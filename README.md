@@ -33,3 +33,14 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 ---
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+
+
+# Documentação do Projeto — Aplicativo TripSplit
+
+> Aplicativo mobile para divisão de contas em viagens em grupo
+
+**Disciplina:** Desenvolvimento para dispositivos móveis  
+**Equipe:** Thereza Angélica · Beatriz Camilo · Clara Macedo · Vladimir Vieira
+**Repositório:**  https://github.com/moveis-tripsplit/tripsplit 
+**Kanban:**  https://github.com/orgs/moveis-tripsplit/projects/1/views/1
+**Versão:** 1.0 — 27 de Agosto de 2026.
