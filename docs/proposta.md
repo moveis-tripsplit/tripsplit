@@ -1,39 +1,40 @@
 # 📱 Documentação do Projeto — TripSplit
 
-> Aplicativo mobile para gerenciamento e divisão de despesas em viagens em grupo.
+> Aplicativo mobile para gerencia mento e divisão de despesas em viagens em grupo.
 
 **Disciplina:** Processos de Software  
-**Equipe:** Thereza Angélica · Beatriz Camilo · Clara Macedo · Fernando Santos
-**Repositório:**  https://github.com/moveis-tripsplit/tripsplit
-**Kanban:**  https://github.com/orgs/moveis-tripsplit/projects/1/views/1
-**Versão:** 1.0 — 27 de Agosto de 2026.
+**Equipe:** Theresa Angélica · Beatriz Camilo · Clara Macedo · Fernando Santos
+**Repositório:** https://github.com/moveis-tripsplit/tripsplit
+**Kanban:** https://github.com/orgs/moveis-tripsplit/projects/1/views/1
+**Versão:** 1.0 — 27 de agosto de 2026.
 
 ---
 
 ## Índice
 
 1. [Visão Geral do Projeto](#1-visão-geral-do-projeto)
-2. [Requisitos do Sistema](#2-requisitos-do-sistema)
-3. [Arquitetura do Sistema](#3-arquitetura-do-sistema)
-4. [Modelagem do Banco de Dados](#4-modelagem-do-banco-de-dados)
-5. [Casos de Uso](#5-casos-de-uso)
-6. [Plano de Projeto](#6-plano-de-projeto)
-7. [Manual do Usuário](#7-manual-do-usuário)
-8. [Documentação da API](#8-documentação-da-api)
-9. [Como Rodar o Projeto](#9-como-rodar-o-projeto)
+2. [MPV](#2-mpv)
+3. [Requisitos do sistema](#3-requisitos-do-sistema)
+4. [Arquitetura do sistema](#4-arquitetura-do-sistema)
+5. [Modelagem do Banco de Dados](#5-modelagem-do-banco-de-dados)
+6. [Casos de Uso](#6-casos-de-uso)
+7. [Plano de Projeto](#7-plano-de-projeto)
+8. [Manual do Utilizador](#8-manual-do-usuário)
+9. [Documentação da API](#9-documentação-da-api)
+10. [Como Rodar o Projeto](#10-como-rodar-o-projeto)
 
 ---
 
 # 1. Visão Geral do Projeto
 
-## 1.1 Sobre
+## 1.1 sobre
 
 Para os aventureiros de viagens em grupo 
 Que tem dificuldades na divisão de contas das viagens entre os participantes
 O TripSplit é um aplicativo mobile 
 Que lhe auxiliara na divisão e cobraças de despesas do grupo
 Diferente do Split wise o TripSplit pretende gerar avisos de cobranças aos membros displicentes com depesas a serem pagas
-Nosso produto tem a divisão voltada para cada despesa feita na viagem.
+O nosso produto tem a divisão voltada para cada despesa feita na viagem.
 
 ---
 
@@ -61,7 +62,7 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 
 ## 1.4 Funcionalidades Principais
 
-- Cadastro e login de usuários;
+- Cadastro e login de utilizadores;
 - Cadastro de viagens;
 - Cadastro de participantes;
 - Cadastro de despesas;
@@ -102,10 +103,27 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 | **Controle de Versão** | Git + GitHub |
 
 ---
+# 2. MPV
 
-# 2. Requisitos do Sistema
+| Funcionalidades do MVP                         |
+|------------------------------------------------|
+| **Criar uma viagem**                           |
+| **Adicionar participantes**                    |
+| **Cadastrar despesas**                         |
+| **selecionar participantes de cada despesa**   |
+| **Calcular automaticamente a divisão**         |
+| **Visualizar valores a pagar**                 |
+| **Visualizar valores a receber**               |               
+| **Marcar dívidas como pagas**                  |                  
+| **Visualizar o resumo financeiro da viagem.**  |   
 
-## 2.1 Convenção de Prioridades
+## 2.1 Resultado esperado
+
+Ao final do MVP, o utilizador deverá conseguir criar uma viagem, adicionar os seus participantes, registrar as despesas realizadas, definir quem participou de cada gasto e visualizar automaticamente quem deve pagar, quanto deve pagar e quem deve receber.
+
+# 3. Requisitos do sistema
+
+## 3.1 Convenção de Prioridades
 
 | Código | Prioridade |
 |---|---|
@@ -115,7 +133,7 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 
 ---
 
-## 2.2 Requisitos Funcionais
+## 3.2 Requisitos Funcionais
 
 ### Módulo de Autenticação
 
@@ -203,7 +221,7 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 
 ---
 
-## 2.3 Requisitos Não-Funcionais
+## 3.3 Requisitos Não Funcionais
 
 | ID | Requisito |
 |---|---|
@@ -222,7 +240,7 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 
 ---
 
-## 2.4 Regras de Negócio
+## 3.4 Regras de Negócio
 
 | ID | Regra |
 |---|---|
@@ -239,9 +257,9 @@ O objetivo do TripSplit é simplificar o controle financeiro de viagens em grupo
 
 ---
 
-# 3. Arquitetura do Sistema
+# 4. Arquitetura do sistema
 
-## 3.1 Visão Geral
+## 4.1 Visão Geral
 
 O TripSplit utiliza uma arquitetura baseada em Kotlin Multiplatform, permitindo compartilhar código entre diferentes plataformas.
 
@@ -288,7 +306,7 @@ A interface é desenvolvida utilizando Compose Multiplatform, enquanto as regras
 └─────────────────────────────────────┘
 ```
 
-## 3.2 Estrutura do Projeto
+## 4.2 Estrutura do Projeto
 
 ```text
 TripSplit/
