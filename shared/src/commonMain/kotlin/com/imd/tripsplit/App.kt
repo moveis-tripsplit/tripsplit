@@ -2,37 +2,26 @@
 
 package com.imd.tripsplit
 
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-
+import com.imd.tripsplit.ui.screens.login.LoginScreen
+import com.imd.tripsplit.ui.theme.TripSplitTheme
 
 @Composable
 @Preview
 fun App() {
-    TelaInicial()
-}
-
-@Composable
-fun TelaInicial() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Olá, TripSplit!"
+    TripSplitTheme {
+        LoginScreen(
+            onLoginSuccess = {
+                // Ponto de integração para navegar para a tela principal
+                println("Login realizado com sucesso!")
+            },
+            onForgotPasswordClick = {
+                println("Navegar para recuperação de senha")
+            },
+            onSignUpClick = {
+                println("Navegar para tela de cadastro")
+            }
         )
     }
 }
-
