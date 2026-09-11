@@ -199,7 +199,7 @@ Dividimos a tela em duas funções complementares:
    - É fácil de testar e visualizar no `@Preview`.
 
 2. **`LoginScreen` (Stateful):**
-   - Cria o estado persistente com `rememberSaveable { mutableStateOf(LoginUiState()) }`.
+   - Cria o estado com `remember { mutableStateOf(LoginUiState()) }`.
    - Passa o estado e atualiza as variáveis quando os eventos acontecem.
 
 ### 6.2 Tratamento de Teclado e Rolagem (*IME Padding & Scroll*)
