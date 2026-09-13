@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "**" ]
+    branches: [ "main" ]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-lint:
@@ -21,14 +25,20 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: cache konan (Kotlin/Native toolchain)
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/libs.versions.toml') }}
+
       - name: grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: compile project
-        run: ./gradlew assemble
 
       - name: run ktlint
         run: ./gradlew ktlintCheck
 
       - name: run detekt
         run: ./gradlew detekt
+
+      - name: compile project
+        run: ./gradlew :androidApp:assembleDebug

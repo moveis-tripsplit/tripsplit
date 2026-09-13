@@ -21,7 +21,19 @@ subprojects {
         config.setFrom("$rootDir/config/detekt/detekt.yml")
     }
 
-    tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask>().configureEach {
-        exclude("**/generated/**")
+    tasks.matching { it.name.contains("SourceSetFormat") || it.name.contains("SourceSetCheck") }
+        .configureEach {
+            notCompatibleWithConfigurationCache("Exclusão manual de generated sources")
+            if (this is org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask) {
+                setSource(
+                    source.asFileTree.matching {
+                        exclude("**/generated/**")
+                    }
+                )
+            }
+        }
+
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        exclude("**/build/generated/**")
     }
 }
