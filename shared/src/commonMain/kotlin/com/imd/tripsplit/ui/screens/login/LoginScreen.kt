@@ -346,8 +346,8 @@ fun LoginContent(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = BlueOcean,
                         contentColor = Color.White,
-                        disabledContainerColor = BlueOcean.copy(alpha = 0.5f),
-                        disabledContentColor = Color.White.copy(alpha = 0.8f)
+                        disabledContainerColor = BlueOcean,
+                        disabledContentColor = Color.White
                     )
                 ) {
                     if (state.isLoading) {
@@ -359,6 +359,7 @@ fun LoginContent(
                     } else {
                         Text(
                             text = "Entrar na conta",
+                            color = Color.White,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
