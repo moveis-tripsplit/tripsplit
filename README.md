@@ -40,7 +40,14 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 > Aplicativo mobile para divisão de contas em viagens em grupo
 
 **Disciplina:** Desenvolvimento para dispositivos móveis  
-**Equipe:** Thereza Angélica · Beatriz Camilo · Clara Macedo · Vladimir Vieira
-**Repositório:**  https://github.com/moveis-tripsplit/tripsplit 
-**Kanban:**  https://github.com/orgs/moveis-tripsplit/projects/1/views/1
+**Equipe:** Thereza Angélica · Beatriz Camilo · Clara Macedo · Vladimir Vieira  
+**Repositório:**  https://github.com/moveis-tripsplit/tripsplit  
+**Kanban:**  https://github.com/orgs/moveis-tripsplit/projects/1/views/1  
 **Versão:** 1.0 — 27 de Agosto de 2026.
+
+---
+
+### 📚 Guias e Tutoriais de Interface
+
+- [🎨 Design System Oficial](./docs/designSystem.md) — Princípios, paleta de cores, tipografia, espaçamentos e componentes.
+- [🎓 Tutorial & Guia da Tela de Login](./docs/README_LOGIN_TUTORIAL.md) — Passo a passo pedagógico explicando a arquitetura em Compose Multiplatform, State Hoisting, tokens e a construção da tela de login.
