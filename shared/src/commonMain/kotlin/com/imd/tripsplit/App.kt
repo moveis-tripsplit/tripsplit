@@ -21,7 +21,7 @@ fun App() {
             },
             onSignUpClick = {
                 println("Navegar para tela de cadastro")
-            }
+            },
         )
     }
 }

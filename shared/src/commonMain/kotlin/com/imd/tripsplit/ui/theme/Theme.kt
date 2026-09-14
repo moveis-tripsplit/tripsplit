@@ -11,68 +11,60 @@ import androidx.compose.ui.graphics.Color
 // 🎨 TripSplit Design System - Tema Principal
 // ==========================================
 
-private val LightColorScheme = lightColorScheme(
-    primary = BlueOcean,
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFFDBEAFE), // Azul suave
-    onPrimaryContainer = BlueOcean,
+private val LightColorScheme =
+    lightColorScheme(
+        primary = BlueOcean,
+        onPrimary = Color.White,
+        // Azul suave
+        primaryContainer = Color(0xFFDBEAFE),
+        onPrimaryContainer = BlueOcean,
+        secondary = GreenTravel,
+        onSecondary = Color.White,
+        // Verde suave
+        secondaryContainer = Color(0xFFDCFCE7),
+        onSecondaryContainer = GreenTravel,
+        tertiary = OrangeAccent,
+        onTertiary = Color.White,
+        background = BackgroundLight,
+        onBackground = TextPrimary,
+        surface = SurfaceLight,
+        onSurface = TextPrimary,
+        surfaceVariant = BackgroundLight,
+        onSurfaceVariant = TextSecondary,
+        outline = BorderLight,
+        outlineVariant = TextDisabled,
+        error = ErrorRed,
+        onError = Color.White,
+    )
 
-    secondary = GreenTravel,
-    onSecondary = Color.White,
-    secondaryContainer = Color(0xFFDCFCE7), // Verde suave
-    onSecondaryContainer = GreenTravel,
-
-    tertiary = OrangeAccent,
-    onTertiary = Color.White,
-
-    background = BackgroundLight,
-    onBackground = TextPrimary,
-
-    surface = SurfaceLight,
-    onSurface = TextPrimary,
-    surfaceVariant = BackgroundLight,
-    onSurfaceVariant = TextSecondary,
-
-    outline = BorderLight,
-    outlineVariant = TextDisabled,
-
-    error = ErrorRed,
-    onError = Color.White
-)
-
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFF1E3A8A),
-    onPrimaryContainer = Color(0xFFBFDBFE),
-
-    secondary = SuccessDark,
-    onSecondary = Color.Black,
-    secondaryContainer = Color(0xFF14532D),
-    onSecondaryContainer = Color(0xFFBBF7D0),
-
-    tertiary = OrangeAccent,
-    onTertiary = Color.White,
-
-    background = BackgroundDark,
-    onBackground = TextPrimaryDark,
-
-    surface = SurfaceDark,
-    onSurface = TextPrimaryDark,
-    surfaceVariant = SurfaceDark,
-    onSurfaceVariant = TextSecondaryDark,
-
-    outline = BorderDark,
-    outlineVariant = TextSecondaryDark,
-
-    error = ErrorDark,
-    onError = Color.White
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = PrimaryDark,
+        onPrimary = Color.White,
+        primaryContainer = Color(0xFF1E3A8A),
+        onPrimaryContainer = Color(0xFFBFDBFE),
+        secondary = SuccessDark,
+        onSecondary = Color.Black,
+        secondaryContainer = Color(0xFF14532D),
+        onSecondaryContainer = Color(0xFFBBF7D0),
+        tertiary = OrangeAccent,
+        onTertiary = Color.White,
+        background = BackgroundDark,
+        onBackground = TextPrimaryDark,
+        surface = SurfaceDark,
+        onSurface = TextPrimaryDark,
+        surfaceVariant = SurfaceDark,
+        onSurfaceVariant = TextSecondaryDark,
+        outline = BorderDark,
+        outlineVariant = TextSecondaryDark,
+        error = ErrorDark,
+        onError = Color.White,
+    )
 
 @Composable
 fun TripSplitTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
@@ -80,6 +72,6 @@ fun TripSplitTheme(
         colorScheme = colorScheme,
         shapes = TripSplitShapes,
         typography = TripSplitTypography,
-        content = content
+        content = content,
     )
 }

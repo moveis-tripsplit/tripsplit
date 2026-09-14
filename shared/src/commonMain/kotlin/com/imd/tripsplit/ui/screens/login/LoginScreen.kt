@@ -82,7 +82,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     onLoginSuccess: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {}
+    onSignUpClick: () -> Unit = {},
 ) {
     var state by remember { mutableStateOf(LoginUiState()) }
 
@@ -98,7 +98,7 @@ fun LoginScreen(
         },
         onForgotPasswordClick = onForgotPasswordClick,
         onSignUpClick = onSignUpClick,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -116,19 +116,20 @@ fun LoginContent(
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .imePadding()
-            .padding(horizontal = SpacingXL, vertical = Spacing2XL),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
+                .imePadding()
+                .padding(horizontal = SpacingXL, vertical = Spacing2XL),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
     ) {
         // ----------------------------------------------------
         // 1. Cabeçalho: Logo + Marca + Boas-vindas
@@ -140,18 +141,19 @@ fun LoginContent(
         Spacer(modifier = Modifier.height(SpacingSM))
 
         // Título estilizado: "Trip" (escuro) + "Split" (azul)
-        val appTitle = buildAnnotatedString {
-            withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) {
-                append("Trip")
+        val appTitle =
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) {
+                    append("Trip")
+                }
+                withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) {
+                    append("Split")
+                }
             }
-            withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) {
-                append("Split")
-            }
-        }
         Text(
             text = appTitle,
             fontSize = 30.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(SpacingSM))
@@ -162,7 +164,7 @@ fun LoginContent(
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(SpacingXS))
@@ -173,7 +175,7 @@ fun LoginContent(
             fontSize = 14.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         )
 
         Spacer(modifier = Modifier.height(SpacingXL))
@@ -186,17 +188,17 @@ fun LoginContent(
             shape = RoundedCornerShape(RadiusXL),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             border = BorderStroke(1.dp, BorderLight),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             Column(
-                modifier = Modifier.padding(SpacingXL)
+                modifier = Modifier.padding(SpacingXL),
             ) {
                 // Campo: E-mail
                 Text(
                     text = "E-mail",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    color = TextPrimary,
                 )
 
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -213,21 +215,23 @@ fun LoginContent(
                             imageVector = TripSplitIcons.Email,
                             contentDescription = "Ícone de e-mail",
                             tint = TextSecondary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     },
                     shape = RoundedCornerShape(RadiusMD),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    )
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next,
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
                 )
 
                 Spacer(modifier = Modifier.height(SpacingLG))
@@ -237,7 +241,7 @@ fun LoginContent(
                     text = "Senha",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    color = TextPrimary,
                 )
 
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -254,43 +258,48 @@ fun LoginContent(
                             imageVector = TripSplitIcons.Lock,
                             contentDescription = "Ícone de senha",
                             tint = TextSecondary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     },
                     trailingIcon = {
                         IconButton(onClick = onTogglePasswordVisibility) {
                             Icon(
-                                imageVector = if (state.isPasswordVisible) {
-                                    TripSplitIcons.VisibilityOff
-                                } else {
-                                    TripSplitIcons.Visibility
-                                },
+                                imageVector =
+                                    if (state.isPasswordVisible) {
+                                        TripSplitIcons.VisibilityOff
+                                    } else {
+                                        TripSplitIcons.Visibility
+                                    },
                                 contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
                                 tint = TextSecondary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
                             )
                         }
                     },
-                    visualTransformation = if (state.isPasswordVisible) {
-                        VisualTransformation.None
-                    } else {
-                        PasswordVisualTransformation()
-                    },
+                    visualTransformation =
+                        if (state.isPasswordVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
                     shape = RoundedCornerShape(RadiusMD),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { if (state.isLoginEnabled) onLoginClick() }
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    )
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
+                        ),
+                    keyboardActions =
+                        KeyboardActions(
+                            onDone = { if (state.isLoginEnabled) onLoginClick() },
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
                 )
 
                 Spacer(modifier = Modifier.height(SpacingMD))
@@ -299,27 +308,28 @@ fun LoginContent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Checkbox "Lembrar de mim"
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { onRememberMeChange(!state.rememberMe) }
+                        modifier = Modifier.clickable { onRememberMeChange(!state.rememberMe) },
                     ) {
                         Checkbox(
                             checked = state.rememberMe,
                             onCheckedChange = onRememberMeChange,
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = BlueOcean,
-                                uncheckedColor = BorderLight
-                            ),
-                            modifier = Modifier.size(20.dp)
+                            colors =
+                                CheckboxDefaults.colors(
+                                    checkedColor = BlueOcean,
+                                    uncheckedColor = BorderLight,
+                                ),
+                            modifier = Modifier.size(20.dp),
                         )
                         Spacer(modifier = Modifier.size(SpacingSM))
                         Text(
                             text = "Lembrar de mim",
                             fontSize = 14.sp,
-                            color = TextSecondary
+                            color = TextSecondary,
                         )
                     }
 
@@ -329,7 +339,7 @@ fun LoginContent(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = BlueOcean,
-                        modifier = Modifier.clickable(onClick = onForgotPasswordClick)
+                        modifier = Modifier.clickable(onClick = onForgotPasswordClick),
                     )
                 }
 
@@ -339,29 +349,31 @@ fun LoginContent(
                 Button(
                     onClick = onLoginClick,
                     enabled = state.isLoginEnabled,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
                     shape = RoundedCornerShape(RadiusMD),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = BlueOcean,
-                        contentColor = Color.White,
-                        disabledContainerColor = BlueOcean,
-                        disabledContentColor = Color.White
-                    )
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = BlueOcean,
+                            contentColor = Color.White,
+                            disabledContainerColor = BlueOcean,
+                            disabledContentColor = Color.White,
+                        ),
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
                             color = Color.White,
                             modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
                         )
                     } else {
                         Text(
                             text = "Entrar na conta",
                             color = Color.White,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -372,19 +384,19 @@ fun LoginContent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "Não tem uma conta? ",
                         fontSize = 14.sp,
-                        color = TextSecondary
+                        color = TextSecondary,
                     )
                     Text(
                         text = "Cadastre-se",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = BlueOcean,
-                        modifier = Modifier.clickable(onClick = onSignUpClick)
+                        modifier = Modifier.clickable(onClick = onSignUpClick),
                     )
                 }
             }
@@ -397,19 +409,19 @@ fun LoginContent(
         // ----------------------------------------------------
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
                 imageVector = TripSplitIcons.ShieldCheck,
                 contentDescription = "Proteção",
                 tint = GreenTravel,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.size(SpacingSM))
             Text(
                 text = "Dados protegidos com criptografia",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = TextSecondary,
             )
         }
 
