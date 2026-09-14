@@ -1,0 +1,10 @@
+root = true
+
+[*.{kt,kts}]
+max_line_length = 200
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
+ktlint_standard_function-naming = disabled
+
+[**/{TripSplitIcons,TripSplitLogo}.kt]
+ktlint_standard_max-line-length = disabled

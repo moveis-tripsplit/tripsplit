@@ -10,7 +10,7 @@ data class LoginUiState(
     val isPasswordVisible: Boolean = false,
     val rememberMe: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 ) {
     /**
      * O botão de login só deve estar habilitado quando ambos os campos

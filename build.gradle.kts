@@ -1,5 +1,6 @@
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
+import org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask
 
 plugins {
     alias(libs.plugins.androidApplication) apply false
@@ -21,7 +22,22 @@ subprojects {
         config.setFrom("$rootDir/config/detekt/detekt.yml")
     }
 
-    tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask>().configureEach {
-        exclude("**/generated/**")
+    configure<KtlintExtension> {
+        filter {
+            exclude("**/build/generated/**")
+            exclude { element -> element.file.path.contains("resourceGenerator") }
+        }
+    }
+
+    tasks.withType<BaseKtLintCheckTask>().configureEach {
+        notCompatibleWithConfigurationCache("Exclusão manual de generated sources")
+        val filteredFiles = source.files.filter { file ->
+            !file.path.contains("resourceGenerator")
+        }
+        setSource(files(filteredFiles))
+    }
+
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        exclude("**/build/generated/**")
     }
 }
