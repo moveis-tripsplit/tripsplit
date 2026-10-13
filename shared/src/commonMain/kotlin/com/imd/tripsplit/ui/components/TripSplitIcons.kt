@@ -70,4 +70,7 @@ object TripSplitIcons {
             defaultFillColor = Color(0xFF16A34A),
         )
     }
+
+    //Person Icon para colocar no campo nome do user!
+    val
 }
