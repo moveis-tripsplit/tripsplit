@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.components
+package com.imd.tripsplit.ui.components.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
