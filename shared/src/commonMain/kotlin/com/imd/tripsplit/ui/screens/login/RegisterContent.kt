@@ -129,301 +129,304 @@ fun RegisterContent(
         ) {
             /*COLUMN DO CARD PARA COLOCAR OS CAMPOS PARA PREENCHER*/
 
-            //----> Campo Nome:
+            Column (
+                modifier = Modifier.padding(SpacingXL),
+            ) {
+                //----> Campo Nome:
 
-            Text(
-                text = "Nome",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
+                Text(
+                    text = "Nome",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
 
-            OutlinedTextField(
-                value = state.nome,
-                onValueChange = onNameChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "Nome", color = TextDisabled, fontSize = 14.sp)
-                },
+                OutlinedTextField(
+                    value = state.nome,
+                    onValueChange = onNameChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "Nome", color = TextDisabled, fontSize = 14.sp)
+                    },
 
-                leadingIcon = {
-                    Icon(
-                        imageVector = TripSplitIcons.User,
-                        contentDescription = "Ícone de usuário",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(20.dp),
-                    )
-                },
-                shape = RoundedCornerShape(RadiusMD),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next,
-                    ),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                    ),
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            //--->CAMPO DE DATA DE NASCIMENTO:
-
-            Text(
-                text = "Data de nascimento",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            BirthDateField(
-                birthDate = birthDate,
-                onBirthDateChange = { birthDate = it }
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            //---> CAMPO EMAIL:
-
-            Text(
-                text = "E-mail",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            OutlinedTextField(
-                value = state.email,
-                onValueChange = onEmailChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = TripSplitIcons.Email,
-                        contentDescription = "Ícone de e-mail",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(20.dp),
-                    )
-                },
-                shape = RoundedCornerShape(RadiusMD),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next,
-                    ),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                    ),
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            //---> CAMPO SENHA:
-
-            Text(
-                text = "Senha",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            OutlinedTextField(
-                value = state.password,
-                onValueChange = onPasswordChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = TripSplitIcons.Lock,
-                        contentDescription = "Ícone de senha",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(20.dp),
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = onTogglePasswordVisibility) {
+                    leadingIcon = {
                         Icon(
-                            imageVector =
-                                if (state.isPasswordVisible) {
-                                    TripSplitIcons.VisibilityOff
-                                } else {
-                                    TripSplitIcons.Visibility
-                                },
-                            contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                            imageVector = TripSplitIcons.User,
+                            contentDescription = "Ícone de usuário",
                             tint = TextSecondary,
                             modifier = Modifier.size(20.dp),
                         )
-                    }
-                },
-                visualTransformation =
-                    if (state.isPasswordVisible) {
-                        VisualTransformation.None
-                    } else {
-                        PasswordVisualTransformation()
                     },
-                shape = RoundedCornerShape(RadiusMD),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done,
-                    ),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                    ),
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
+                    shape = RoundedCornerShape(RadiusMD),
+                    singleLine = true,
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next,
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
 
-            //---> CAMPO DE CONFIRMAR SENHA:
+                //--->CAMPO DE DATA DE NASCIMENTO:
 
-            Text(
-                text = "Confirmar Senha",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
+                Text(
+                    text = "Data de nascimento",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
 
-            OutlinedTextField(
-                value = state.password,
-                onValueChange = onPasswordChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = TripSplitIcons.Lock,
-                        contentDescription = "Ícone de senha",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(20.dp),
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = onTogglePasswordVisibility) {
+                BirthDateField(
+                    birthDate = birthDate,
+                    onBirthDateChange = { birthDate = it }
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
+
+                //---> CAMPO EMAIL:
+
+                Text(
+                    text = "E-mail",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary,
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
+
+                OutlinedTextField(
+                    value = state.email,
+                    onValueChange = onEmailChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
+                    },
+                    leadingIcon = {
                         Icon(
-                            imageVector =
-                                if (state.isPasswordVisible) {
-                                    TripSplitIcons.VisibilityOff
-                                } else {
-                                    TripSplitIcons.Visibility
-                                },
-                            contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                            imageVector = TripSplitIcons.Email,
+                            contentDescription = "Ícone de e-mail",
                             tint = TextSecondary,
                             modifier = Modifier.size(20.dp),
                         )
-                    }
-                },
-                visualTransformation =
-                    if (state.isPasswordVisible) {
-                        VisualTransformation.None
-                    } else {
-                        PasswordVisualTransformation()
                     },
-                shape = RoundedCornerShape(RadiusMD),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done,
-                    ),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                    ),
-            )
-            Spacer(modifier = Modifier.height(SpacingXS))
+                    shape = RoundedCornerShape(RadiusMD),
+                    singleLine = true,
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next,
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
 
+                //---> CAMPO SENHA:
 
-            //---> BOTÃO ENVIAR FORMULÁRIO:
+                Text(
+                    text = "Senha",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary,
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
 
-            Button(
-                onClick = onRegisterClick,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                shape = RoundedCornerShape(RadiusMD),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = BlueOcean,
-                        contentColor = Color.White,
-                        disabledContainerColor = BlueOcean,
-                        disabledContentColor = Color.White,
-                    ),
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                    )
-                } else {
-                    Text(
-                        text = "Criar Conta!",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                OutlinedTextField(
+                    value = state.password,
+                    onValueChange = onPasswordChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = TripSplitIcons.Lock,
+                            contentDescription = "Ícone de senha",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = onTogglePasswordVisibility) {
+                            Icon(
+                                imageVector =
+                                    if (state.isPasswordVisible) {
+                                        TripSplitIcons.VisibilityOff
+                                    } else {
+                                        TripSplitIcons.Visibility
+                                    },
+                                contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                                tint = TextSecondary,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    },
+                    visualTransformation =
+                        if (state.isPasswordVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                    shape = RoundedCornerShape(RadiusMD),
+                    singleLine = true,
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
+
+                //---> CAMPO DE CONFIRMAR SENHA:
+
+                Text(
+                    text = "Confirmar Senha",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary,
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
+
+                OutlinedTextField(
+                    value = state.password,
+                    onValueChange = onPasswordChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = TripSplitIcons.Lock,
+                            contentDescription = "Ícone de senha",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = onTogglePasswordVisibility) {
+                            Icon(
+                                imageVector =
+                                    if (state.isPasswordVisible) {
+                                        TripSplitIcons.VisibilityOff
+                                    } else {
+                                        TripSplitIcons.Visibility
+                                    },
+                                contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                                tint = TextSecondary,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    },
+                    visualTransformation =
+                        if (state.isPasswordVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                    shape = RoundedCornerShape(RadiusMD),
+                    singleLine = true,
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                        ),
+                )
+                Spacer(modifier = Modifier.height(SpacingLG))
+
+                //---> BOTÃO ENVIAR FORMULÁRIO:
+
+                Button(
+                    onClick = onRegisterClick,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                    shape = RoundedCornerShape(RadiusMD),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = BlueOcean,
+                            contentColor = Color.White,
+                            disabledContainerColor = BlueOcean,
+                            disabledContentColor = Color.White,
+                        ),
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Text(
+                            text = "Criar Conta!",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
-            }
-            Spacer(modifier = Modifier.height(SpacingLG))
+                Spacer(modifier = Modifier.height(SpacingLG))
 
-            //---> BOTÃO VOLTAR PARA LOGIN:
+                //---> BOTÃO VOLTAR PARA LOGIN:
 
-            Button(
-                onClick = onLoginClick,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                shape = RoundedCornerShape(RadiusMD),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = BlueOcean,
-                        contentColor = Color.White,
-                        disabledContainerColor = BlueOcean,
-                        disabledContentColor = Color.White,
-                    ),
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                    )
-                } else {
-                    Text(
-                        text = "Já tenho conta, quero fazer Login!",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                Button(
+                    onClick = onLoginClick,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                    shape = RoundedCornerShape(RadiusMD),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = BlueOcean,
+                            contentColor = Color.White,
+                            disabledContainerColor = BlueOcean,
+                            disabledContentColor = Color.White,
+                        ),
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Text(
+                            text = "Já tenho conta, quero fazer Login!",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(SpacingLG))
             }
-            Spacer(modifier = Modifier.height(SpacingLG))
 
             // ----------------------------------------------------
             //  RODAPÉ
@@ -446,18 +449,27 @@ fun BirthDateField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
         readOnly = true,
-        label = { Text("Data de nascimento") },
-        placeholder = { Text("DD/MM/AAAA") },
+        placeholder = { Text("dd/mm/aaaa",  color = TextDisabled ) },
         trailingIcon = {
             IconButton(
                 onClick = { showDatePicker = true }
             ) {
                 Icon(
                     imageVector = TripSplitIcons.Calendar,
-                    contentDescription = "Selecionar data"
+                    contentDescription = "Selecionar data",
+                    tint = TextSecondary,
                 )
             }
         },
+        shape = RoundedCornerShape(RadiusMD),
+        singleLine = true,
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = BlueOcean,
+                unfocusedBorderColor = BorderLight,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+            ),
         modifier = Modifier.fillMaxWidth()
     )
 
