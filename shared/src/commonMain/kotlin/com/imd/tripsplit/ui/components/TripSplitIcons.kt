@@ -72,5 +72,18 @@ object TripSplitIcons {
     }
 
     //Person Icon para colocar no campo nome do user!
-    val
+    val User: ImageVector by lazy {
+        createVector(
+            name = "User",
+            pathData = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+        )
+    }
+
+    //Icon para calendário:
+    val Calendar: ImageVector by lazy {
+        createVector(
+            name = "Calendar",
+            pathData = "M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM5 7V6h14v1H5zm2 4h3v3H7zm5 0h3v3h-3zm5 0h2v3h-2z"
+        )
+    }
 }

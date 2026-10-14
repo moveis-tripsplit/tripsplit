@@ -18,7 +18,7 @@ data class RegisterUiState (
 {
     /**
      * O botão de registro só deve estar habilitado quando
-     * todos os campos estiverem preenchidos, a senha e sua
+     * todos os campos estiverem preenchidos, a senha sua
      * confirmação forem iguais e não houver operação em andamento.
      */
     val isRegisterEnabled: Boolean

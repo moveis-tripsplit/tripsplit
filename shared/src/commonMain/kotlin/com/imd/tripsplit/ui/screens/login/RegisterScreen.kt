@@ -68,17 +68,37 @@ import com.imd.tripsplit.ui.theme.TextDisabled
 import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 import com.imd.tripsplit.ui.theme.TripSplitTheme
+import kotlinx.datetime.LocalDate
 
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    onRegisterSucess: () -> Unit = {}, //REVER PARA SABER SE VAI FUNCIONAR
-    onLoginClick: () -> Unit = {}, //User quer voltar ao login
+    onRegisterClick: () -> Unit = {},
+    onLoginClick: () -> Unit = {},
 ) {
-    //Aqui ele puxa os dados iniciais salvos no estado RegisterUIstate
     var state by remember {
         mutableStateOf(RegisterUiState())
     }
 
+    RegisterContent(
+        modifier = modifier,
+        state = state,
+        onNameChange = {
+            state = state.copy(nome = it)
+        },
+        onEmailChange = {
+            state = state.copy(email = it)
+        },
+        onPasswordChange = {
+            state = state.copy(password = it)
+        },
+        onTogglePasswordVisibility = {
+            state = state.copy(
+                isPasswordVisible = !state.isPasswordVisible
+            )
+        },
+        onLoginClick = onLoginClick,
+        onRegisterClick = onRegisterClick
+    )
 }
