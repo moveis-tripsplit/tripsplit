@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,15 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.ui.theme.TextSecondary
-import kotlinx.datetime.LocalDate
 
-private val MonthsPtBr = listOf("jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez")
-
-private fun LocalDate.short(): String =
-    "${dayOfMonth.toString().padStart(2, '0')} ${MonthsPtBr[month.ordinal]}"
-
-fun Trip.periodLabel(): String =
-    "${startDate.short()} – ${endDate.short()} ${endDate.year}"
+// Função auxiliar simples para o período usando as strings da Trip
+fun Trip.periodLabel(): String = "${startDate} – ${endDate}"
 
 @Composable
 fun TripCard(
@@ -30,7 +26,12 @@ fun TripCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TripSplitCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -47,7 +48,7 @@ fun TripCard(
                 StatusChip(trip.status, modifier = Modifier.padding(start = 8.dp))
             }
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
