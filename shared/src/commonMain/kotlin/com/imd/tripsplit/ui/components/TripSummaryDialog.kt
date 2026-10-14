@@ -19,7 +19,7 @@ import com.imd.tripsplit.ui.theme.GreenTravel
 import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable
-fun TripSummary(
+fun TripSummaryDialog(
     trip: Trip,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
