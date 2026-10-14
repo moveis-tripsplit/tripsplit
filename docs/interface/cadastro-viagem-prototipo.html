@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripSplit — Protótipo de Cadastro de Viagem (Figma Ready)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* TripSplit Design System Tokens */
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --secondary: #16A34A;
+      --accent: #F97316;
+      --background: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text-primary: #172033;
+      --text-secondary: #64748B;
+      --text-disabled: #94A3B8;
+      --success: #16A34A;
+      --error: #DC2626;
+      --warning: #EAB308;
+      --info: #2563EB;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 999px;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+      --shadow-float: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: #0F172A;
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px 16px;
+    }
+
+    /* Top Control Bar */
+    .top-toolbar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      background: #1E293B;
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      border: 1px solid #334155;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #F8FAFC;
+    }
+
+    .brand-title span {
+      background: rgba(37, 99, 235, 0.2);
+      color: #60A5FA;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: #2563EB;
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary-action {
+      background: #334155;
+      color: #F8FAFC;
+      border: 1px solid #475569;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary-action:hover {
+      background: #475569;
+    }
+
+    /* Instruções para o Figma */
+    .figma-tips-card {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #CBD5E1;
+    }
+
+    .figma-tips-card strong {
+      color: #60A5FA;
+    }
+
+    /* Container do Dispositivo Mobile */
+    .mobile-mockup-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      background: var(--background);
+      border-radius: 44px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 10px #1E293B, 0 0 0 12px #334155;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 48px;
+      padding: 12px 24px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      position: relative;
+      z-index: 10;
+    }
+
+    .notch-island {
+      width: 110px;
+      height: 26px;
+      background: #000000;
+      border-radius: 13px;
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    /* Top App Bar */
+    .app-bar {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #F1F5F9;
+    }
+
+    .app-bar-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Scrollable Content */
+    .screen-content {
+      padding: 12px 20px 100px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+      max-height: 750px;
+    }
+
+    /* Intro Header */
+    .intro-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      background: #EFF6FF;
+      color: var(--primary);
+      border: 1px solid #DBEAFE;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .screen-h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    .screen-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Cards */
+    .trip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .pill-later {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-orange {
+      background: #FFF7ED;
+      color: var(--accent);
+      border: 1px solid #FFEDD5;
+    }
+
+    .pill-green {
+      background: #F0FDF4;
+      color: var(--secondary);
+      border: 1px solid #DCFCE7;
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .form-label .required {
+      color: var(--error);
+    }
+
+    .form-label .optional {
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .input-box {
+      width: 100%;
+      height: 48px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .textarea-box {
+      width: 100%;
+      height: 72px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      resize: none;
+      transition: border-color 0.2s;
+    }
+
+    .textarea-box:focus {
+      border-color: var(--primary);
+    }
+
+    /* Date Range Pickers */
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .date-box {
+      flex: 1;
+      height: 50px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .date-box-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .date-box-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .date-arrow {
+      color: var(--text-disabled);
+      font-weight: 700;
+    }
+
+    .duration-chip {
+      align-self: flex-start;
+      background: #DCFCE7;
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Itinerary Timeline */
+    .itinerary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .itinerary-item {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .itinerary-item.orange {
+      border-left-color: var(--accent);
+    }
+
+    .itinerary-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .itinerary-meta {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    .itinerary-item.orange .itinerary-meta {
+      color: var(--accent);
+    }
+
+    .itinerary-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .itinerary-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .itinerary-tag.green {
+      color: var(--success);
+    }
+
+    /* Participants Grid */
+    .participants-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .participant-card {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .avatar.green { background: var(--secondary); }
+    .avatar.orange { background: var(--accent); }
+    .avatar.purple { background: #8B5CF6; }
+
+    .participant-meta {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .participant-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .participant-role {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .role-badge {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Add Item Buttons */
+    .btn-add-outline {
+      width: 100%;
+      height: 40px;
+      background: #EFF6FF;
+      border: 1.5px dashed var(--primary);
+      border-radius: var(--radius-md);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add-outline:hover {
+      background: #DBEAFE;
+    }
+
+    /* Helper Notes */
+    .helper-note {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .helper-note strong {
+      color: var(--text-primary);
+    }
+
+    /* Sticky Footer */
+    .sticky-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .btn-primary-submit {
+      width: 100%;
+      height: 52px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-float);
+      transition: all 0.2s;
+    }
+
+    .btn-primary-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-draft-link {
+      background: none;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .btn-draft-link:hover {
+      color: var(--text-primary);
+    }
+
+    .home-indicator {
+      width: 134px;
+      height: 5px;
+      background: var(--text-primary);
+      border-radius: 2.5px;
+      margin-top: 4px;
+    }
+
+    /* Modal / Bottom Sheet Overlay */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      background: var(--surface);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 16px 20px 28px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-drag-bar {
+      width: 40px;
+      height: 4px;
+      background: #CBD5E1;
+      border-radius: 2px;
+      align-self: center;
+      margin-bottom: 4px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: #F1F5F9;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Ações Superior para o Usuário e Figma -->
+  <div class="top-toolbar">
+    <div class="brand-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1>TripSplit — Cadastro de Viagem</h1>
+      <span>Figma Ready</span>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-action" onclick="copySvgToClipboard()">
+        📋 Copiar SVG para Figma
+      </button>
+      <a href="cadastro-viagem.svg" download="tripsplit-cadastro-viagem.svg" style="text-decoration: none;">
+        <button class="btn-secondary-action">
+          ⬇️ Baixar SVG
+        </button>
+      </a>
+      <a href="cadastro-viagem-estados.svg" download="tripsplit-cadastro-viagem-estados.svg" style="text-decoration: none;">
+        <button class="btn-secondary-action">
+          🖼️ Ver 3 Estados
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Dica de Importação no Figma -->
+  <div class="figma-tips-card">
+    ✨ <strong>Como levar para o Figma:</strong> Você pode clicar em <strong>"Copiar SVG para Figma"</strong> acima e colar (Ctrl + V) diretamente em qualquer arquivo do Figma, ou arrastar o arquivo <code>cadastro-viagem.svg</code> para o canvas do Figma. Todas as camadas, botões, ícones e textos foram criados para ficarem 100% editáveis no Figma!
+  </div>
+
+  <!-- Dispositivo Mobile (390 x 844 padrão do Design System) -->
+  <div class="mobile-mockup-wrapper">
+    <!-- Status Bar iOS -->
+    <div class="status-bar">
+      <span>09:41</span>
+      <div class="notch-island"></div>
+      <div class="status-icons">
+        <span>5G</span>
+        <span>📶</span>
+        <span>🔋 100%</span>
+      </div>
+    </div>
+
+    <!-- Top App Bar -->
+    <div class="app-bar">
+      <button class="icon-btn" title="Voltar" onclick="alert('Voltar para a lista de viagens')">
+        ←
+      </button>
+      <span class="app-bar-title">Cadastrar Viagem</span>
+      <button class="icon-btn" title="Cancelar" onclick="alert('Cancelar cadastro')">
+        ✕
+      </button>
+    </div>
+
+    <!-- Conteúdo da Tela com Rolagem -->
+    <div class="screen-content" id="screenContent">
+      <!-- Cabeçalho Informativo -->
+      <div class="intro-header">
+        <span class="tag-badge">✈️ Planejamento de Viagem</span>
+        <h2 class="screen-h1">Para onde vamos?</h2>
+        <p class="screen-subtitle">Preencha os dados principais. Você poderá adicionar atividades ao roteiro e convidar mais participantes a qualquer momento.</p>
+      </div>
+
+      <!-- Card 1: Título e Descrição -->
+      <div class="trip-card">
+        <div class="form-group">
+          <label class="form-label" for="tripTitle">
+            Título da viagem <span class="required">*</span>
+          </label>
+          <input type="text" id="tripTitle" class="input-box" value="Férias em Florianópolis 🏖️" placeholder="Ex: Férias em Floripa, Carnaval Salvador...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="tripDesc">
+            Descrição <span class="optional">(opcional)</span>
+          </label>
+          <textarea id="tripDesc" class="textarea-box" placeholder="Escreva uma breve descrição ou objetivo da viagem...">Viagem da galera da faculdade para curtir praias do norte, trilhas e churrasco na casa alugada.</textarea>
+        </div>
+      </div>
+
+      <!-- Card 2: Período e Datas -->
+      <div class="trip-card">
+        <label class="form-label">
+          Período da viagem <span class="required">*</span>
+        </label>
+        <div class="date-row">
+          <div class="date-box" onclick="alert('Alterar data de início')">
+            <span class="date-box-label">Início</span>
+            <span class="date-box-val">📅 15/11/2026</span>
+          </div>
+          <span class="date-arrow">→</span>
+          <div class="date-box" onclick="alert('Alterar data de término')">
+            <span class="date-box-label">Término</span>
+            <span class="date-box-val">📅 22/11/2026</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span class="duration-chip">✓ 7 dias de viagem</span>
+          <span style="font-size: 11px; color: var(--text-secondary);">Datas flexíveis</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Roteiro (com indicação: pode adicionar depois) -->
+      <div class="trip-card">
+        <div class="card-header-row">
+          <span class="card-title">Roteiro de Atividades</span>
+          <span class="pill-later pill-orange">● Pode adicionar depois</span>
+        </div>
+        <p class="helper-note">Monte os passeios agora ou preencha durante a viagem conforme combinarem:</p>
+
+        <div class="itinerary-list" id="itineraryList">
+          <div class="itinerary-item">
+            <div class="itinerary-info">
+              <span class="itinerary-meta">Dia 1 • 15/11 — 14:00</span>
+              <span class="itinerary-name">Check-in na Casa de Canasvieiras</span>
+            </div>
+            <span class="itinerary-tag">📍 Canasvieiras</span>
+          </div>
+
+          <div class="itinerary-item orange">
+            <div class="itinerary-info">
+              <span class="itinerary-meta">Dia 2 • 16/11 — 10:00</span>
+              <span class="itinerary-name">Passeio de Barco - Ilha do Campeche</span>
+            </div>
+            <span class="itinerary-tag green">💰 R$ 120/pessoa</span>
+          </div>
+        </div>
+
+        <button class="btn-add-outline" onclick="openModal('activity')">
+          + Adicionar atividade ao roteiro
+        </button>
+
+        <p class="helper-note">
+          💡 <strong>Dica:</strong> Cada atividade pode ter despesas e participantes próprios atrelados.
+        </p>
+      </div>
+
+      <!-- Card 4: Participantes (com indicação: pode adicionar novos depois) -->
+      <div class="trip-card">
+        <div class="card-header-row">
+          <span class="card-title">Participantes (<span id="participantCount">4</span>)</span>
+          <span class="pill-later pill-green">● Pode adicionar depois</span>
+        </div>
+        <p class="helper-note">Quem vai dividir os custos com você:</p>
+
+        <div class="participants-grid" id="participantsGrid">
+          <div class="participant-card">
+            <div class="avatar">VC</div>
+            <div class="participant-meta">
+              <span class="participant-name">Você</span>
+              <span class="participant-role role-badge">Organizador</span>
+            </div>
+          </div>
+
+          <div class="participant-card">
+            <div class="avatar green">BC</div>
+            <div class="participant-meta">
+              <span class="participant-name">Beatriz C.</span>
+              <span class="participant-role">Confirmada</span>
+            </div>
+          </div>
+
+          <div class="participant-card">
+            <div class="avatar orange">CM</div>
+            <div class="participant-meta">
+              <span class="participant-name">Clara M.</span>
+              <span class="participant-role">Membro</span>
+            </div>
+          </div>
+
+          <div class="participant-card">
+            <div class="avatar purple">FS</div>
+            <div class="participant-meta">
+              <span class="participant-name">Fernando S.</span>
+              <span class="participant-role">Sem conta</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-add-outline" onclick="openModal('participant')">
+          + Convidar ou adicionar participante
+        </button>
+
+        <p class="helper-note">
+          ℹ️ Amigos sem o app instalado também podem ser cadastrados e receber cobranças via Pix.
+        </p>
+      </div>
+    </div>
+
+    <!-- Barra de Rodapé Fixa com Botão de Ação -->
+    <div class="sticky-footer">
+      <button class="btn-primary-submit" onclick="alert('Viagem cadastrada com sucesso no TripSplit! 🎉')">
+        Criar Viagem ✈️
+      </button>
+      <button class="btn-draft-link" onclick="alert('Rascunho salvo com sucesso!')">
+        Salvar como rascunho
+      </button>
+      <div class="home-indicator"></div>
+    </div>
+
+    <!-- Modal Dinâmico de Adicionar Atividade / Participante -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-drag-bar"></div>
+        <div class="modal-header">
+          <span class="modal-title" id="modalTitle">Nova Atividade</span>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <!-- Conteúdo do Modal de Atividade -->
+        <div id="modalActivityBody" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Nome da Atividade *</label>
+            <input type="text" id="newActivityName" class="input-box" placeholder="Ex: Jantar de Boas-Vindas...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Localização</label>
+            <input type="text" id="newActivityLocation" class="input-box" placeholder="Ex: Restaurante do Porto">
+          </div>
+          <button class="btn-primary-submit" style="height: 44px; font-size: 13px;" onclick="addActivity()">
+            Salvar Atividade no Roteiro
+          </button>
+        </div>
+
+        <!-- Conteúdo do Modal de Participante -->
+        <div id="modalParticipantBody" style="display: none; flex-direction: column; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Nome do Participante *</label>
+            <input type="text" id="newParticipantName" class="input-box" placeholder="Ex: Lucas Silva">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail ou Chave Pix (opcional)</label>
+            <input type="text" id="newParticipantContact" class="input-box" placeholder="lucas@exemplo.com ou (84) 99999-9999">
+          </div>
+          <button class="btn-primary-submit" style="height: 44px; font-size: 13px;" onclick="addParticipant()">
+            Adicionar Participante
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(type) {
+      const overlay = document.getElementById('modalOverlay');
+      const title = document.getElementById('modalTitle');
+      const actBody = document.getElementById('modalActivityBody');
+      const partBody = document.getElementById('modalParticipantBody');
+
+      if (type === 'activity') {
+        title.innerText = 'Nova Atividade no Roteiro';
+        actBody.style.display = 'flex';
+        partBody.style.display = 'none';
+      } else {
+        title.innerText = 'Adicionar Novo Participante';
+        actBody.style.display = 'none';
+        partBody.style.display = 'flex';
+      }
+      overlay.classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    function addActivity() {
+      const name = document.getElementById('newActivityName').value.trim();
+      const loc = document.getElementById('newActivityLocation').value.trim() || 'A definir';
+      if (!name) {
+        alert('Por favor, informe o nome da atividade.');
+        return;
+      }
+      const list = document.getElementById('itineraryList');
+      const item = document.createElement('div');
+      item.className = 'itinerary-item';
+      item.innerHTML = `
+        <div class="itinerary-info">
+          <span class="itinerary-meta">Nova Atividade</span>
+          <span class="itinerary-name">${name}</span>
+        </div>
+        <span class="itinerary-tag">📍 ${loc}</span>
+      `;
+      list.appendChild(item);
+      document.getElementById('newActivityName').value = '';
+      document.getElementById('newActivityLocation').value = '';
+      closeModal();
+    }
+
+    let pCount = 4;
+    function addParticipant() {
+      const name = document.getElementById('newParticipantName').value.trim();
+      if (!name) {
+        alert('Por favor, informe o nome do participante.');
+        return;
+      }
+      const initials = name.slice(0, 2).toUpperCase();
+      const grid = document.getElementById('participantsGrid');
+      const card = document.createElement('div');
+      card.className = 'participant-card';
+      card.innerHTML = `
+        <div class="avatar" style="background: #0284C7">${initials}</div>
+        <div class="participant-meta">
+          <span class="participant-name">${name}</span>
+          <span class="participant-role">Convidado</span>
+        </div>
+      `;
+      grid.appendChild(card);
+      pCount++;
+      document.getElementById('participantCount').innerText = pCount;
+      document.getElementById('newParticipantName').value = '';
+      closeModal();
+    }
+
+    async function copySvgToClipboard() {
+      try {
+        const response = await fetch('cadastro-viagem.svg');
+        const svgText = await response.text();
+        await navigator.clipboard.writeText(svgText);
+        alert('✅ Código SVG copiado com sucesso!\n\nAgora vá no Figma e pressione Ctrl + V (ou Cmd + V no Mac) para colar o protótipo com todas as camadas e textos editáveis!');
+      } catch (e) {
+        alert('Não foi possível copiar automaticamente via browser. Por favor, baixe o arquivo cadastro-viagem.svg e arraste-o para o Figma!');
+      }
+    }
+  </script>
+</body>
+</html>
