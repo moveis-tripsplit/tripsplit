@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.components.screens.home
+package com.imd.tripsplit.ui.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,7 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.model.TripStatus
@@ -31,6 +37,10 @@ import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
 import com.imd.tripsplit.ui.components.TripSplitLogo
 import com.imd.tripsplit.ui.components.TripSummaryDialog
+import com.imd.tripsplit.ui.theme.SpacingLG
+import com.imd.tripsplit.ui.theme.SpacingMD
+import com.imd.tripsplit.ui.theme.SpacingSM
+import com.imd.tripsplit.ui.theme.SpacingXL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,41 +62,53 @@ fun HomeScreen(
         TripFilter.FINISHED -> trips.filter { it.status == TripStatus.FINISHED }
     }
 
+    // "Trip" escuro + "Split" azul, igual ao título da tela de login (cores do tema, p/ Dark Mode)
+    val scheme = MaterialTheme.colorScheme
+    val appTitle = buildAnnotatedString {
+        withStyle(SpanStyle(color = scheme.onBackground, fontWeight = FontWeight.Bold)) { append("Trip") }
+        withStyle(SpanStyle(color = scheme.primary, fontWeight = FontWeight.Bold)) { append("Split") }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(SpacingSM),
                     ) {
                         TripSplitLogo(size = 36.dp)
-                        Text("TripSplit")
+                        Text(text = appTitle, fontSize = 22.sp)
                     }
                 },
                 actions = {
                     AccentButton(
                         text = "+ Nova Viagem",
                         onClick = onCreateTripClick,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = SpacingLG),
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors()
+                // Fundo do header = Background do Design System (#F8FAFC)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                ),
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(horizontal = SpacingLG),
+            verticalArrangement = Arrangement.spacedBy(SpacingLG),
         ) {
             FilterChipRow(
                 selected = selectedFilter,
                 onSelected = onFilterSelected,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = SpacingSM),
             )
 
             if (filteredTrips.isEmpty()) {
@@ -95,13 +117,13 @@ fun HomeScreen(
                     message = "Você ainda não possui viagens nesta categoria.",
                     actionText = "Criar Viagem",
                     onAction = onCreateTripClick,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(bottom = 24.dp)
+                    verticalArrangement = Arrangement.spacedBy(SpacingMD),
+                    contentPadding = PaddingValues(bottom = SpacingXL),
                 ) {
                     items(filteredTrips, key = { it.id }) { trip ->
                         TripCard(
@@ -114,7 +136,7 @@ fun HomeScreen(
                                     // Redireciona para a página de edição/detalhes da viagem em andamento/futura
                                     onNavigateToTripEdit(trip.id)
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -126,7 +148,7 @@ fun HomeScreen(
     summaryTrip?.let { trip ->
         TripSummaryDialog(
             trip = trip,
-            onDismiss = { summaryTrip = null }
+            onDismiss = { summaryTrip = null },
         )
     }
 }

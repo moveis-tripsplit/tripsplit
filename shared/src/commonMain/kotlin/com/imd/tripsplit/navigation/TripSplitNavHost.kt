@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.imd.tripsplit.ui.components.screens.home.HomeScreen
+import com.imd.tripsplit.ui.screens.home.HomeScreen
 import com.imd.tripsplit.ui.components.TripDetailsScreen
 import com.imd.tripsplit.model.TripFilter
 
