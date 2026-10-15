@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.kotlinSerialization) apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
 }
@@ -23,18 +24,16 @@ subprojects {
     }
 
     configure<KtlintExtension> {
+        android.set(true)
+        ignoreFailures.set(false)
         filter {
-            exclude("**/build/generated/**")
-            exclude { element -> element.file.path.contains("resourceGenerator") }
+            exclude("**/generated/**")
+            exclude("**/build/**")
         }
     }
 
     tasks.withType<BaseKtLintCheckTask>().configureEach {
-        notCompatibleWithConfigurationCache("Exclusão manual de generated sources")
-        val filteredFiles = source.files.filter { file ->
-            !file.path.contains("resourceGenerator")
-        }
-        setSource(files(filteredFiles))
+        exclude { element -> element.file.invariantSeparatorsPath.contains("/build/") }
     }
 
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
