@@ -5,20 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.imd.tripsplit.model.Trip
-import com.imd.tripsplit.ui.theme.TextSecondary
-
-// Função auxiliar simples para o período usando as strings da Trip
-fun Trip.periodLabel(): String = "${startDate} – ${endDate}"
+import com.imd.tripsplit.ui.theme.SpacingLG
+import com.imd.tripsplit.ui.theme.SpacingMD
+import com.imd.tripsplit.ui.theme.SpacingSM
 
 @Composable
 fun TripCard(
@@ -26,15 +22,10 @@ fun TripCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+    TripSplitCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(SpacingLG),
+            verticalArrangement = Arrangement.spacedBy(SpacingMD),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -42,13 +33,21 @@ fun TripCard(
                 verticalAlignment = Alignment.Top,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(trip.title, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
-                    Text("${trip.destination} • ${trip.periodLabel()}", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                    Text(
+                        text = trip.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        text = "${trip.destination} • ${trip.periodLabel()}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
-                StatusChip(trip.status, modifier = Modifier.padding(start = 8.dp))
+                StatusChip(trip.status, modifier = Modifier.padding(start = SpacingSM))
             }
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -57,7 +56,11 @@ fun TripCard(
             ) {
                 AvatarStack(trip.participants)
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("Total ${trip.totalAmount.toBrl()}", style = MaterialTheme.typography.labelSmall, color = TextSecondary)
+                    Text(
+                        text = "Total ${trip.totalAmount.toBrl()}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     BalanceLabel(trip.myBalance)
                 }
             }
