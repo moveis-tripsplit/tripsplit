@@ -48,26 +48,29 @@ fun HomeScreen(
     trips: List<Trip>,
     selectedFilter: TripFilter,
     onFilterSelected: (TripFilter) -> Unit,
-    onNavigateToTripEdit: (tripId: String) -> Unit, // Redireciona para edição (gastos/participantes)
+    // Redireciona para edição (gastos/participantes)
+    onNavigateToTripEdit: (tripId: String) -> Unit,
     onCreateTripClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Estado para controlar qual viagem está exibindo o pop-up de resumo
     var summaryTrip by remember { mutableStateOf<Trip?>(null) }
 
-    val filteredTrips = when (selectedFilter) {
-        TripFilter.ALL -> trips
-        TripFilter.ONGOING -> trips.filter { it.status == TripStatus.ONGOING }
-        TripFilter.UPCOMING -> trips.filter { it.status == TripStatus.UPCOMING }
-        TripFilter.FINISHED -> trips.filter { it.status == TripStatus.FINISHED }
-    }
+    val filteredTrips =
+        when (selectedFilter) {
+            TripFilter.ALL -> trips
+            TripFilter.ONGOING -> trips.filter { it.status == TripStatus.ONGOING }
+            TripFilter.UPCOMING -> trips.filter { it.status == TripStatus.UPCOMING }
+            TripFilter.FINISHED -> trips.filter { it.status == TripStatus.FINISHED }
+        }
 
     // "Trip" escuro + "Split" azul, igual ao título da tela de login (cores do tema, p/ Dark Mode)
     val scheme = MaterialTheme.colorScheme
-    val appTitle = buildAnnotatedString {
-        withStyle(SpanStyle(color = scheme.onBackground, fontWeight = FontWeight.Bold)) { append("Trip") }
-        withStyle(SpanStyle(color = scheme.primary, fontWeight = FontWeight.Bold)) { append("Split") }
-    }
+    val appTitle =
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = scheme.onBackground, fontWeight = FontWeight.Bold)) { append("Trip") }
+            withStyle(SpanStyle(color = scheme.primary, fontWeight = FontWeight.Bold)) { append("Split") }
+        }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -83,19 +86,28 @@ fun HomeScreen(
                         Text(text = appTitle, fontSize = 22.sp)
                     }
                 },
+                actions = {
+                    AccentButton(
+                        text = "+ Nova Viagem",
+                        onClick = onCreateTripClick,
+                        modifier = Modifier.padding(end = SpacingLG),
+                    )
+                },
                 // Fundo do header = Background do Design System (#F8FAFC)
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
             )
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = SpacingLG),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = SpacingLG),
             verticalArrangement = Arrangement.spacedBy(SpacingLG),
         ) {
             FilterChipRow(

@@ -4,5 +4,5 @@ enum class TripFilter {
     ALL,
     ONGOING,
     UPCOMING,
-    FINISHED    
+    FINISHED
 }

@@ -46,12 +46,10 @@ fun Double.toBrl(): String {
     return "${sign}R$ $reais,$rest"
 }
 
-/* Cores vêm sempre de MaterialTheme.colorScheme (definido em ui/theme/Theme.kt),
- * o que mantém o Dark Mode funcionando (Design System, seções 19 e 20.1). */
+// Cores vêm sempre de MaterialTheme.colorScheme (definido em ui/theme/Theme.kt),
+// o que mantém o Dark Mode funcionando (Design System, seções 19 e 20.1).
 
-/* ------------------------------------------------------------------ */
-/* Cartão base (Surface, raio 16dp, borda sutil)                       */
-/* ------------------------------------------------------------------ */
+// Cartão base (Surface, raio 16dp, borda sutil)
 @Composable
 fun TripSplitCard(
     modifier: Modifier = Modifier,
@@ -68,37 +66,39 @@ fun TripSplitCard(
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* Chip de status                                                      */
-/* ------------------------------------------------------------------ */
-private fun TripStatus.displayName(): String = when (this) {
-    TripStatus.ONGOING -> "Em andamento"
-    TripStatus.UPCOMING -> "Futura"
-    TripStatus.FINISHED -> "Finalizada"
-}
+// Chip de status
+private fun TripStatus.displayName(): String =
+    when (this) {
+        TripStatus.ONGOING -> "Em andamento"
+        TripStatus.UPCOMING -> "Futura"
+        TripStatus.FINISHED -> "Finalizada"
+    }
 
 @Composable
-fun StatusChip(status: TripStatus, modifier: Modifier = Modifier) {
+fun StatusChip(
+    status: TripStatus,
+    modifier: Modifier = Modifier
+) {
     val scheme = MaterialTheme.colorScheme
-    val tint = when (status) {
-        TripStatus.ONGOING -> scheme.tertiary // laranja: viagem
-        TripStatus.UPCOMING -> scheme.primary // azul: informação
-        TripStatus.FINISHED -> scheme.secondary // verde: concluído
-    }
+    val tint =
+        when (status) {
+            TripStatus.ONGOING -> scheme.tertiary // laranja: viagem
+            TripStatus.UPCOMING -> scheme.primary // azul: informação
+            TripStatus.FINISHED -> scheme.secondary // verde: concluído
+        }
     Text(
         text = status.displayName(),
         style = MaterialTheme.typography.labelSmall,
         color = tint,
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(tint.copy(alpha = 0.12f))
-            .padding(horizontal = SpacingMD, vertical = SpacingXS),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(50))
+                .background(tint.copy(alpha = 0.12f))
+                .padding(horizontal = SpacingMD, vertical = SpacingXS),
     )
 }
 
-/* ------------------------------------------------------------------ */
-/* Avatares empilhados dos participantes                               */
-/* ------------------------------------------------------------------ */
+// Avatares empilhados dos participantes
 private fun Participant.initials(): String =
     name.trim().split(" ")
         .filter { it.isNotEmpty() }
@@ -106,16 +106,21 @@ private fun Participant.initials(): String =
         .joinToString("") { it.first().uppercase() }
 
 @Composable
-fun Avatar(participant: Participant, modifier: Modifier = Modifier, size: Int = 28) {
+fun Avatar(
+    participant: Participant,
+    modifier: Modifier = Modifier,
+    size: Int = 28
+) {
     val scheme = MaterialTheme.colorScheme
     val background = scheme.primaryContainer
     val textColor = scheme.onPrimaryContainer
     Box(
-        modifier = modifier
-            .size(size.dp)
-            .clip(CircleShape)
-            .background(background)
-            .border(2.dp, scheme.surface, CircleShape),
+        modifier =
+            modifier
+                .size(size.dp)
+                .clip(CircleShape)
+                .background(background)
+                .border(2.dp, scheme.surface, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -151,17 +156,19 @@ fun AvatarStack(
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* Saldo do usuário na viagem (verde = receber, vermelho = dívida)     */
-/* ------------------------------------------------------------------ */
+// Saldo do usuário na viagem (verde = receber, vermelho = dívida)
 @Composable
-fun BalanceLabel(balance: Double, modifier: Modifier = Modifier) {
+fun BalanceLabel(
+    balance: Double,
+    modifier: Modifier = Modifier
+) {
     val scheme = MaterialTheme.colorScheme
-    val (text, color) = when {
-        balance > 0 -> "Você recebe ${balance.toBrl()}" to scheme.secondary
-        balance < 0 -> "Você deve ${(-balance).toBrl()}" to scheme.error
-        else -> "Tudo quitado" to scheme.onSurfaceVariant
-    }
+    val (text, color) =
+        when {
+            balance > 0 -> "Você recebe ${balance.toBrl()}" to scheme.secondary
+            balance < 0 -> "Você deve ${(-balance).toBrl()}" to scheme.error
+            else -> "Tudo quitado" to scheme.onSurfaceVariant
+        }
     Text(
         text = text,
         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -170,11 +177,13 @@ fun BalanceLabel(balance: Double, modifier: Modifier = Modifier) {
     )
 }
 
-/* ------------------------------------------------------------------ */
-/* Cabeçalho de seção                                                  */
-/* ------------------------------------------------------------------ */
+// Cabeçalho de seção
 @Composable
-fun SectionHeader(title: String, modifier: Modifier = Modifier, subtitle: String? = null) {
+fun SectionHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null
+) {
     Column(modifier = modifier) {
         Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
         if (subtitle != null) {
@@ -183,9 +192,7 @@ fun SectionHeader(title: String, modifier: Modifier = Modifier, subtitle: String
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* Item de estatística (usado no resumo)                               */
-/* ------------------------------------------------------------------ */
+// Item de estatística (usado no resumo)
 @Composable
 fun StatItem(
     label: String,
@@ -199,10 +206,8 @@ fun StatItem(
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* Botões: texto sempre onPrimary/onTertiary (branco), estados         */
-/* Default / Disabled / Loading (Design System, seção 8.5)             */
-/* ------------------------------------------------------------------ */
+// Botões: texto sempre onPrimary/onTertiary (branco), estados
+// Default / Disabled / Loading (Design System, seção 8.5)
 @Composable
 private fun TripSplitButton(
     text: String,
@@ -218,12 +223,13 @@ private fun TripSplitButton(
         modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(RadiusMD),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            disabledContainerColor = MaterialTheme.colorScheme.outline,
-            disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+                disabledContainerColor = MaterialTheme.colorScheme.outline,
+                disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
+            ),
     ) {
         if (loading) {
             CircularProgressIndicator(

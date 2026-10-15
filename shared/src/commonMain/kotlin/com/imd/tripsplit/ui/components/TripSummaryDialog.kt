@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.imd.tripsplit.model.Trip
-import com.imd.tripsplit.ui.theme.GreenTravel
 import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable

@@ -22,9 +22,7 @@ import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingSM
 
-/* ------------------------------------------------------------------ */
-/* Filtros: selecionado = Primary (azul é a cor de seleção), pílula    */
-/* ------------------------------------------------------------------ */
+// Filtros: selecionado = Primary (azul é a cor de seleção), pílula
 @Composable
 fun FilterChipRow(
     selected: TripFilter,
@@ -40,13 +38,14 @@ fun FilterChipRow(
         items(TripFilter.entries.toList()) { filter ->
             val isSelected = filter == selected
             Box(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = 40.dp)
-                    .clip(shape)
-                    .background(if (isSelected) scheme.primary else scheme.surface)
-                    .border(1.dp, if (isSelected) scheme.primary else scheme.outline, shape)
-                    .clickable { onSelected(filter) }
-                    .padding(horizontal = SpacingLG),
+                modifier =
+                    Modifier
+                        .defaultMinSize(minHeight = 40.dp)
+                        .clip(shape)
+                        .background(if (isSelected) scheme.primary else scheme.surface)
+                        .border(1.dp, if (isSelected) scheme.primary else scheme.outline, shape)
+                        .clickable { onSelected(filter) }
+                        .padding(horizontal = SpacingLG),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -59,9 +58,10 @@ fun FilterChipRow(
     }
 }
 
-private fun TripFilter.displayName(): String = when (this) {
-    TripFilter.ALL -> "Todas"
-    TripFilter.ONGOING -> "Em andamento"
-    TripFilter.UPCOMING -> "Futuras"
-    TripFilter.FINISHED -> "Finalizadas"
-}
+private fun TripFilter.displayName(): String =
+    when (this) {
+        TripFilter.ALL -> "Todas"
+        TripFilter.ONGOING -> "Em andamento"
+        TripFilter.UPCOMING -> "Futuras"
+        TripFilter.FINISHED -> "Finalizadas"
+    }
