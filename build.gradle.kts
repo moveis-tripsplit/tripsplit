@@ -24,9 +24,11 @@ subprojects {
     }
 
     configure<KtlintExtension> {
+        android.set(true)
+        ignoreFailures.set(false)
         filter {
             exclude("**/generated/**")
-            exclude { element -> element.file.invariantSeparatorsPath.contains("/build/") }
+            exclude("**/build/**")
         }
     }
 

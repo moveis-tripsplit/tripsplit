@@ -32,8 +32,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,17 +61,12 @@ import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlin.time.Instant
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-
-
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 @Composable
 fun RegisterContent(
-
-    //Recebe variaveis necessárias para construção da page
+    // Recebe variaveis necessárias para construção da page
     modifier: Modifier = Modifier,
     state: RegisterUiState,
     onNameChange: (String) -> Unit,
@@ -78,21 +75,19 @@ fun RegisterContent(
     onTogglePasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
-  
+) {
+    // VARIAVEIS NECESSÁRIAS
 
-){
-    /* VARIAVEIS NECESSÁRIAS*/
-
-    //Necessário para inserir a data de nascimento no formulário:
+    // Necessário para inserir a data de nascimento no formulário:
     var birthDate by remember {
         mutableStateOf<LocalDate?>(null)
     }
     val scrollState = rememberScrollState()
 
-    /*FIM DE VARIAVEIS NECESSÁRIAS*/
+    // FIM DE VARIAVEIS NECESSÁRIAS
 
-    /* Coluna Principal */
-    Column (
+    // Coluna Principal
+    Column(
         modifier =
             modifier
                 .fillMaxSize()
@@ -103,14 +98,6 @@ fun RegisterContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-
-        // ----------------------------------------------------
-        // CABEÇALHO
-        // ----------------------------------------------------
-
-        //to do
-
-        //Texto
         Text(
             text = "Olá! Vamos realizar seu cadastro preenchendo os campos abaixo.",
             fontSize = 22.sp,
@@ -119,7 +106,7 @@ fun RegisterContent(
             textAlign = TextAlign.Center,
         )
 
-        /* CARD FORMULÁRIO */
+        // CARD FORMULÁRIO
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(RadiusXL),
@@ -127,12 +114,12 @@ fun RegisterContent(
             border = BorderStroke(1.dp, BorderLight),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
-            /*COLUMN DO CARD PARA COLOCAR OS CAMPOS PARA PREENCHER*/
+            // COLUMN DO CARD PARA COLOCAR OS CAMPOS PARA PREENCHER
 
-            Column (
+            Column(
                 modifier = Modifier.padding(SpacingXL),
             ) {
-                //----> Campo Nome:
+                // Campo Nome:
 
                 Text(
                     text = "Nome",
@@ -149,7 +136,6 @@ fun RegisterContent(
                     placeholder = {
                         Text(text = "Nome", color = TextDisabled, fontSize = 14.sp)
                     },
-
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.User,
@@ -175,7 +161,7 @@ fun RegisterContent(
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
-                //--->CAMPO DE DATA DE NASCIMENTO:
+                // CAMPO DE DATA DE NASCIMENTO:
 
                 Text(
                     text = "Data de nascimento",
@@ -191,7 +177,7 @@ fun RegisterContent(
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
-                //---> CAMPO EMAIL:
+                // CAMPO EMAIL:
 
                 Text(
                     text = "E-mail",
@@ -233,7 +219,7 @@ fun RegisterContent(
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
-                //---> CAMPO SENHA:
+                // CAMPO SENHA:
 
                 Text(
                     text = "Senha",
@@ -296,7 +282,7 @@ fun RegisterContent(
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
-                //---> CAMPO DE CONFIRMAR SENHA:
+                // CAMPO DE CONFIRMAR SENHA:
 
                 Text(
                     text = "Confirmar Senha",
@@ -359,7 +345,7 @@ fun RegisterContent(
                 )
                 Spacer(modifier = Modifier.height(SpacingLG))
 
-                //---> BOTÃO ENVIAR FORMULÁRIO:
+                // ---> BOTÃO ENVIAR FORMULÁRIO:
 
                 Button(
                     onClick = onRegisterClick,
@@ -393,7 +379,7 @@ fun RegisterContent(
                 }
                 Spacer(modifier = Modifier.height(SpacingLG))
 
-                //---> BOTÃO VOLTAR PARA LOGIN:
+                // ---> BOTÃO VOLTAR PARA LOGIN:
 
                 Button(
                     onClick = onLoginClick,
@@ -428,13 +414,9 @@ fun RegisterContent(
                 Spacer(modifier = Modifier.height(SpacingLG))
             }
 
-            // ----------------------------------------------------
             //  RODAPÉ
-            // ----------------------------------------------------
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -449,7 +431,7 @@ fun BirthDateField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
         readOnly = true,
-        placeholder = { Text("dd/mm/aaaa",  color = TextDisabled ) },
+        placeholder = { Text("dd/mm/aaaa", color = TextDisabled) },
         trailingIcon = {
             IconButton(
                 onClick = { showDatePicker = true }
@@ -482,10 +464,11 @@ fun BirthDateField(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val date = Instant
-                                .fromEpochMilliseconds(millis)
-                                .toLocalDateTime(TimeZone.UTC)
-                                .date
+                            val date =
+                                Instant
+                                    .fromEpochMilliseconds(millis)
+                                    .toLocalDateTime(TimeZone.UTC)
+                                    .date
 
                             onBirthDateChange(date)
                         }
@@ -508,6 +491,3 @@ fun BirthDateField(
         }
     }
 }
-
-
-

@@ -71,7 +71,7 @@ object TripSplitIcons {
         )
     }
 
-    //Person Icon para colocar no campo nome do user!
+    // Person Icon para colocar no campo nome do user!
     val User: ImageVector by lazy {
         createVector(
             name = "User",
@@ -79,7 +79,7 @@ object TripSplitIcons {
         )
     }
 
-    //Icon para calendário:
+    // Icon para calendário:
     val Calendar: ImageVector by lazy {
         createVector(
             name = "Calendar",

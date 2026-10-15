@@ -2,7 +2,7 @@ package com.imd.tripsplit.ui.screens.login
 
 import kotlinx.datetime.LocalDate
 
-data class RegisterUiState (
+data class RegisterUiState(
     val nome: String = "",
     val birthDate: LocalDate? = null,
     val email: String = "",
@@ -14,15 +14,15 @@ data class RegisterUiState (
     val errorMessage: String? = null,
     val isDatePickerVisible: Boolean = false,
     val birthDateError: String? = null,
-)
-{
+) {
     /**
      * O botão de registro só deve estar habilitado quando
      * todos os campos estiverem preenchidos, a senha sua
      * confirmação forem iguais e não houver operação em andamento.
      */
     val isRegisterEnabled: Boolean
-        get() = nome.isNotBlank() &&
+        get() =
+            nome.isNotBlank() &&
                 birthDate != null &&
                 email.isNotBlank() &&
                 password.isNotBlank() &&
@@ -34,7 +34,8 @@ data class RegisterUiState (
      * Verifica se as senhas informadas são diferentes.
      */
     val isPasswordMatching: Boolean
-        get() = confirmPassword.isEmpty() ||
+        get() =
+            confirmPassword.isEmpty() ||
                 password == confirmPassword
 
     /**

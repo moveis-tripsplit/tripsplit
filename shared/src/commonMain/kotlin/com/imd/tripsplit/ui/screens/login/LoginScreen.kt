@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,7 +83,6 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
-
 ) {
     var state by remember { mutableStateOf(LoginUiState()) }
 
@@ -117,9 +115,7 @@ fun LoginContent(
     onRememberMeChange: (Boolean) -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
-
     modifier: Modifier = Modifier,
-
     onRegisterClick: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
@@ -398,14 +394,14 @@ fun LoginContent(
 
                     Text(
                         text = "Cadastre-se",
-                        modifier = Modifier.clickable {
-                            onRegisterClick()
-                        },
+                        modifier =
+                            Modifier.clickable {
+                                onRegisterClick()
+                            },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color= BlueOcean,
+                        color = BlueOcean,
                     )
-
                 }
             }
         }
