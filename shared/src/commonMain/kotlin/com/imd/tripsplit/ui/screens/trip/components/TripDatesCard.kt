@@ -48,7 +48,7 @@ fun TripDatesCard(
     Card(
         shape = RoundedCornerShape(RadiusLG),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, BorderLight),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(SpacingLG)) {
@@ -56,7 +56,7 @@ fun TripDatesCard(
                 text = "Período da viagem *",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(SpacingSM))
@@ -69,16 +69,16 @@ fun TripDatesCard(
                 OutlinedTextField(
                     value = startDate,
                     onValueChange = onStartDateChange,
-                    label = { Text("Data de Início", fontSize = 11.sp) },
-                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp) },
+                    label = { Text("Data de Início", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(RadiusMD),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                         ),
                     singleLine = true,
                 )
@@ -87,22 +87,22 @@ fun TripDatesCard(
                     text = "→",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextDisabled,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                 )
 
                 OutlinedTextField(
                     value = endDate,
                     onValueChange = onEndDateChange,
-                    label = { Text("Data de Término", fontSize = 11.sp) },
-                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp) },
+                    label = { Text("Data de Término", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(RadiusMD),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                         ),
                     singleLine = true,
                 )
@@ -120,21 +120,21 @@ fun TripDatesCard(
                         modifier =
                             Modifier
                                 .clip(RoundedCornerShape(RadiusXL))
-                                .background(Color(0xFFDCFCE7))
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
                                 .padding(horizontal = SpacingSM, vertical = 2.dp),
                     ) {
                         Text(
                             text = "✓ Período definido",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = GreenTravel,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                         )
                     }
                 } else {
                     Text(
                         text = "💡 Datas flexíveis podem ser alteradas depois",
                         fontSize = 11.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     )
                 }
             }

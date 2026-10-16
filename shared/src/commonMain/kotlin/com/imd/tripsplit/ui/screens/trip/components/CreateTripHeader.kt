@@ -53,14 +53,14 @@ fun CreateTripHeader(
             Card(
                 shape = RoundedCornerShape(RadiusMD),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = BorderStroke(1.dp, BorderLight),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 modifier =
                     Modifier
                         .size(40.dp)
                         .clickable { onBackClick() },
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "←", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "←", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
 
@@ -68,20 +68,20 @@ fun CreateTripHeader(
                 text = if (isEditing) "Editar Viagem" else "Cadastrar Viagem",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Card(
                 shape = RoundedCornerShape(RadiusMD),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = BorderStroke(1.dp, BorderLight),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 modifier =
                     Modifier
                         .size(40.dp)
                         .clickable { onBackClick() },
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "✕", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
+                    Text(text = "✕", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -94,14 +94,14 @@ fun CreateTripHeader(
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(RadiusXL))
-                        .background(Color(0xFFEFF6FF))
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(horizontal = SpacingMD, vertical = SpacingXS),
             ) {
                 Text(
                     text = "✈️ NOVA VIAGEM EM GRUPO",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = BlueOcean,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
@@ -112,7 +112,7 @@ fun CreateTripHeader(
             text = if (isEditing) "Editar viagem" else "Para onde vamos?",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(SpacingXS))
@@ -125,7 +125,7 @@ fun CreateTripHeader(
                     "Preencha as informações da viagem para começar a dividir gastos com os participantes."
                 },
             fontSize = 13.sp,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 18.sp,
         )
     }

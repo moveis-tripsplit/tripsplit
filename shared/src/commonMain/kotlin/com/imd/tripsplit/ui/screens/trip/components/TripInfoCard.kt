@@ -38,7 +38,7 @@ fun TripInfoCard(
     Card(
         shape = RoundedCornerShape(RadiusLG),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, BorderLight),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(SpacingLG)) {
@@ -46,7 +46,7 @@ fun TripInfoCard(
                 text = "Título da viagem *",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(SpacingXS))
@@ -54,26 +54,29 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                placeholder = { Text("Ex: Férias em Floripa, Carnaval...") },
+                placeholder = {
+                    Text(
+                        text = "Ex: Férias em Floripa, Carnaval...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(RadiusMD),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                    ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                ),
                 singleLine = true,
             )
-
             Spacer(modifier = Modifier.height(SpacingMD))
 
             Text(
                 text = "Descrição (opcional)",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(SpacingXS))
@@ -81,19 +84,20 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = description,
                 onValueChange = onDescriptionChange,
-                placeholder = { Text("Adicione um recado para o grupo ou anotações...") },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(84.dp),
+                placeholder = {
+                    Text(
+                        text = "Adicione um recado para o grupo ou anotações...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant // Forçando a cor no placeholder!
+                    )
+                },
+                modifier = Modifier.fillMaxWidth().height(84.dp),
                 shape = RoundedCornerShape(RadiusMD),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                    ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                ),
                 maxLines = 3,
             )
         }
