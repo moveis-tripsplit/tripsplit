@@ -86,13 +86,6 @@ fun HomeScreen(
                         Text(text = appTitle, fontSize = 22.sp)
                     }
                 },
-                actions = {
-                    AccentButton(
-                        text = "+ Nova Viagem",
-                        onClick = onCreateTripClick,
-                        modifier = Modifier.padding(end = SpacingLG),
-                    )
-                },
                 // Fundo do header = Background do Design System (#F8FAFC)
                 colors =
                     TopAppBarDefaults.topAppBarColors(
