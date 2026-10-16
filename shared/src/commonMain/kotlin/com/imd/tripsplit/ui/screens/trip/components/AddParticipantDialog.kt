@@ -7,8 +7,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +47,7 @@ fun AddParticipantDialog(
                 text = "Adicionar Participante",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
         text = {
@@ -56,27 +58,38 @@ fun AddParticipantDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nome *") },
-                    placeholder = { Text("Ex: Mariana Silva") },
+                    label = { Text("Nome *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = {
+                        Text("Ex: Mariana Silva", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))
+                        },
                     singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
                     value = role,
                     onValueChange = { role = it },
-                    label = { Text("Papel / Função") },
-                    placeholder = { Text("Ex: Convidado, Membro...") },
+                    label = { Text("Papel / Função", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: Convidado, Membro...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
                     value = contact,
                     onValueChange = { contact = it },
-                    label = { Text("Contato ou Chave PIX (opcional)") },
-                    placeholder = { Text("Ex: mariana@email.com") },
+                    label = { Text("Contato ou Chave PIX (opcional)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: mariana@email.com", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
@@ -110,15 +123,15 @@ fun AddParticipantDialog(
                     }
                 },
                 enabled = name.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = BlueOcean),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(RadiusMD),
             ) {
-                Text("Adicionar", color = Color.White)
+                Text("Adicionar", color = MaterialTheme.colorScheme.onPrimary)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = TextSecondary)
+                Text("Cancelar", color = MaterialTheme.colorScheme.secondary)
             }
         },
         shape = RoundedCornerShape(RadiusLG),

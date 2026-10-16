@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -60,6 +61,9 @@ fun TripInfoCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(RadiusMD),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -67,6 +71,7 @@ fun TripInfoCard(
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 ),
                 singleLine = true,
             )
@@ -90,6 +95,9 @@ fun TripInfoCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant // Forçando a cor no placeholder!
                     )
                 },
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
                 modifier = Modifier.fillMaxWidth().height(84.dp),
                 shape = RoundedCornerShape(RadiusMD),
                 colors = OutlinedTextFieldDefaults.colors(
