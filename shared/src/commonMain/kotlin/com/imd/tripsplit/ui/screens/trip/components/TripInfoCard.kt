@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -18,14 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imd.tripsplit.ui.theme.BlueOcean
-import com.imd.tripsplit.ui.theme.BorderLight
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXS
-import com.imd.tripsplit.ui.theme.TextPrimary
 
 @Composable
 fun TripInfoCard(
@@ -38,7 +36,7 @@ fun TripInfoCard(
     Card(
         shape = RoundedCornerShape(RadiusLG),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, BorderLight),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(SpacingLG)) {
@@ -46,7 +44,7 @@ fun TripInfoCard(
                 text = "Título da viagem *",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(SpacingXS))
@@ -54,26 +52,35 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                placeholder = { Text("Ex: Férias em Floripa, Carnaval...") },
+                placeholder = {
+                    Text(
+                        text = "Ex: Férias em Floripa, Carnaval...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(RadiusMD),
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        cursorColor = MaterialTheme.colorScheme.primary
                     ),
                 singleLine = true,
             )
-
             Spacer(modifier = Modifier.height(SpacingMD))
 
             Text(
                 text = "Descrição (opcional)",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(SpacingXS))
@@ -81,18 +88,24 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = description,
                 onValueChange = onDescriptionChange,
-                placeholder = { Text("Adicione um recado para o grupo ou anotações...") },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(84.dp),
+                placeholder = {
+                    Text(
+                        text = "Adicione um recado para o grupo ou anotações...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                modifier = Modifier.fillMaxWidth().height(84.dp),
                 shape = RoundedCornerShape(RadiusMD),
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     ),
                 maxLines = 3,
             )
