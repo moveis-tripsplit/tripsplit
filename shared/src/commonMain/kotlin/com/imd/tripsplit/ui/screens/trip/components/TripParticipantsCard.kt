@@ -25,16 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.screens.trip.TripParticipant
-import com.imd.tripsplit.ui.theme.BlueOcean
-import com.imd.tripsplit.ui.theme.BorderLight
-import com.imd.tripsplit.ui.theme.GreenTravel
-import com.imd.tripsplit.ui.theme.OrangeAccent
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
@@ -42,9 +37,6 @@ import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXS
-import com.imd.tripsplit.ui.theme.TextDisabled
-import com.imd.tripsplit.ui.theme.TextPrimary
-import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable
 fun TripParticipantsCard(
@@ -56,7 +48,7 @@ fun TripParticipantsCard(
     Card(
         shape = RoundedCornerShape(RadiusLG),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, BorderLight),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(SpacingLG)) {
@@ -69,22 +61,22 @@ fun TripParticipantsCard(
                     text = "Participantes (${participants.size})",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Box(
                     modifier =
                         Modifier
                             .clip(RoundedCornerShape(RadiusXL))
-                            .background(Color(0xFFF0FDF4))
-                            .border(1.dp, Color(0xFFDCFCE7), RoundedCornerShape(RadiusXL))
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusXL))
                             .padding(horizontal = SpacingSM, vertical = 2.dp),
                 ) {
                     Text(
                         text = "Pode adicionar depois",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = GreenTravel,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
                 }
             }
@@ -94,7 +86,7 @@ fun TripParticipantsCard(
             Text(
                 text = "Quem vai dividir os custos da viagem com você:",
                 fontSize = 12.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             Spacer(modifier = Modifier.height(SpacingSM))
@@ -105,8 +97,8 @@ fun TripParticipantsCard(
                         Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(RadiusMD))
-                            .background(Color(0xFFF8FAFC))
-                            .border(BorderStroke(1.dp, BorderLight), RoundedCornerShape(RadiusMD))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), RoundedCornerShape(RadiusMD))
                             .padding(SpacingMD),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -115,13 +107,13 @@ fun TripParticipantsCard(
                             text = "Nenhum participante adicionado ainda",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "Adicione ou convide amigos para dividir as despesas.",
                             fontSize = 11.sp,
-                            color = TextDisabled,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         )
                     }
                 }
@@ -140,8 +132,8 @@ fun TripParticipantsCard(
                                     Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(RadiusMD))
-                                        .background(Color(0xFFF8FAFC))
-                                        .border(1.dp, BorderLight, RoundedCornerShape(RadiusMD))
+                                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusMD))
                                         .padding(SpacingSM),
                             ) {
                                 Row(
@@ -153,14 +145,14 @@ fun TripParticipantsCard(
                                             Modifier
                                                 .size(28.dp)
                                                 .clip(CircleShape)
-                                                .background(if (participant.isOrganizer) BlueOcean else OrangeAccent),
+                                                .background(if (participant.isOrganizer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
                                             text = participant.initials,
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color.White,
+                                            color = if (participant.isOrganizer) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
                                         )
                                     }
 
@@ -169,14 +161,14 @@ fun TripParticipantsCard(
                                             text = participant.name,
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = TextPrimary,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                         )
                                         Text(
                                             text = participant.role,
                                             fontSize = 9.sp,
-                                            color = if (participant.isOrganizer) BlueOcean else TextSecondary,
+                                            color = if (participant.isOrganizer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                                         )
                                     }
 
@@ -184,7 +176,7 @@ fun TripParticipantsCard(
                                         onClick = { onRemoveParticipant(participant.id) },
                                         modifier = Modifier.size(20.dp),
                                     ) {
-                                        Text("✕", fontSize = 10.sp, color = TextSecondary)
+                                        Text("✕", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
                             }
@@ -202,10 +194,10 @@ fun TripParticipantsCard(
                 onClick = onAddParticipantClick,
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFEFF6FF),
-                        contentColor = BlueOcean,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     ),
-                border = BorderStroke(1.dp, BlueOcean),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(RadiusMD),
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -217,7 +209,7 @@ fun TripParticipantsCard(
             Text(
                 text = "ℹ️ Amigos sem o app instalado também podem ser adicionados.",
                 fontSize = 11.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             )
         }
     }
