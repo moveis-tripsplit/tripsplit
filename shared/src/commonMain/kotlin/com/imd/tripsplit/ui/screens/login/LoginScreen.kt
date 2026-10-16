@@ -29,6 +29,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -305,6 +306,10 @@ private fun LoginFormCard(
                 },
                 shape = RoundedCornerShape(RadiusMD),
                 singleLine = true,
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -358,6 +363,10 @@ private fun LoginFormCard(
                 visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 shape = RoundedCornerShape(RadiusMD),
                 singleLine = true,
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.Password,
