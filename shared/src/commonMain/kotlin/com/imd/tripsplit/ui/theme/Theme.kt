@@ -59,6 +59,8 @@ private val DarkColorScheme =
         outlineVariant = TextSecondaryDark,
         error = ErrorDark,
         onError = Color.White,
+
+
     )
 
 @Composable
