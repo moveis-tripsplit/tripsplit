@@ -69,6 +69,8 @@ import com.imd.tripsplit.ui.theme.TextDisabled
 import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 import com.imd.tripsplit.ui.theme.TripSplitTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.widthIn
 
 // ====================================================
 // 📱 Tela de Login - TripSplit
@@ -121,322 +123,368 @@ fun LoginContent(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier =
-            modifier
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        val isWideScreen = maxWidth >= 600.dp
+
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(scrollState)
                 .imePadding()
                 .padding(horizontal = SpacingXL, vertical = Spacing2XL),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-    ) {
-        // ----------------------------------------------------
-        // 1. Cabeçalho: Logo + Marca + Boas-vindas
-        // ----------------------------------------------------
-        Spacer(modifier = Modifier.height(SpacingLG))
-
-        TripSplitLogo(size = 76.dp)
-
-        Spacer(modifier = Modifier.height(SpacingSM))
-
-        // Título estilizado: "Trip" (escuro) + "Split" (azul)
-        val appTitle =
-            buildAnnotatedString {
-                withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) {
-                    append("Trip")
-                }
-                withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) {
-                    append("Split")
-                }
-            }
-        Text(
-            text = appTitle,
-            fontSize = 30.sp,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(SpacingSM))
-
-        // Mensagem de boas-vindas
-        Text(
-            text = "Bem-vindo de volta!",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(SpacingXS))
-
-        // Subtítulo descritivo
-        Text(
-            text = "Acesse sua conta para gerenciar despesas\ne viagens em grupo sem complicações.",
-            fontSize = 14.sp,
-            color = TextSecondary,
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp,
-        )
-
-        Spacer(modifier = Modifier.height(SpacingXL))
-
-        // ----------------------------------------------------
-        // 2. Card de Formulário
-        // ----------------------------------------------------
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(RadiusXL),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, BorderLight),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(SpacingXL),
-            ) {
-                // Campo: E-mail
-                Text(
-                    text = "E-mail",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
-                )
-
-                Spacer(modifier = Modifier.height(SpacingXS))
-
-                OutlinedTextField(
-                    value = state.email,
-                    onValueChange = onEmailChange,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = TripSplitIcons.Email,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
-                    shape = RoundedCornerShape(RadiusMD),
-                    singleLine = true,
-                    keyboardOptions =
-                        KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Next,
-                        ),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                        ),
-                )
-
-                Spacer(modifier = Modifier.height(SpacingLG))
-
-                // Campo: Senha
-                Text(
-                    text = "Senha",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
-                )
-
-                Spacer(modifier = Modifier.height(SpacingXS))
-
-                OutlinedTextField(
-                    value = state.password,
-                    onValueChange = onPasswordChange,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = TripSplitIcons.Lock,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = onTogglePasswordVisibility) {
-                            Icon(
-                                imageVector =
-                                    if (state.isPasswordVisible) {
-                                        TripSplitIcons.VisibilityOff
-                                    } else {
-                                        TripSplitIcons.Visibility
-                                    },
-                                contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
-                                tint = TextSecondary,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    },
-                    visualTransformation =
-                        if (state.isPasswordVisible) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        },
-                    shape = RoundedCornerShape(RadiusMD),
-                    singleLine = true,
-                    keyboardOptions =
-                        KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done,
-                        ),
-                    keyboardActions =
-                        KeyboardActions(
-                            onDone = { if (state.isLoginEnabled) onLoginClick() },
-                        ),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                        ),
-                )
-
-                Spacer(modifier = Modifier.height(SpacingMD))
-
-                // Linha: Lembrar de mim + Esqueceu a senha
+            if (isWideScreen) {
+                // Layout Paisagem / Tablet: Conteúdo em Row (Lado a lado)
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = SpacingLG),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing2XL),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Checkbox "Lembrar de mim"
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier =
-                            Modifier
-                                .minimumInteractiveComponentSize()
-                                .clickable { onRememberMeChange(!state.rememberMe) },
+                    // Lado Esquerdo: Marca e Boas-Vindas
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Checkbox(
-                            checked = state.rememberMe,
-                            onCheckedChange = onRememberMeChange,
-                            colors =
-                                CheckboxDefaults.colors(
-                                    checkedColor = BlueOcean,
-                                    uncheckedColor = BorderLight,
-                                ),
-                            modifier = Modifier.size(20.dp),
-                        )
-                        Spacer(modifier = Modifier.size(SpacingSM))
+                        TripSplitLogo(size = 90.dp)
+                        Spacer(modifier = Modifier.height(SpacingMD))
+
+                        val appTitle = buildAnnotatedString {
+                            withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) { append("Trip") }
+                            withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) { append("Split") }
+                        }
+                        Text(text = appTitle, fontSize = 34.sp, textAlign = TextAlign.Center)
+
+                        Spacer(modifier = Modifier.height(SpacingSM))
                         Text(
-                            text = "Lembrar de mim",
+                            text = "Bem-vindo de volta!",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(SpacingXS))
+                        Text(
+                            text = "Acesse sua conta para gerenciar despesas\ne viagens em grupo sem complicações.",
                             fontSize = 14.sp,
                             color = TextSecondary,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 20.sp
                         )
                     }
 
-                    // Link "Esqueceu a senha?"
-                    Text(
-                        text = "Esqueceu a senha?",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = BlueOcean,
-                        modifier =
-                            Modifier
-                                .minimumInteractiveComponentSize()
-                                .clickable(onClick = onForgotPasswordClick),
-                    )
+                    // Lado Direito: Formulário de Login
+                    Column(
+                        modifier = Modifier.weight(1.2f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LoginFormCard(
+                            state = state,
+                            onEmailChange = onEmailChange,
+                            onPasswordChange = onPasswordChange,
+                            onTogglePasswordVisibility = onTogglePasswordVisibility,
+                            onRememberMeChange = onRememberMeChange,
+                            onLoginClick = onLoginClick,
+                            onForgotPasswordClick = onForgotPasswordClick,
+                            onRegisterClick = onRegisterClick
+                        )
+                    }
                 }
+            } else {
+                // Layout Retrato (Celular em pé): Column tradicional
+                Spacer(modifier = Modifier.height(SpacingLG))
+                TripSplitLogo(size = 76.dp)
+                Spacer(modifier = Modifier.height(SpacingSM))
+
+                val appTitle = buildAnnotatedString {
+                    withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) { append("Trip") }
+                    withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) { append("Split") }
+                }
+                Text(text = appTitle, fontSize = 30.sp, textAlign = TextAlign.Center)
+
+                Spacer(modifier = Modifier.height(SpacingSM))
+                Text(
+                    text = "Bem-vindo de volta!",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(SpacingXS))
+                Text(
+                    text = "Acesse sua conta para gerenciar despesas\ne viagens em grupo sem complicações.",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 20.sp
+                )
 
                 Spacer(modifier = Modifier.height(SpacingXL))
 
-                // Botão Primário: Entrar na conta
-                Button(
-                    onClick = onLoginClick,
-                    enabled = state.isLoginEnabled,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                    shape = RoundedCornerShape(RadiusMD),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = BlueOcean,
-                            contentColor = Color.White,
-                            disabledContainerColor = BlueOcean,
-                            disabledContentColor = Color.White,
-                        ),
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
-                        Text(
-                            text = "Entrar na conta",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                LoginFormCard(
+                    state = state,
+                    onEmailChange = onEmailChange,
+                    onPasswordChange = onPasswordChange,
+                    onTogglePasswordVisibility = onTogglePasswordVisibility,
+                    onRememberMeChange = onRememberMeChange,
+                    onLoginClick = onLoginClick,
+                    onForgotPasswordClick = onForgotPasswordClick,
+                    onRegisterClick = onRegisterClick
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Spacing2XL))
+
+            // Rodapé de Proteção
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = TripSplitIcons.ShieldCheck,
+                    contentDescription = null,
+                    tint = GreenTravel,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.size(SpacingSM))
+                Text(
+                    text = "Dados protegidos com criptografia",
+                    fontSize = 13.sp,
+                    color = TextSecondary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(SpacingLG))
+        }
+    }
+}
+
+@Composable
+private fun LoginFormCard(
+    state: LoginUiState,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onTogglePasswordVisibility: () -> Unit,
+    onRememberMeChange: (Boolean) -> Unit,
+    onLoginClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onRegisterClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .widthIn(max = 480.dp), // Evita esticar demais em telas bem largas
+        shape = RoundedCornerShape(RadiusXL),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, BorderLight),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(SpacingXL),
+        ) {
+            // Campo: E-mail
+            Text(
+                text = "E-mail",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+            )
+
+            Spacer(modifier = Modifier.height(SpacingXS))
+
+            OutlinedTextField(
+                value = state.email,
+                onValueChange = onEmailChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = TripSplitIcons.Email,
+                        contentDescription = null,
+                        tint = TextSecondary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                shape = RoundedCornerShape(RadiusMD),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueOcean,
+                    unfocusedBorderColor = BorderLight,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                ),
+            )
+
+            Spacer(modifier = Modifier.height(SpacingLG))
+
+            // Campo: Senha
+            Text(
+                text = "Senha",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+            )
+
+            Spacer(modifier = Modifier.height(SpacingXS))
+
+            OutlinedTextField(
+                value = state.password,
+                onValueChange = onPasswordChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = TripSplitIcons.Lock,
+                        contentDescription = null,
+                        tint = TextSecondary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = onTogglePasswordVisibility) {
+                        Icon(
+                            imageVector = if (state.isPasswordVisible) TripSplitIcons.VisibilityOff else TripSplitIcons.Visibility,
+                            contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(20.dp),
                         )
                     }
-                }
+                },
+                visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                shape = RoundedCornerShape(RadiusMD),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { if (state.isLoginEnabled) onLoginClick() },
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueOcean,
+                    unfocusedBorderColor = BorderLight,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                ),
+            )
 
-                Spacer(modifier = Modifier.height(SpacingLG))
+            Spacer(modifier = Modifier.height(SpacingMD))
 
-                // Link para cadastro: Não tem uma conta? Cadastre-se
+            // Linha: Lembrar de mim + Esqueceu a senha
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .clickable { onRememberMeChange(!state.rememberMe) },
                 ) {
+                    Checkbox(
+                        checked = state.rememberMe,
+                        onCheckedChange = onRememberMeChange,
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = BlueOcean,
+                            uncheckedColor = BorderLight,
+                        ),
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Spacer(modifier = Modifier.size(SpacingSM))
                     Text(
-                        text = "Não tem uma conta? ",
+                        text = "Lembrar de mim",
                         fontSize = 14.sp,
                         color = TextSecondary,
                     )
+                }
 
+                Text(
+                    text = "Esqueceu a senha?",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = BlueOcean,
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .clickable(onClick = onForgotPasswordClick),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(SpacingXL))
+
+            // Botão Primário: Entrar na conta
+            Button(
+                onClick = onLoginClick,
+                enabled = state.isLoginEnabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(RadiusMD),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BlueOcean,
+                    contentColor = Color.White,
+                    disabledContainerColor = BlueOcean,
+                    disabledContentColor = Color.White,
+                ),
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                    )
+                } else {
                     Text(
-                        text = "Cadastre-se",
-                        modifier =
-                            Modifier
-                                .minimumInteractiveComponentSize()
-                                .clickable { onRegisterClick() },
-                        fontSize = 14.sp,
+                        text = "Entrar na conta",
+                        color = Color.White,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(SpacingLG))
+
+            // Link para cadastro
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Não tem uma conta? ",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                )
+
+                Text(
+                    text = "Cadastre-se",
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .clickable { onRegisterClick() },
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(Spacing2XL))
-
-        // ----------------------------------------------------
-        // 3. Rodapé de Confiança e Criptografia
-        // ----------------------------------------------------
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                imageVector = TripSplitIcons.ShieldCheck,
-                contentDescription = null,
-                tint = GreenTravel,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.size(SpacingSM))
-            Text(
-                text = "Dados protegidos com criptografia",
-                fontSize = 13.sp,
-                color = TextSecondary,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(SpacingLG))
     }
 }
 
