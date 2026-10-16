@@ -25,10 +25,6 @@ import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXL
 
-/**
- * Versão Stateless (Pura) com State Hoisting para máxima testabilidade e reutilização.
- * Orquestra as seções modularizadas do formulário de criação de viagem.
- */
 @Composable
 fun CreateTripContent(
     state: CreateTripUiState,
@@ -36,6 +32,7 @@ fun CreateTripContent(
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isEditing: Boolean = false,
 ) {
     val scrollState = rememberScrollState()
 
@@ -43,7 +40,7 @@ fun CreateTripContent(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier =
@@ -56,7 +53,10 @@ fun CreateTripContent(
             horizontalAlignment = Alignment.Start,
         ) {
             // 1. Barra de Navegação + Introdução
-            CreateTripHeader(onBackClick = onBackClick)
+            CreateTripHeader(
+                onBackClick = onBackClick,
+                isEditing = isEditing,
+            )
 
             Spacer(modifier = Modifier.height(SpacingLG))
 
@@ -102,6 +102,7 @@ fun CreateTripContent(
             isLoading = state.isLoading,
             onSubmitClick = onSubmitClick,
             onSaveDraftClick = onBackClick,
+            isEditing = isEditing,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
     }

@@ -36,6 +36,7 @@ fun CreateTripBottomBar(
     onSubmitClick: () -> Unit,
     onSaveDraftClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isEditing: Boolean = false,
 ) {
     Card(
         shape = RoundedCornerShape(topStart = RadiusXL, topEnd = RadiusXL),
@@ -58,10 +59,13 @@ fun CreateTripBottomBar(
                 enabled = !isLoading,
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(24.dp),
+                    )
                 } else {
                     Text(
-                        text = "Criar Viagem ✈️",
+                        text = if (isEditing) "Salvar alterações" else "Criar Viagem ✈️",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -69,13 +73,15 @@ fun CreateTripBottomBar(
                 }
             }
 
-            TextButton(onClick = onSaveDraftClick) {
-                Text(
-                    text = "Salvar como rascunho",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = TextSecondary,
-                )
+            if (!isEditing) {
+                TextButton(onClick = onSaveDraftClick) {
+                    Text(
+                        text = "Salvar como rascunho",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = TextSecondary,
+                    )
+                }
             }
         }
     }
