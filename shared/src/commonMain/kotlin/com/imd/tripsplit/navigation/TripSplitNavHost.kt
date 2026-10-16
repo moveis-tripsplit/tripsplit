@@ -15,6 +15,8 @@ import androidx.navigation.toRoute
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.ui.screens.home.HomeScreen
+import com.imd.tripsplit.ui.screens.login.LoginScreen
+import com.imd.tripsplit.ui.screens.login.RegisterScreen
 import com.imd.tripsplit.ui.screens.trip.CreateTripScreen
 
 @Composable
@@ -24,9 +26,37 @@ fun TripSplitNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.Home,
+        startDestination = Route.Login,
         modifier = modifier,
     ) {
+        // LOGIN
+        composable<Route.Login> {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Route.Home) {
+                        popUpTo<Route.Login> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                onRegisterClick = {
+                    navController.navigate(Route.Register)
+                },
+            )
+        }
+
+        composable<Route.Register> {
+            RegisterScreen(
+                onRegisterClick = {
+                    // Lógica do botão Registrar
+                },
+                onLoginClick = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
         composable<Route.Home> {
             val trips by TripRepository.trips.collectAsState()
             var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
