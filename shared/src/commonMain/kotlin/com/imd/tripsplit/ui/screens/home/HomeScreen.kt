@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +38,6 @@ import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
 import com.imd.tripsplit.ui.components.TripSplitLogo
 import com.imd.tripsplit.ui.components.TripSummaryDialog
-import com.imd.tripsplit.ui.theme.BlueOcean
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
@@ -98,8 +97,9 @@ fun HomeScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onCreateTripClick,
-                containerColor = BlueOcean,
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.minimumInteractiveComponentSize(),
             ) {
                 Text(
                     text = "+ Nova viagem",

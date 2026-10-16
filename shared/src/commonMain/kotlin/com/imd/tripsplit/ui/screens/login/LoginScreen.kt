@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -213,7 +214,7 @@ fun LoginContent(
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Email,
-                            contentDescription = "Ícone de e-mail",
+                            contentDescription = null,
                             tint = TextSecondary,
                             modifier = Modifier.size(20.dp),
                         )
@@ -256,7 +257,7 @@ fun LoginContent(
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Lock,
-                            contentDescription = "Ícone de senha",
+                            contentDescription = null,
                             tint = TextSecondary,
                             modifier = Modifier.size(20.dp),
                         )
@@ -313,7 +314,10 @@ fun LoginContent(
                     // Checkbox "Lembrar de mim"
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { onRememberMeChange(!state.rememberMe) },
+                        modifier =
+                            Modifier
+                                .minimumInteractiveComponentSize()
+                                .clickable { onRememberMeChange(!state.rememberMe) },
                     ) {
                         Checkbox(
                             checked = state.rememberMe,
@@ -339,7 +343,10 @@ fun LoginContent(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = BlueOcean,
-                        modifier = Modifier.clickable(onClick = onForgotPasswordClick),
+                        modifier =
+                            Modifier
+                                .minimumInteractiveComponentSize()
+                                .clickable(onClick = onForgotPasswordClick),
                     )
                 }
 
@@ -395,12 +402,12 @@ fun LoginContent(
                     Text(
                         text = "Cadastre-se",
                         modifier =
-                            Modifier.clickable {
-                                onRegisterClick()
-                            },
+                            Modifier
+                                .minimumInteractiveComponentSize()
+                                .clickable { onRegisterClick() },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = BlueOcean,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
@@ -417,7 +424,7 @@ fun LoginContent(
         ) {
             Icon(
                 imageVector = TripSplitIcons.ShieldCheck,
-                contentDescription = "Proteção",
+                contentDescription = null,
                 tint = GreenTravel,
                 modifier = Modifier.size(20.dp),
             )
