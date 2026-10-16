@@ -53,9 +53,10 @@ fun CreateTripHeader(
                 shape = RoundedCornerShape(RadiusMD),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = BorderStroke(1.dp, BorderLight),
-                modifier = Modifier
-                    .size(40.dp)
-                    .clickable { onBackClick() },
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .clickable { onBackClick() },
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "←", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
@@ -73,9 +74,10 @@ fun CreateTripHeader(
                 shape = RoundedCornerShape(RadiusMD),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = BorderStroke(1.dp, BorderLight),
-                modifier = Modifier
-                    .size(40.dp)
-                    .clickable { onBackClick() },
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .clickable { onBackClick() },
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "✕", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
@@ -87,10 +89,11 @@ fun CreateTripHeader(
 
         // Cabeçalho Informativo
         Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(RadiusXL))
-                .background(Color(0xFFEFF6FF))
-                .padding(horizontal = SpacingMD, vertical = SpacingXS),
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(RadiusXL))
+                    .background(Color(0xFFEFF6FF))
+                    .padding(horizontal = SpacingMD, vertical = SpacingXS),
         ) {
             Text(
                 text = "✈️ NOVA VIAGEM EM GRUPO",

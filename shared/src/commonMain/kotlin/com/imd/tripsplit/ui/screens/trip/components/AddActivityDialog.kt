@@ -97,13 +97,14 @@ fun AddActivityDialog(
                 onClick = {
                     if (title.isNotBlank()) {
                         val cost = costText.replace(",", ".").toDoubleOrNull()
-                        val activity = TripActivity(
-                            id = Random.nextInt(1000, 9999).toString(),
-                            title = title.trim(),
-                            dateHour = dateHour.trim().ifEmpty { "A definir" },
-                            location = location.trim().ifEmpty { "A definir" },
-                            estimatedCost = cost,
-                        )
+                        val activity =
+                            TripActivity(
+                                id = Random.nextInt(1000, 9999).toString(),
+                                title = title.trim(),
+                                dateHour = dateHour.trim().ifEmpty { "A definir" },
+                                location = location.trim().ifEmpty { "A definir" },
+                                estimatedCost = cost,
+                            )
                         onConfirm(activity)
                     }
                 },

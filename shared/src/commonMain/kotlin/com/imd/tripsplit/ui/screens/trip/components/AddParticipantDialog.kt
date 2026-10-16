@@ -86,22 +86,26 @@ fun AddParticipantDialog(
             Button(
                 onClick = {
                     if (name.isNotBlank()) {
-                        val initials = name.trim().split(" ")
-                            .filter { it.isNotBlank() }
-                            .map { it.first().uppercase() }
-                            .take(2)
-                            .joinToString("")
-                            .ifEmpty { "P" }
+                        val initials =
+                            name
+                                .trim()
+                                .split(" ")
+                                .filter { it.isNotBlank() }
+                                .map { it.first().uppercase() }
+                                .take(2)
+                                .joinToString("")
+                                .ifEmpty { "P" }
 
-                        val participant = TripParticipant(
-                            id = Random.nextInt(1000, 9999).toString(),
-                            name = name.trim(),
-                            initials = initials,
-                            role = role.trim().ifEmpty { "Participante" },
-                            isOrganizer = false,
-                            hasAccount = true,
-                            contactOrPix = contact.trim().ifEmpty { null },
-                        )
+                        val participant =
+                            TripParticipant(
+                                id = Random.nextInt(1000, 9999).toString(),
+                                name = name.trim(),
+                                initials = initials,
+                                role = role.trim().ifEmpty { "Participante" },
+                                isOrganizer = false,
+                                hasAccount = true,
+                                contactOrPix = contact.trim().ifEmpty { null },
+                            )
                         onConfirm(participant)
                     }
                 },

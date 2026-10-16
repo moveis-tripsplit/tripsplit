@@ -73,11 +73,12 @@ fun TripParticipantsCard(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(RadiusXL))
-                        .background(Color(0xFFF0FDF4))
-                        .border(1.dp, Color(0xFFDCFCE7), RoundedCornerShape(RadiusXL))
-                        .padding(horizontal = SpacingSM, vertical = 2.dp),
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(RadiusXL))
+                            .background(Color(0xFFF0FDF4))
+                            .border(1.dp, Color(0xFFDCFCE7), RoundedCornerShape(RadiusXL))
+                            .padding(horizontal = SpacingSM, vertical = 2.dp),
                 ) {
                     Text(
                         text = "Pode adicionar depois",
@@ -100,12 +101,13 @@ fun TripParticipantsCard(
 
             if (participants.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(RadiusMD))
-                        .background(Color(0xFFF8FAFC))
-                        .border(BorderStroke(1.dp, BorderLight), RoundedCornerShape(RadiusMD))
-                        .padding(SpacingMD),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(RadiusMD))
+                            .background(Color(0xFFF8FAFC))
+                            .border(BorderStroke(1.dp, BorderLight), RoundedCornerShape(RadiusMD))
+                            .padding(SpacingMD),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -126,29 +128,32 @@ fun TripParticipantsCard(
             } else {
                 participants.chunked(2).forEach { rowParticipants ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(SpacingSM),
                     ) {
                         rowParticipants.forEach { participant ->
                             Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(RadiusMD))
-                                    .background(Color(0xFFF8FAFC))
-                                    .border(1.dp, BorderLight, RoundedCornerShape(RadiusMD))
-                                    .padding(SpacingSM),
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(RadiusMD))
+                                        .background(Color(0xFFF8FAFC))
+                                        .border(1.dp, BorderLight, RoundedCornerShape(RadiusMD))
+                                        .padding(SpacingSM),
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(SpacingSM),
                                 ) {
                                     Box(
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .clip(CircleShape)
-                                            .background(if (participant.isOrganizer) BlueOcean else OrangeAccent),
+                                        modifier =
+                                            Modifier
+                                                .size(28.dp)
+                                                .clip(CircleShape)
+                                                .background(if (participant.isOrganizer) BlueOcean else OrangeAccent),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
@@ -195,10 +200,11 @@ fun TripParticipantsCard(
 
             Button(
                 onClick = onAddParticipantClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFEFF6FF),
-                    contentColor = BlueOcean,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEFF6FF),
+                        contentColor = BlueOcean,
+                    ),
                 border = BorderStroke(1.dp, BlueOcean),
                 shape = RoundedCornerShape(RadiusMD),
                 modifier = Modifier.fillMaxWidth(),

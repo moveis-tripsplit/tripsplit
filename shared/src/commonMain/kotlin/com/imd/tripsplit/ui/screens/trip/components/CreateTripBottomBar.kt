@@ -49,9 +49,10 @@ fun CreateTripBottomBar(
         ) {
             Button(
                 onClick = onSubmitClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
                 shape = RoundedCornerShape(RadiusMD),
                 colors = ButtonDefaults.buttonColors(containerColor = BlueOcean),
                 enabled = !isLoading,

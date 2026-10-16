@@ -73,16 +73,22 @@ fun TripDatesCard(
                     placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(RadiusMD),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                    ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                        ),
                     singleLine = true,
                 )
 
-                Text("→", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextDisabled)
+                Text(
+                    text = "→",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextDisabled,
+                )
 
                 OutlinedTextField(
                     value = endDate,
@@ -91,12 +97,13 @@ fun TripDatesCard(
                     placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(RadiusMD),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BlueOcean,
-                        unfocusedBorderColor = BorderLight,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary,
-                    ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BlueOcean,
+                            unfocusedBorderColor = BorderLight,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                        ),
                     singleLine = true,
                 )
             }
@@ -110,10 +117,11 @@ fun TripDatesCard(
             ) {
                 if (startDate.isNotBlank() && endDate.isNotBlank()) {
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(RadiusXL))
-                            .background(Color(0xFFDCFCE7))
-                            .padding(horizontal = SpacingSM, vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(RadiusXL))
+                                .background(Color(0xFFDCFCE7))
+                                .padding(horizontal = SpacingSM, vertical = 2.dp),
                     ) {
                         Text(
                             text = "✓ Período definido",

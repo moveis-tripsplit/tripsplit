@@ -72,11 +72,12 @@ fun TripActivitiesCard(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(RadiusXL))
-                        .background(Color(0xFFFFF7ED))
-                        .border(1.dp, Color(0xFFFFEDD5), RoundedCornerShape(RadiusXL))
-                        .padding(horizontal = SpacingSM, vertical = 2.dp),
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(RadiusXL))
+                            .background(Color(0xFFFFF7ED))
+                            .border(1.dp, Color(0xFFFFEDD5), RoundedCornerShape(RadiusXL))
+                            .padding(horizontal = SpacingSM, vertical = 2.dp),
                 ) {
                     Text(
                         text = "Pode adicionar depois",
@@ -99,12 +100,13 @@ fun TripActivitiesCard(
 
             if (activities.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(RadiusMD))
-                        .background(Color(0xFFF8FAFC))
-                        .border(BorderStroke(1.dp, BorderLight), RoundedCornerShape(RadiusMD))
-                        .padding(SpacingMD),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(RadiusMD))
+                            .background(Color(0xFFF8FAFC))
+                            .border(BorderStroke(1.dp, BorderLight), RoundedCornerShape(RadiusMD))
+                            .padding(SpacingMD),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -125,13 +127,14 @@ fun TripActivitiesCard(
             } else {
                 activities.forEach { activity ->
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clip(RoundedCornerShape(RadiusMD))
-                            .background(Color(0xFFF8FAFC))
-                            .border(1.dp, BorderLight, RoundedCornerShape(RadiusMD))
-                            .padding(horizontal = SpacingMD, vertical = SpacingSM),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .clip(RoundedCornerShape(RadiusMD))
+                                .background(Color(0xFFF8FAFC))
+                                .border(1.dp, BorderLight, RoundedCornerShape(RadiusMD))
+                                .padding(horizontal = SpacingMD, vertical = SpacingSM),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -170,15 +173,20 @@ fun TripActivitiesCard(
 
             Button(
                 onClick = onAddActivityClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFEFF6FF),
-                    contentColor = BlueOcean,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEFF6FF),
+                        contentColor = BlueOcean,
+                    ),
                 border = BorderStroke(1.dp, BlueOcean),
                 shape = RoundedCornerShape(RadiusMD),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("+ Adicionar atividade ao roteiro", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "+ Adicionar atividade ao roteiro",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
 
             Spacer(modifier = Modifier.height(SpacingXS))

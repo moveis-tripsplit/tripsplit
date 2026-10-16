@@ -57,12 +57,13 @@ fun TripInfoCard(
                 placeholder = { Text("Ex: Férias em Floripa, Carnaval...") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(RadiusMD),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueOcean,
-                    unfocusedBorderColor = BorderLight,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BlueOcean,
+                        unfocusedBorderColor = BorderLight,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
+                    ),
                 singleLine = true,
             )
 
@@ -81,16 +82,18 @@ fun TripInfoCard(
                 value = description,
                 onValueChange = onDescriptionChange,
                 placeholder = { Text("Adicione um recado para o grupo ou anotações...") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(84.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(84.dp),
                 shape = RoundedCornerShape(RadiusMD),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueOcean,
-                    unfocusedBorderColor = BorderLight,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BlueOcean,
+                        unfocusedBorderColor = BorderLight,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary,
+                    ),
                 maxLines = 3,
             )
         }

@@ -40,17 +40,19 @@ fun CreateTripContent(
     val scrollState = rememberScrollState()
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .imePadding()
-                .padding(horizontal = SpacingXL, vertical = SpacingLG)
-                .padding(bottom = 100.dp), // Espaço para a barra de ação fixa
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .imePadding()
+                    .padding(horizontal = SpacingXL, vertical = SpacingLG)
+                    .padding(bottom = 100.dp),
             horizontalAlignment = Alignment.Start,
         ) {
             // 1. Barra de Navegação + Introdução
