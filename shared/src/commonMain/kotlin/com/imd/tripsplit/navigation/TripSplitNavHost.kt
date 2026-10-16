@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.model.TripFilter
@@ -89,6 +90,28 @@ fun TripSplitNavHost(
                 onTripCreatedSuccess = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        // DeepLink adicionado
+        composable<Route.TripDetail>(
+            deepLinks =
+                listOf(
+                    navDeepLink<Route.TripDetail>(
+                        basePath = "tripsplit://trip",
+                    ),
+                ),
+        ) { entry ->
+            val args = entry.toRoute<Route.TripDetail>()
+
+            CreateTripScreen(
+                tripId = args.tripId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onTripCreatedSuccess = {
+                    navController.popBackStack()
+                },
             )
         }
     }
