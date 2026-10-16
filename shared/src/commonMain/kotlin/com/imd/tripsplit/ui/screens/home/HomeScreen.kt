@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -36,10 +38,10 @@ import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
 import com.imd.tripsplit.ui.components.TripSplitLogo
 import com.imd.tripsplit.ui.components.TripSummaryDialog
+import com.imd.tripsplit.ui.theme.BlueOcean
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
-import com.imd.tripsplit.ui.theme.SpacingXL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,6 +95,19 @@ fun HomeScreen(
                     ),
             )
         },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = onCreateTripClick,
+                containerColor = BlueOcean,
+                contentColor = Color.White,
+            ) {
+                Text(
+                    text = "+ Nova viagem",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        },
     ) { innerPadding ->
         Column(
             modifier =
@@ -120,7 +135,7 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(SpacingMD),
-                    contentPadding = PaddingValues(bottom = SpacingXL),
+                    contentPadding = PaddingValues(bottom = 88.dp),
                 ) {
                     items(filteredTrips, key = { it.id }) { trip ->
                         TripCard(
@@ -141,7 +156,6 @@ fun HomeScreen(
         }
     }
 
-    // Exibe o diálogo de resumo se houver uma viagem selecionada
     summaryTrip?.let { trip ->
         TripSummaryDialog(
             trip = trip,

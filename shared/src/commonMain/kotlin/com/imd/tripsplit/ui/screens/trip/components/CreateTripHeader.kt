@@ -41,6 +41,7 @@ import com.imd.tripsplit.ui.theme.TextSecondary
 fun CreateTripHeader(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isEditing: Boolean = false,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // Barra Superior de Navegação
@@ -64,7 +65,7 @@ fun CreateTripHeader(
             }
 
             Text(
-                text = "Cadastrar Viagem",
+                text = if (isEditing) "Editar Viagem" else "Cadastrar Viagem",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -87,26 +88,28 @@ fun CreateTripHeader(
 
         Spacer(modifier = Modifier.height(SpacingLG))
 
-        // Cabeçalho Informativo
-        Box(
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(RadiusXL))
-                    .background(Color(0xFFEFF6FF))
-                    .padding(horizontal = SpacingMD, vertical = SpacingXS),
-        ) {
-            Text(
-                text = "✈️ NOVA VIAGEM EM GRUPO",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = BlueOcean,
-            )
+        // Cabeçalho Informativo (só no cadastro)
+        if (!isEditing) {
+            Box(
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(RadiusXL))
+                        .background(Color(0xFFEFF6FF))
+                        .padding(horizontal = SpacingMD, vertical = SpacingXS),
+            ) {
+                Text(
+                    text = "✈️ NOVA VIAGEM EM GRUPO",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = BlueOcean,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(SpacingSM))
         }
 
-        Spacer(modifier = Modifier.height(SpacingSM))
-
         Text(
-            text = "Para onde vamos?",
+            text = if (isEditing) "Editar viagem" else "Para onde vamos?",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -115,7 +118,12 @@ fun CreateTripHeader(
         Spacer(modifier = Modifier.height(SpacingXS))
 
         Text(
-            text = "Preencha as informações da viagem para começar a dividir gastos com os participantes.",
+            text =
+                if (isEditing) {
+                    "Atualize as informações, o roteiro e os participantes da viagem."
+                } else {
+                    "Preencha as informações da viagem para começar a dividir gastos com os participantes."
+                },
             fontSize = 13.sp,
             color = TextSecondary,
             lineHeight = 18.sp,
