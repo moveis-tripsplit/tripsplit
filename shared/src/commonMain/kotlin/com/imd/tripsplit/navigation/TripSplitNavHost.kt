@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.ui.components.TripDetailsScreen
 import com.imd.tripsplit.ui.screens.home.HomeScreen
+import com.imd.tripsplit.ui.screens.trip.CreateTripScreen
 
 @Composable
 fun TripSplitNavHost(
@@ -44,9 +45,11 @@ fun TripSplitNavHost(
         }
 
         composable<Route.NewTrip> {
-            TripDetailsScreen(
-                tripId = "nova",
-                onBack = { navController.popBackStack() }
+            CreateTripScreen(
+                onBackClick = { navController.popBackStack() },
+                onTripCreatedSuccess = {
+                    navController.popBackStack()
+                }
             )
         }
     }

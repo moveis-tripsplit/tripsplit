@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.model.TripStatus
-import com.imd.tripsplit.ui.components.AccentButton
 import com.imd.tripsplit.ui.components.EmptyState
 import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
@@ -85,13 +84,6 @@ fun HomeScreen(
                         TripSplitLogo(size = 36.dp)
                         Text(text = appTitle, fontSize = 22.sp)
                     }
-                },
-                actions = {
-                    AccentButton(
-                        text = "+ Nova Viagem",
-                        onClick = onCreateTripClick,
-                        modifier = Modifier.padding(end = SpacingLG),
-                    )
                 },
                 // Fundo do header = Background do Design System (#F8FAFC)
                 colors =
