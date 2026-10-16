@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.model.TripStatus
-import com.imd.tripsplit.ui.components.AccentButton
 import com.imd.tripsplit.ui.components.EmptyState
 import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
