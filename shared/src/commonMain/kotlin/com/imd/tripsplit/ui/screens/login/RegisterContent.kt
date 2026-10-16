@@ -25,6 +25,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -38,27 +39,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.components.TripSplitIcons
-import com.imd.tripsplit.ui.theme.BlueOcean
-import com.imd.tripsplit.ui.theme.BorderLight
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.Spacing2XL
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingXL
 import com.imd.tripsplit.ui.theme.SpacingXS
-import com.imd.tripsplit.ui.theme.TextDisabled
-import com.imd.tripsplit.ui.theme.TextPrimary
-import com.imd.tripsplit.ui.theme.TextSecondary
+import com.imd.tripsplit.ui.theme.TripSplitTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -102,16 +99,18 @@ fun RegisterContent(
             text = "Olá! Vamos realizar seu cadastro preenchendo os campos abaixo.",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
         )
+
+        Spacer(modifier = Modifier.height(SpacingLG))
 
         // CARD FORMULÁRIO
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(RadiusXL),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, BorderLight),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             // COLUMN DO CARD PARA COLOCAR OS CAMPOS PARA PREENCHER
@@ -125,7 +124,7 @@ fun RegisterContent(
                     text = "Nome",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
@@ -134,13 +133,16 @@ fun RegisterContent(
                     onValueChange = onNameChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "Nome", color = TextDisabled, fontSize = 14.sp)
+                        Text(text = "Nome", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.User,
                             contentDescription = "Ícone de usuário",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -153,10 +155,13 @@ fun RegisterContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -167,13 +172,13 @@ fun RegisterContent(
                     text = "Data de nascimento",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
                 BirthDateField(
                     birthDate = birthDate,
-                    onBirthDateChange = { birthDate = it }
+                    onBirthDateChange = { birthDate = it },
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
@@ -183,7 +188,7 @@ fun RegisterContent(
                     text = "E-mail",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
@@ -192,13 +197,16 @@ fun RegisterContent(
                     onValueChange = onEmailChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
+                        Text(text = "seu.email@exemplo.com", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Email,
                             contentDescription = "Ícone de e-mail",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -211,10 +219,13 @@ fun RegisterContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -225,7 +236,7 @@ fun RegisterContent(
                     text = "Senha",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
@@ -234,13 +245,16 @@ fun RegisterContent(
                     onValueChange = onPasswordChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                        Text(text = "••••••••••", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Lock,
                             contentDescription = "Ícone de senha",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -254,7 +268,7 @@ fun RegisterContent(
                                         TripSplitIcons.Visibility
                                     },
                                 contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
-                                tint = TextSecondary,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -274,10 +288,13 @@ fun RegisterContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -288,7 +305,7 @@ fun RegisterContent(
                     text = "Confirmar Senha",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
@@ -297,13 +314,16 @@ fun RegisterContent(
                     onValueChange = onPasswordChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                        Text(text = "••••••••••", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Lock,
                             contentDescription = "Ícone de senha",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -317,7 +337,7 @@ fun RegisterContent(
                                         TripSplitIcons.Visibility
                                     },
                                 contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
-                                tint = TextSecondary,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -337,10 +357,13 @@ fun RegisterContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
                 Spacer(modifier = Modifier.height(SpacingLG))
@@ -356,22 +379,22 @@ fun RegisterContent(
                     shape = RoundedCornerShape(RadiusMD),
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = BlueOcean,
-                            contentColor = Color.White,
-                            disabledContainerColor = BlueOcean,
-                            disabledContentColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                         ),
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp,
                         )
                     } else {
                         Text(
                             text = "Criar Conta!",
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -386,27 +409,27 @@ fun RegisterContent(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
+                            .padding(vertical = 2.dp),
                     shape = RoundedCornerShape(RadiusMD),
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = BlueOcean,
-                            contentColor = Color.White,
-                            disabledContainerColor = BlueOcean,
-                            disabledContentColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                         ),
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp,
                         )
                     } else {
                         Text(
                             text = "Já tenho conta, quero fazer Login!",
-                            color = Color.White,
-                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -431,7 +454,10 @@ fun BirthDateField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
         readOnly = true,
-        placeholder = { Text("dd/mm/aaaa", color = TextDisabled) },
+        placeholder = { Text("dd/mm/aaaa", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        ),
         trailingIcon = {
             IconButton(
                 onClick = { showDatePicker = true }
@@ -439,7 +465,7 @@ fun BirthDateField(
                 Icon(
                     imageVector = TripSplitIcons.Calendar,
                     contentDescription = "Selecionar data",
-                    tint = TextSecondary,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
@@ -447,10 +473,13 @@ fun BirthDateField(
         singleLine = true,
         colors =
             OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = BlueOcean,
-                unfocusedBorderColor = BorderLight,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                cursorColor = MaterialTheme.colorScheme.primary,
             ),
         modifier = Modifier.fillMaxWidth()
     )
@@ -489,5 +518,37 @@ fun BirthDateField(
         ) {
             DatePicker(state = datePickerState)
         }
+    }
+}
+
+@Preview
+@Composable
+fun RegisterScreenLightPreview() {
+    TripSplitTheme(darkTheme = false) {
+        RegisterContent(
+            state = RegisterUiState(),
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onTogglePasswordVisibility = {},
+            onLoginClick = {},
+            onRegisterClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun RegisterScreenDarkPreview() {
+    TripSplitTheme(darkTheme = true) {
+        RegisterContent(
+            state = RegisterUiState(),
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onTogglePasswordVisibility = {},
+            onLoginClick = {},
+            onRegisterClick = {}
+        )
     }
 }

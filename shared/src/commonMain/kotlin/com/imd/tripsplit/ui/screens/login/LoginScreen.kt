@@ -27,6 +27,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -38,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -54,8 +54,6 @@ import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.components.TripSplitIcons
 import com.imd.tripsplit.ui.components.TripSplitLogo
 import com.imd.tripsplit.ui.theme.BlueOcean
-import com.imd.tripsplit.ui.theme.BorderLight
-import com.imd.tripsplit.ui.theme.GreenTravel
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.Spacing2XL
@@ -64,10 +62,9 @@ import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXL
 import com.imd.tripsplit.ui.theme.SpacingXS
-import com.imd.tripsplit.ui.theme.TextDisabled
-import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 import com.imd.tripsplit.ui.theme.TripSplitTheme
+
 
 // ====================================================
 // 📱 Tela de Login - TripSplit
@@ -143,10 +140,10 @@ fun LoginContent(
         // Título estilizado: "Trip" (escuro) + "Split" (azul)
         val appTitle =
             buildAnnotatedString {
-                withStyle(SpanStyle(color = TextPrimary, fontWeight = FontWeight.Bold)) {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)) {
                     append("Trip")
                 }
-                withStyle(SpanStyle(color = BlueOcean, fontWeight = FontWeight.Bold)) {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
                     append("Split")
                 }
             }
@@ -163,7 +160,7 @@ fun LoginContent(
             text = "Bem-vindo de volta!",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
 
@@ -173,7 +170,7 @@ fun LoginContent(
         Text(
             text = "Acesse sua conta para gerenciar despesas\ne viagens em grupo sem complicações.",
             fontSize = 14.sp,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
             lineHeight = 20.sp,
         )
@@ -187,7 +184,7 @@ fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(RadiusXL),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, BorderLight),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             Column(
@@ -198,7 +195,7 @@ fun LoginContent(
                     text = "E-mail",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -208,13 +205,20 @@ fun LoginContent(
                     onValueChange = onEmailChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "seu.email@exemplo.com", color = TextDisabled, fontSize = 14.sp)
+                        Text(
+                            text = "seu.email@exemplo.com",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Email,
                             contentDescription = "Ícone de e-mail",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -227,10 +231,13 @@ fun LoginContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
 
@@ -241,7 +248,7 @@ fun LoginContent(
                     text = "Senha",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Spacer(modifier = Modifier.height(SpacingXS))
@@ -251,13 +258,20 @@ fun LoginContent(
                     onValueChange = onPasswordChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
-                        Text(text = "••••••••••", color = TextDisabled, fontSize = 14.sp)
+                        Text(
+                            text = "••••••••••",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
                     },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = TripSplitIcons.Lock,
                             contentDescription = "Ícone de senha",
-                            tint = TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     },
@@ -271,7 +285,7 @@ fun LoginContent(
                                         TripSplitIcons.Visibility
                                     },
                                 contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
-                                tint = TextSecondary,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -295,10 +309,13 @@ fun LoginContent(
                         ),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueOcean,
-                            unfocusedBorderColor = BorderLight,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
 
@@ -320,8 +337,8 @@ fun LoginContent(
                             onCheckedChange = onRememberMeChange,
                             colors =
                                 CheckboxDefaults.colors(
-                                    checkedColor = BlueOcean,
-                                    uncheckedColor = BorderLight,
+                                    checkedColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedColor = MaterialTheme.colorScheme.outline,
                                 ),
                             modifier = Modifier.size(20.dp),
                         )
@@ -329,7 +346,7 @@ fun LoginContent(
                         Text(
                             text = "Lembrar de mim",
                             fontSize = 14.sp,
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
 
@@ -338,7 +355,7 @@ fun LoginContent(
                         text = "Esqueceu a senha?",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = BlueOcean,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable(onClick = onForgotPasswordClick),
                     )
                 }
@@ -356,22 +373,22 @@ fun LoginContent(
                     shape = RoundedCornerShape(RadiusMD),
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = BlueOcean,
-                            contentColor = Color.White,
-                            disabledContainerColor = BlueOcean,
-                            disabledContentColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                         ),
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp,
                         )
                     } else {
                         Text(
                             text = "Entrar na conta",
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -418,14 +435,13 @@ fun LoginContent(
             Icon(
                 imageVector = TripSplitIcons.ShieldCheck,
                 contentDescription = "Proteção",
-                tint = GreenTravel,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(20.dp),
             )
-            Spacer(modifier = Modifier.size(SpacingSM))
             Text(
                 text = "Dados protegidos com criptografia",
                 fontSize = 13.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -438,8 +454,16 @@ fun LoginContent(
 // ====================================================
 @Preview
 @Composable
-fun LoginScreenPreview() {
-    TripSplitTheme {
+fun LoginScreenLightPreview() {
+    TripSplitTheme(darkTheme = false) {
+        LoginScreen()
+    }
+}
+
+@Preview
+@Composable
+fun LoginScreenDarkPreview() {
+    TripSplitTheme(darkTheme = true) {
         LoginScreen()
     }
 }
