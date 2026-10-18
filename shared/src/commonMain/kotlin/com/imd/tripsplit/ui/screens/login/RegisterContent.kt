@@ -77,7 +77,6 @@ fun RegisterContent(
     onRegisterClick: () -> Unit = {},
 ) {
     // VARIAVEIS NECESSÁRIAS
-
     // Necessário para inserir a data de nascimento no formulário:
     var birthDate by remember {
         mutableStateOf<LocalDate?>(null)
@@ -125,9 +124,7 @@ fun RegisterContent(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(
-                        bottom = 5.dp
-                    )
+                    .padding(bottom = 5.dp)
         )
 
         // CARD FORMULÁRIO
@@ -149,7 +146,7 @@ fun RegisterContent(
                     text = "Nome",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary
+                    color = TextPrimary,
                 )
                 Spacer(modifier = Modifier.height(SpacingXS))
 
