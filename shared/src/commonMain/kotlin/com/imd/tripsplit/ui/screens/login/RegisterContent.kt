@@ -99,11 +99,34 @@ fun RegisterContent(
         verticalArrangement = Arrangement.Top,
     ) {
         Text(
-            text = "Olá! Vamos realizar seu cadastro preenchendo os campos abaixo.",
+            text = "Vem viajar com a gente.",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             textAlign = TextAlign.Center,
+            lineHeight = 20.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 40.dp,
+                )
+        )
+
+        Spacer(modifier = Modifier.height(SpacingXS))
+
+        Text(
+            text = "Preencha os campos abaixo:",
+            fontSize = 14.sp,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            lineHeight = 20.sp,
+            letterSpacing = 0.5.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    bottom = 5.dp
+                )
+
         )
 
         // CARD FORMULÁRIO
@@ -431,8 +454,11 @@ fun BirthDateField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
         readOnly = true,
-        placeholder = { Text("dd/mm/aaaa", color = TextDisabled) },
-        trailingIcon = {
+        placeholder = { Text("DD/MM/AAAA", color = TextDisabled, fontSize = 14.sp ) },
+
+        trailingIcon = null,
+
+        leadingIcon = {
             IconButton(
                 onClick = { showDatePicker = true }
             ) {
