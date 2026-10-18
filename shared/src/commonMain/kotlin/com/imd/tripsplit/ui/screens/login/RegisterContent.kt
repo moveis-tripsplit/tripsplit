@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,8 +57,10 @@ import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.Spacing2XL
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
+import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXL
 import com.imd.tripsplit.ui.theme.SpacingXS
+import com.imd.tripsplit.ui.theme.TextDisabled
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -64,6 +68,7 @@ import kotlin.time.Instant
 
 @Composable
 fun RegisterContent(
+    // Recebe variaveis necessárias para construção da page
     modifier: Modifier = Modifier,
     state: RegisterUiState,
     onNameChange: (String) -> Unit,
@@ -76,62 +81,30 @@ fun RegisterContent(
     var birthDate by remember { mutableStateOf<LocalDate?>(null) }
     val scrollState = rememberScrollState()
 
+    // CARD FORMULÁRIO:
     BoxWithConstraints(
         modifier =
-            modifier
+            Modifier
                 .fillMaxSize()
+                .imePadding()
                 .background(MaterialTheme.colorScheme.background)
+                .statusBarsPadding()
+                .navigationBarsPadding()
     ) {
-        Text(
-            text = "Vem viajar com a gente.",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary,
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = 40.dp,
-                    )
-        )
-
-        Spacer(modifier = Modifier.height(SpacingXS))
-
-        Text(
-            text = "Preencha os campos abaixo:",
-            fontSize = 14.sp,
-            color = TextSecondary,
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp,
-            letterSpacing = 0.5.sp,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        bottom = 5.dp
-                    )
-        )
-
-        // CARD FORMULÁRIO
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(RadiusXL),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, BorderLight),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        val isWideScreen = maxWidth >= 600.dp
+        val screenWidth = maxWidth
+        val isWideScreen = screenWidth >= 600.dp
 
         Column(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .imePadding()
-                    .padding(horizontal = SpacingXL, vertical = Spacing2XL),
+                    .padding(
+                        horizontal = SpacingXL,
+                        vertical = Spacing2XL
+                    ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             if (isWideScreen) {
                 // Layout Paisagem / Tablet: Row lado a lado
@@ -154,15 +127,17 @@ fun RegisterContent(
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(SpacingMD))
                         Text(
-                            text = "Preencha seus dados para começar a gerenciar e dividir despesas de viagens com seus amigos de forma simples.",
-                            fontSize = 15.sp,
+                            text = "Preencha com seus dados,\n vem dividir despesas de viagens com seus amigos de forma simples.",
+                            fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
-                            lineHeight = 22.sp
+                            lineHeight = 22.sp,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
 
@@ -187,13 +162,22 @@ fun RegisterContent(
             } else {
                 // Layout Retrato (Celular em pé)
                 Text(
-                    text = "Olá! Vamos realizar seu cadastro preenchendo os campos abaixo.",
+                    text = "Crie sua conta no TripSplit",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-
+                Spacer(modifier = Modifier.height(SpacingSM))
+                Text(
+                    text = "Preencha com seus dados,\nvem dividir despesas de viagens com seus amigos de forma simples.",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 22.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Spacer(modifier = Modifier.height(SpacingXL))
 
                 RegisterFormCard(
@@ -238,7 +222,7 @@ private fun RegisterFormCard(
         Column(
             modifier = Modifier.padding(SpacingXL),
         ) {
-            // Campo Nome
+            // CAMPO NOME:
             Text(
                 text = "Nome",
                 fontSize = 14.sp,
@@ -279,7 +263,7 @@ private fun RegisterFormCard(
             )
             Spacer(modifier = Modifier.height(SpacingMD))
 
-            // Campo Data de Nascimento
+            // CAMPO DATA DE NASCIMENTO
             Text(
                 text = "Data de nascimento",
                 fontSize = 14.sp,
@@ -294,7 +278,7 @@ private fun RegisterFormCard(
             )
             Spacer(modifier = Modifier.height(SpacingMD))
 
-            // Campo E-mail
+            // CAMPO EMAIL:
             Text(
                 text = "E-mail",
                 fontSize = 14.sp,
@@ -335,7 +319,7 @@ private fun RegisterFormCard(
             )
             Spacer(modifier = Modifier.height(SpacingMD))
 
-            // Campo Senha
+            // CAMPO SENHA:
             Text(
                 text = "Senha",
                 fontSize = 14.sp,
@@ -387,7 +371,7 @@ private fun RegisterFormCard(
             )
             Spacer(modifier = Modifier.height(SpacingMD))
 
-            // Campo Confirmar Senha
+            // CAMPO CONFIRMA SENHA:
             Text(
                 text = "Confirmar Senha",
                 fontSize = 14.sp,
@@ -439,7 +423,7 @@ private fun RegisterFormCard(
             )
             Spacer(modifier = Modifier.height(SpacingXL))
 
-            // Botão Criar Conta
+            // BOTÃO CRIAR CONTA:
             Button(
                 onClick = onRegisterClick,
                 modifier =
@@ -470,10 +454,10 @@ private fun RegisterFormCard(
             }
             Spacer(modifier = Modifier.height(SpacingMD))
 
-            // Botão Voltar para Login
+            // BOTÃO VOLTAR PARA O LOGIN:
             Button(
                 onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(RadiusMD),
                 colors =
                     ButtonDefaults.buttonColors(
@@ -490,13 +474,16 @@ private fun RegisterFormCard(
                 } else {
                     Text(
                         text = "Já tenho conta, quero fazer Login!",
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                     )
                 }
+                Spacer(modifier = Modifier.height(SpacingLG))
             }
+
+            //  RODAPÉ
         }
     }
 }
@@ -512,15 +499,11 @@ fun BirthDateField(
     OutlinedTextField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
+        modifier = Modifier.fillMaxWidth(),
         readOnly = true,
         placeholder = { Text("DD/MM/AAAA", color = TextDisabled, fontSize = 14.sp) },
         trailingIcon = null,
         leadingIcon = {
-            IconButton(
-                onClick = { showDatePicker = true }
-            ) {
-        placeholder = { Text("dd/mm/aaaa", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-        trailingIcon = {
             IconButton(onClick = { showDatePicker = true }) {
                 Icon(
                     imageVector = TripSplitIcons.Calendar,
@@ -538,7 +521,6 @@ fun BirthDateField(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             ),
-        modifier = Modifier.fillMaxWidth()
     )
 
     if (showDatePicker) {
