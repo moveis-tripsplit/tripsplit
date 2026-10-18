@@ -105,11 +105,12 @@ fun RegisterContent(
             color = TextPrimary,
             textAlign = TextAlign.Center,
             lineHeight = 20.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 40.dp,
-                )
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 40.dp,
+                    )
         )
 
         Spacer(modifier = Modifier.height(SpacingXS))
@@ -121,12 +122,12 @@ fun RegisterContent(
             textAlign = TextAlign.Center,
             lineHeight = 20.sp,
             letterSpacing = 0.5.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    bottom = 5.dp
-                )
-
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 5.dp
+                    )
         )
 
         // CARD FORMULÁRIO
@@ -454,10 +455,8 @@ fun BirthDateField(
         value = birthDate?.toString() ?: "",
         onValueChange = {},
         readOnly = true,
-        placeholder = { Text("DD/MM/AAAA", color = TextDisabled, fontSize = 14.sp ) },
-
+        placeholder = { Text("DD/MM/AAAA", color = TextDisabled, fontSize = 14.sp) },
         trailingIcon = null,
-
         leadingIcon = {
             IconButton(
                 onClick = { showDatePicker = true }
