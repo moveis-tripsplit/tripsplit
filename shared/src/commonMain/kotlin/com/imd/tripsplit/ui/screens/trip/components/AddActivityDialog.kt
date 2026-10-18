@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -17,16 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.screens.trip.TripActivity
-import com.imd.tripsplit.ui.theme.BlueOcean
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM
-import com.imd.tripsplit.ui.theme.TextPrimary
-import com.imd.tripsplit.ui.theme.TextSecondary
 import kotlin.random.Random
 
 @Composable
@@ -46,7 +43,7 @@ fun AddActivityDialog(
                 text = "Adicionar Atividade",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
         text = {
@@ -57,36 +54,52 @@ fun AddActivityDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Título da atividade *") },
-                    placeholder = { Text("Ex: Passeio de Barco") },
+                    label = { Text("Título da atividade *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: Passeio de Barco", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
                     value = dateHour,
                     onValueChange = { dateHour = it },
-                    label = { Text("Data / Horário") },
-                    placeholder = { Text("Ex: 16/11 • 10:00") },
+                    label = { Text("Data / Horário", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: 16/11 • 10:00", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = it },
-                    label = { Text("Local") },
-                    placeholder = { Text("Ex: Ilha do Campeche") },
+                    label = { Text("Local", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: Ilha do Campeche", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
                     value = costText,
                     onValueChange = { costText = it },
-                    label = { Text("Custo estimado (R$)") },
-                    placeholder = { Text("Ex: 120.00") },
+                    label = { Text("Custo estimado (R$)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: 120.00", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
@@ -109,15 +122,15 @@ fun AddActivityDialog(
                     }
                 },
                 enabled = title.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = BlueOcean),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(RadiusMD),
             ) {
-                Text("Adicionar", color = Color.White)
+                Text("Adicionar", color = MaterialTheme.colorScheme.onPrimary)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = TextSecondary)
+                Text("Cancelar", color = MaterialTheme.colorScheme.secondary)
             }
         },
         shape = RoundedCornerShape(RadiusLG),
