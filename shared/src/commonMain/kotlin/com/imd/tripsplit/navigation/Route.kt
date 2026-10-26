@@ -13,6 +13,9 @@ sealed interface Route {
     data object Home : Route
 
     @Serializable
+    data object Perfil : Route
+
+    @Serializable
     data class TripDetail(val tripId: String) : Route
 
     @Serializable

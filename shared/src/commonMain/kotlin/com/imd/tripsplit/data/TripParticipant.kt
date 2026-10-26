@@ -1,7 +1,7 @@
 package com.imd.tripsplit.data
 
 import com.imd.tripsplit.model.Participant
-import com.imd.tripsplit.ui.screens.trip.TripParticipant
+import com.imd.tripsplit.ui.screens.home.trip.TripParticipant
 
 fun TripParticipant.toParticipant(): Participant =
     Participant(

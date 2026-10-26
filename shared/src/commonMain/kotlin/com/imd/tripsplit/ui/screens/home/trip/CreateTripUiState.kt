@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip
+package com.imd.tripsplit.ui.screens.home.trip
 
 /**
  * Representa uma atividade no roteiro da viagem.

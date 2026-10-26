@@ -16,9 +16,10 @@ import androidx.navigation.toRoute
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.ui.screens.home.HomeScreen
+import com.imd.tripsplit.ui.screens.home.perfil.PerfilScreen
+import com.imd.tripsplit.ui.screens.home.trip.CreateTripScreen
 import com.imd.tripsplit.ui.screens.login.LoginScreen
-import com.imd.tripsplit.ui.screens.login.RegisterScreen
-import com.imd.tripsplit.ui.screens.trip.CreateTripScreen
+import com.imd.tripsplit.ui.screens.login.cadastro.RegisterScreen
 
 @Composable
 fun TripSplitNavHost(
@@ -47,6 +48,14 @@ fun TripSplitNavHost(
             )
         }
 
+        composable<Route.Perfil> {
+            PerfilScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable<Route.Register> {
             RegisterScreen(
                 onRegisterClick = {
@@ -72,6 +81,9 @@ fun TripSplitNavHost(
                 onCreateTripClick = {
                     navController.navigate(Route.NewTrip)
                 },
+                onPerfilClick = {
+                    navController.navigate(Route.Perfil)
+                }
             )
         }
 

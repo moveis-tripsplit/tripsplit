@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imd.tripsplit.ui.screens.trip.TripActivity
+import com.imd.tripsplit.ui.screens.home.trip.TripActivity
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
