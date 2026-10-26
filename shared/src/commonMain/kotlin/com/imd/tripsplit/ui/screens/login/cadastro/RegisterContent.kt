@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.login
+package com.imd.tripsplit.ui.screens.login.cadastro
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

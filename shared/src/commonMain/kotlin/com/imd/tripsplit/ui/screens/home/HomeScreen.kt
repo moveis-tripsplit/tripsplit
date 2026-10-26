@@ -1,5 +1,6 @@
 package com.imd.tripsplit.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ fun HomeScreen(
     onFilterSelected: (TripFilter) -> Unit,
     onNavigateToTripEdit: (tripId: String) -> Unit,
     onCreateTripClick: () -> Unit,
+    onPerfilClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var summaryTrip by remember { mutableStateOf<Trip?>(null) }
@@ -84,6 +86,19 @@ fun HomeScreen(
                         TripSplitLogo(size = 36.dp)
                         Text(text = appTitle, fontSize = 22.sp)
                     }
+                },
+                actions = {
+                    Text(
+                        text = "Perfil",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier =
+                            Modifier
+                                .clickable {
+                                    onPerfilClick()
+                                }
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        fontSize = 16.sp
+                    )
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(

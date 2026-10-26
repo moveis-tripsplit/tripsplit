@@ -1,8 +1,8 @@
 package com.imd.tripsplit.model
 
 import com.imd.tripsplit.data.toTripParticipant
-import com.imd.tripsplit.ui.screens.trip.CreateTripUiState
-import com.imd.tripsplit.ui.screens.trip.TripActivity
+import com.imd.tripsplit.ui.screens.home.trip.CreateTripUiState
+import com.imd.tripsplit.ui.screens.home.trip.TripActivity
 
 data class Trip(
     val id: String,

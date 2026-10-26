@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,27 +20,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.imd.tripsplit.ui.screens.trip.TripActivity
+import com.imd.tripsplit.ui.screens.home.trip.TripParticipant
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import kotlin.random.Random
 
 @Composable
-fun AddActivityDialog(
+fun AddParticipantDialog(
     onDismiss: () -> Unit,
-    onConfirm: (TripActivity) -> Unit,
+    onConfirm: (TripParticipant) -> Unit,
 ) {
-    var title by remember { mutableStateOf("") }
-    var dateHour by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var costText by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var role by remember { mutableStateOf("") }
+    var contact by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Adicionar Atividade",
+                text = "Adicionar Participante",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -52,10 +51,12 @@ fun AddActivityDialog(
                 verticalArrangement = Arrangement.spacedBy(SpacingSM),
             ) {
                 OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Título da atividade *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("Ex: Passeio de Barco", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nome *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = {
+                        Text("Ex: Mariana Silva", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))
+                    },
                     singleLine = true,
                     textStyle =
                         LocalTextStyle.current.copy(
@@ -65,10 +66,10 @@ fun AddActivityDialog(
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
-                    value = dateHour,
-                    onValueChange = { dateHour = it },
-                    label = { Text("Data / Horário", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("Ex: 16/11 • 10:00", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+                    value = role,
+                    onValueChange = { role = it },
+                    label = { Text("Papel / Função", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: Convidado, Membro...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
                     textStyle =
                         LocalTextStyle.current.copy(
@@ -78,23 +79,10 @@ fun AddActivityDialog(
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    label = { Text("Local", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("Ex: Ilha do Campeche", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
-                    singleLine = true,
-                    textStyle =
-                        LocalTextStyle.current.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(RadiusMD),
-                )
-                OutlinedTextField(
-                    value = costText,
-                    onValueChange = { costText = it },
-                    label = { Text("Custo estimado (R$)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("Ex: 120.00", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+                    value = contact,
+                    onValueChange = { contact = it },
+                    label = { Text("Contato ou Chave PIX (opcional)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ex: mariana@email.com", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
                     textStyle =
                         LocalTextStyle.current.copy(
@@ -108,20 +96,31 @@ fun AddActivityDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (title.isNotBlank()) {
-                        val cost = costText.replace(",", ".").toDoubleOrNull()
-                        val activity =
-                            TripActivity(
+                    if (name.isNotBlank()) {
+                        val initials =
+                            name
+                                .trim()
+                                .split(" ")
+                                .filter { it.isNotBlank() }
+                                .map { it.first().uppercase() }
+                                .take(2)
+                                .joinToString("")
+                                .ifEmpty { "P" }
+
+                        val participant =
+                            TripParticipant(
                                 id = Random.nextInt(1000, 9999).toString(),
-                                title = title.trim(),
-                                dateHour = dateHour.trim().ifEmpty { "A definir" },
-                                location = location.trim().ifEmpty { "A definir" },
-                                estimatedCost = cost,
+                                name = name.trim(),
+                                initials = initials,
+                                role = role.trim().ifEmpty { "Participante" },
+                                isOrganizer = false,
+                                hasAccount = true,
+                                contactOrPix = contact.trim().ifEmpty { null },
                             )
-                        onConfirm(activity)
+                        onConfirm(participant)
                     }
                 },
-                enabled = title.isNotBlank(),
+                enabled = name.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(RadiusMD),
             ) {

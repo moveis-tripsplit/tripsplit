@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip
+package com.imd.tripsplit.ui.screens.home.trip
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,8 +11,8 @@ import com.imd.tripsplit.data.toParticipant
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripStatus
 import com.imd.tripsplit.model.toUiState
-import com.imd.tripsplit.ui.screens.trip.components.AddActivityDialog
-import com.imd.tripsplit.ui.screens.trip.components.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.AddActivityDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.AddParticipantDialog
 import kotlin.random.Random
 
 @Composable

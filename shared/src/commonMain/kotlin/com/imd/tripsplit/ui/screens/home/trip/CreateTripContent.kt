@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip
+package com.imd.tripsplit.ui.screens.home.trip
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,12 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.imd.tripsplit.ui.screens.trip.components.CreateTripBottomBar
-import com.imd.tripsplit.ui.screens.trip.components.CreateTripHeader
-import com.imd.tripsplit.ui.screens.trip.components.TripActivitiesCard
-import com.imd.tripsplit.ui.screens.trip.components.TripDatesCard
-import com.imd.tripsplit.ui.screens.trip.components.TripInfoCard
-import com.imd.tripsplit.ui.screens.trip.components.TripParticipantsCard
+import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripBottomBar
+import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripHeader
+import com.imd.tripsplit.ui.screens.home.trip.components.TripActivitiesCard
+import com.imd.tripsplit.ui.screens.home.trip.components.TripDatesCard
+import com.imd.tripsplit.ui.screens.home.trip.components.TripInfoCard
+import com.imd.tripsplit.ui.screens.home.trip.components.TripParticipantsCard
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXL
