@@ -283,7 +283,6 @@ Informações previstas:
 **TO DO ---** Definir como será registrada a confirmação de um pagamento
 entre participantes e quem terá permissão para alterar seu status.
 
-### 4.6 Pix e cobranças
 
 ### 4.6 Pix e cobranças
 
@@ -299,264 +298,113 @@ A funcionalidade prevê a disponibilização dos dados necessários para que um 
 
 ### 5.1 Prioridades
 
-  Prioridade   Significado
-  ------------ ----------------------------------------------------------------
-  P1           Essencial para o fluxo principal do aplicativo.
-  P2           Importante, mas pode ser desenvolvido após o núcleo funcional.
-  P3           Evolução ou melhoria futura.
+| **Prioridade** | **Significado** |
+|----------------|-----------------|
+| P1 | Essencial para o fluxo principal do aplicativo. |
+| P2 | Importante, mas pode ser desenvolvido após o núcleo funcional. |
+| P3 | Evolução ou melhoria futura. |
 
-As prioridades são uma proposta de organização. Devem ser comparadas com
-o backlog e com os critérios oficiais da disciplina.
+As prioridades são uma proposta de organização. Devem ser comparadas
+com o backlog e com os critérios oficiais da disciplina.
 
 ### 5.2 Requisitos funcionais
 
 #### Módulo de viagens
 
-  -----------------------------------------------------------------------
-  ID                      Requisito               Prioridade
-  ----------------------- ----------------------- -----------------------
-  RF01                    O sistema deve permitir P1
-                          criar uma viagem.       
+| **ID** | **Requisito** | **Prioridade** |
+|--------|---------------|----------------|
+| RF01 | O sistema deve permitir criar uma viagem. | P1 |
+| RF02 | O sistema deve apresentar as viagens disponíveis ao usuário. | P1 |
+| RF03 | O sistema deve permitir visualizar os detalhes de uma viagem. | P1 |
+| RF04 | O sistema deve permitir editar os dados de uma viagem, conforme permissões definidas. | P2 |
+| RF05 | O sistema deve permitir encerrar ou arquivar uma viagem, conforme regra definida. | P2 |
 
-  RF02                    O sistema deve          P1
-                          apresentar as viagens   
-                          disponíveis ao usuário. 
-
-  RF03                    O sistema deve permitir P1
-                          visualizar os detalhes  
-                          de uma viagem.          
-
-  RF04                    O sistema deve permitir P2
-                          editar os dados de uma  
-                          viagem, conforme        
-                          permissões definidas.   
-
-  RF05                    O sistema deve permitir P2
-                          encerrar ou arquivar    
-                          uma viagem, conforme    
-                          regra definida.         
-  -----------------------------------------------------------------------
+---
 
 #### Módulo de participantes
 
-  -----------------------------------------------------------------------
-  ID                      Requisito               Prioridade
-  ----------------------- ----------------------- -----------------------
-  RF06                    O sistema deve permitir P1
-                          adicionar participantes 
-                          a uma viagem.           
+| **ID** | **Requisito** | **Prioridade** |
+|--------|---------------|----------------|
+| RF06 | O sistema deve permitir adicionar participantes a uma viagem. | P1 |
+| RF07 | O sistema deve permitir registrar participantes sem conta. | P1 |
+| RF08 | O sistema deve distinguir participantes com conta e sem conta. | P1 |
+| RF09 | O sistema deve permitir consultar os participantes de uma viagem. | P1 |
+| RF10 | O sistema deve permitir editar ou remover participantes, respeitando as regras de negócio. | P2 |
 
-  RF07                    O sistema deve permitir P1
-                          registrar participantes 
-                          sem conta.              
-
-  RF08                    O sistema deve          P1
-                          distinguir              
-                          participantes com conta 
-                          e sem conta.            
-
-  RF09                    O sistema deve permitir P1
-                          consultar os            
-                          participantes de uma    
-                          viagem.                 
-
-  RF10                    O sistema deve permitir P2
-                          editar ou remover       
-                          participantes,          
-                          respeitando as regras   
-                          de negócio.             
-  -----------------------------------------------------------------------
+---
 
 #### Módulo de despesas
 
-  -----------------------------------------------------------------------
-  ID                      Requisito               Prioridade
-  ----------------------- ----------------------- -----------------------
-  RF11                    O sistema deve permitir P1
-                          registrar despesas em   
-                          uma viagem.             
+| **ID** | **Requisito** | **Prioridade** |
+|--------|---------------|----------------|
+| RF11 | O sistema deve permitir registrar despesas em uma viagem. | P1 |
+| RF12 | O sistema deve permitir identificar quem pagou uma despesa. | P1 |
+| RF13 | O sistema deve permitir selecionar os participantes que dividirão uma despesa. | P1 |
+| RF14 | O sistema deve calcular a divisão do valor entre os participantes selecionados. | P1 |
+| RF15 | O sistema deve apresentar a lista de despesas da viagem. | P1 |
+| RF16 | O sistema deve permitir consultar os detalhes de uma despesa. | P1 |
+| RF17 | O sistema deve permitir editar ou excluir despesas conforme regras definidas. | P2 |
 
-  RF12                    O sistema deve permitir P1
-                          identificar quem pagou  
-                          uma despesa.            
-
-  RF13                    O sistema deve permitir P1
-                          selecionar os           
-                          participantes que       
-                          dividirão uma despesa.  
-
-  RF14                    O sistema deve calcular P1
-                          a divisão do valor      
-                          entre os participantes  
-                          selecionados.           
-
-  RF15                    O sistema deve          P1
-                          apresentar a lista de   
-                          despesas da viagem.     
-
-  RF16                    O sistema deve permitir P1
-                          consultar os detalhes   
-                          de uma despesa.         
-
-  RF17                    O sistema deve permitir P2
-                          editar ou excluir       
-                          despesas conforme       
-                          regras definidas.       
-  -----------------------------------------------------------------------
+---
 
 #### Módulo financeiro
 
-  -----------------------------------------------------------------------
-  ID                      Requisito               Prioridade
-  ----------------------- ----------------------- -----------------------
-  RF18                    O sistema deve          P1
-                          apresentar o total de   
-                          despesas da viagem.     
+| **ID** | **Requisito** | **Prioridade** |
+|--------|---------------|----------------|
+| RF18 | O sistema deve apresentar o total de despesas da viagem. | P1 |
+| RF19 | O sistema deve apresentar o valor atribuído a cada participante. | P1 |
+| RF20 | O sistema deve distinguir valores pagos e pendentes. | P1 |
+| RF21 | O sistema deve apresentar um resumo financeiro por participante. | P1 |
+| RF22 | O sistema deve auxiliar na identificação de quem deve pagar ou receber. | P2 |
+| RF23 | O sistema deve permitir consultar informações de cobrança via Pix, conforme escopo aprovado. | P2 |
 
-  RF19                    O sistema deve          P1
-                          apresentar o valor      
-                          atribuído a cada        
-                          participante.           
-
-  RF20                    O sistema deve          P1
-                          distinguir valores      
-                          pagos e pendentes.      
-
-  RF21                    O sistema deve          P1
-                          apresentar um resumo    
-                          financeiro por          
-                          participante.           
-
-  RF22                    O sistema deve auxiliar P2
-                          na identificação de     
-                          quem deve pagar ou      
-                          receber.                
-
-  RF23                    O sistema deve permitir P2
-                          consultar informações   
-                          de cobrança via Pix,    
-                          conforme escopo         
-                          aprovado.               
-  -----------------------------------------------------------------------
+---
 
 #### Módulos complementares
 
-  -----------------------------------------------------------------------
-  ID                      Requisito               Prioridade
-  ----------------------- ----------------------- -----------------------
-  RF24                    O sistema poderá        P2
-                          permitir                
-                          compartilhamento de     
-                          informações da viagem.  
+| **ID** | **Requisito** | **Prioridade** |
+|--------|---------------|----------------|
+| RF24 | O sistema poderá permitir o compartilhamento de informações da viagem. | P2 |
+| RF25 | O sistema poderá apresentar histórico de alterações financeiras. | P3 |
+| RF26 | O sistema poderá oferecer notificações de despesas e cobranças. | P3 |
 
-  RF25                    O sistema poderá        P3
-                          apresentar histórico de 
-                          alterações financeiras. 
-
-  RF26                    O sistema poderá        P3
-                          oferecer notificações   
-                          de despesas e           
-                          cobranças.              
-  -----------------------------------------------------------------------
-
-> **TO DO ---** Conferir a numeração e a descrição dos requisitos com a
-> especificação oficial da equipe. Ajustar os IDs caso já exista uma
-> matriz de requisitos aprovada.
+> **TO DO ---** Conferir a numeração e a descrição dos requisitos com a especificação oficial da equipe. Ajustar os IDs caso já exista uma matriz de requisitos aprovada.
 
 ### 5.3 Requisitos não funcionais
 
-  -----------------------------------------------------------------------
-  ID                                  Requisito
-  ----------------------------------- -----------------------------------
-  RNF01                               A aplicação deve manter uma
-                                      experiência consistente nas
-                                      plataformas suportadas.
+| **ID** | **Requisito não funcional** |
+|--------|-----------------------------|
+| RNF01 | A aplicação deve manter uma experiência consistente nas plataformas suportadas. |
+| RNF02 | A interface deve se adaptar a diferentes dimensões de tela. |
+| RNF03 | A lógica de divisão de despesas deve ser separada dos componentes visuais. |
+| RNF04 | O código compartilhado deve ser organizado de forma que possa ser reutilizado entre plataformas. |
+| RNF05 | Os valores monetários devem ser tratados com precisão de centavos. |
+| RNF06 | A aplicação deve apresentar feedback para operações realizadas pelo usuário. |
+| RNF07 | A interface deve tratar estados de carregamento, erro e ausência de dados quando aplicável. |
+| RNF08 | O projeto deve utilizar controle de versão. |
+| RNF09 | As regras centrais de cálculo devem possuir testes automatizados. |
+| RNF10 | Dados pessoais e financeiros devem ser tratados com cuidado e não devem ser expostos desnecessariamente. |
 
-  RNF02                               A interface deve se adaptar a
-                                      diferentes dimensões de tela.
+> **TO DO ---** Definir requisitos mensuráveis de desempenho, acessibilidade, compatibilidade mínima de sistema operacional e política de armazenamento de dados.
 
-  RNF03                               A lógica de divisão de despesas
-                                      deve ser separada dos componentes
-                                      visuais.
-
-  RNF04                               O código compartilhado deve ser
-                                      organizado de forma que possa ser
-                                      reutilizado entre plataformas.
-
-  RNF05                               Os valores monetários devem ser
-                                      tratados com precisão de centavos.
-
-  RNF06                               A aplicação deve apresentar
-                                      feedback para operações realizadas
-                                      pelo usuário.
-
-  RNF07                               A interface deve tratar estados de
-                                      carregamento, erro e ausência de
-                                      dados quando aplicável.
-
-  RNF08                               O projeto deve utilizar controle de
-                                      versão.
-
-  RNF09                               As regras centrais de cálculo devem
-                                      possuir testes automatizados.
-
-  RNF10                               Dados pessoais e financeiros devem
-                                      ser tratados com cuidado e não
-                                      devem ser expostos
-                                      desnecessariamente.
-  -----------------------------------------------------------------------
-
-**TO DO ---** Definir requisitos mensuráveis de desempenho,
-acessibilidade, compatibilidade mínima de sistema operacional e política
-de armazenamento de dados.
-
-------------------------------------------------------------------------
+---
 
 ## 6. Regras de negócio
 
-As regras abaixo descrevem o comportamento esperado do domínio. Devem
-ser confirmadas pela equipe antes de serem tratadas como regras
-definitivas.
+As regras abaixo descrevem o comportamento esperado do domínio. Devem ser confirmadas pela equipe antes de serem tratadas como regras definitivas.
 
-  -----------------------------------------------------------------------
-  ID                                  Regra
-  ----------------------------------- -----------------------------------
-  RN01                                Uma viagem pode possuir vários
-                                      participantes.
-
-  RN02                                Uma viagem pode possuir várias
-                                      despesas.
-
-  RN03                                Cada despesa deve estar associada a
-                                      uma viagem.
-
-  RN04                                Uma despesa deve possuir um valor
-                                      monetário válido e positivo.
-
-  RN05                                Uma despesa deve identificar quem
-                                      realizou o pagamento.
-
-  RN06                                A divisão de uma despesa deve
-                                      considerar somente os participantes
-                                      selecionados para aquela despesa.
-
-  RN07                                Participantes sem conta devem poder
-                                      ser considerados nos cálculos da
-                                      viagem.
-
-  RN08                                A soma das parcelas atribuídas aos
-                                      participantes deve corresponder ao
-                                      valor total da despesa, respeitando
-                                      o arredondamento monetário.
-
-  RN09                                O status de pagamento deve permitir
-                                      distinguir valores pagos e
-                                      pendentes.
-
-  RN10                                O resumo financeiro deve considerar
-                                      as despesas registradas e os
-                                      pagamentos confirmados conforme as
-                                      regras do sistema.
+| **ID** | **Regra de negócio** |
+|--------|----------------------|
+| RN01 | Uma viagem pode possuir vários participantes. |
+| RN02 | Uma viagem pode possuir várias despesas. |
+| RN03 | Cada despesa deve estar associada a uma viagem. |
+| RN04 | Uma despesa deve possuir um valor monetário válido e positivo. |
+| RN05 | Uma despesa deve identificar quem realizou o pagamento. |
+| RN06 | A divisão de uma despesa deve considerar somente os participantes selecionados para aquela despesa. |
+| RN07 | Participantes sem conta devem poder ser considerados nos cálculos da viagem. |
+| RN08 | A soma das parcelas atribuídas aos participantes deve corresponder ao valor total da despesa, respeitando o arredondamento monetário. |
+| RN09 | O status de pagamento deve permitir distinguir valores pagos e pendentes. |
+| RN10 | O resumo financeiro deve considerar as despesas registradas e os pagamentos confirmados conforme as regras do sistema. |
   -----------------------------------------------------------------------
 
 ### 6.1 Exemplo de divisão igualitária
