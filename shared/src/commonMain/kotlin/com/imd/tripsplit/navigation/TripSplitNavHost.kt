@@ -83,7 +83,7 @@ fun TripSplitNavHost(
                 },
                 onPerfilClick = {
                     navController.navigate(Route.Perfil)
-                }
+                },
             )
         }
 

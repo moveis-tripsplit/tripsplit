@@ -144,7 +144,6 @@ fun HomeScreen(
                     onSelected = onFilterSelected,
                     modifier = Modifier.fillMaxWidth().padding(top = SpacingSM),
                 )
-
                 if (filteredTrips.isEmpty()) {
                     EmptyState(
                         title = "Nenhuma viagem encontrada",
@@ -164,8 +163,10 @@ fun HomeScreen(
                                 trip = trip,
                                 onClick = {
                                     if (trip.status == TripStatus.FINISHED) {
+                                        // Abre o resumo em tela sobreposta (Diálogo)
                                         summaryTrip = trip
                                     } else {
+                                        // Redireciona para a página de edição/detalhes da viagem em andamento/futura
                                         onNavigateToTripEdit(trip.id)
                                     }
                                 },
