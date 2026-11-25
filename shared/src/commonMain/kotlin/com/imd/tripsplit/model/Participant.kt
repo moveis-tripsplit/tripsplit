@@ -1,5 +1,8 @@
 package com.imd.tripsplit.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Participant(
     val id: String,
     val name: String,
@@ -8,3 +11,4 @@ data class Participant(
     val isOrganizer: Boolean = false,
     val contactOrPix: String? = null,
 )
+

@@ -52,14 +52,28 @@ fun TripSplitNavHost(
             PerfilScreen(
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
+                onLogoutClick = {
+                    com.imd.tripsplit.data.UserRepository.logout()
+                    navController.navigate(Route.Login) {
+                        popUpTo<Route.Home> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
             )
         }
 
         composable<Route.Register> {
             RegisterScreen(
-                onRegisterClick = {
-                    // Lógica do botão Registrar
+                onRegisterSuccess = {
+                    navController.navigate(Route.Home) {
+                        popUpTo<Route.Login> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 },
                 onLoginClick = {
                     navController.popBackStack()
@@ -68,11 +82,20 @@ fun TripSplitNavHost(
         }
 
         composable<Route.Home> {
-            val trips by TripRepository.trips.collectAsState()
+            val allTrips by TripRepository.trips.collectAsState()
+            val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+            val userTrips =
+                remember(allTrips, currentUser) {
+                    if (currentUser != null) {
+                        allTrips.filter { it.userId == currentUser?.id || it.userId.isBlank() }
+                    } else {
+                        allTrips
+                    }
+                }
             var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
 
             HomeScreen(
-                trips = trips,
+                trips = userTrips,
                 selectedFilter = selectedFilter,
                 onFilterSelected = { selectedFilter = it },
                 onNavigateToTripEdit = { tripId ->

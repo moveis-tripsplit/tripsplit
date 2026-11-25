@@ -68,17 +68,18 @@ import kotlin.time.Instant
 
 @Composable
 fun RegisterContent(
-    // Recebe variaveis necessárias para construção da page
     modifier: Modifier = Modifier,
     state: RegisterUiState,
     onNameChange: (String) -> Unit,
+    onBirthDateChange: (LocalDate) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
+    onToggleConfirmPasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
 ) {
-    var birthDate by remember { mutableStateOf<LocalDate?>(null) }
     val scrollState = rememberScrollState()
 
     // CARD FORMULÁRIO:
@@ -148,12 +149,14 @@ fun RegisterContent(
                     ) {
                         RegisterFormCard(
                             state = state,
-                            birthDate = birthDate,
-                            onBirthDateChange = { birthDate = it },
+                            birthDate = state.birthDate,
+                            onBirthDateChange = onBirthDateChange,
                             onNameChange = onNameChange,
                             onEmailChange = onEmailChange,
                             onPasswordChange = onPasswordChange,
+                            onConfirmPasswordChange = onConfirmPasswordChange,
                             onTogglePasswordVisibility = onTogglePasswordVisibility,
+                            onToggleConfirmPasswordVisibility = onToggleConfirmPasswordVisibility,
                             onRegisterClick = onRegisterClick,
                             onLoginClick = onLoginClick
                         )
@@ -182,12 +185,14 @@ fun RegisterContent(
 
                 RegisterFormCard(
                     state = state,
-                    birthDate = birthDate,
-                    onBirthDateChange = { birthDate = it },
+                    birthDate = state.birthDate,
+                    onBirthDateChange = onBirthDateChange,
                     onNameChange = onNameChange,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
+                    onConfirmPasswordChange = onConfirmPasswordChange,
                     onTogglePasswordVisibility = onTogglePasswordVisibility,
+                    onToggleConfirmPasswordVisibility = onToggleConfirmPasswordVisibility,
                     onRegisterClick = onRegisterClick,
                     onLoginClick = onLoginClick
                 )
@@ -204,7 +209,9 @@ private fun RegisterFormCard(
     onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
+    onToggleConfirmPasswordVisibility: () -> Unit,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -222,6 +229,22 @@ private fun RegisterFormCard(
         Column(
             modifier = Modifier.padding(SpacingXL),
         ) {
+            if (state.errorMessage != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = SpacingMD),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                    shape = RoundedCornerShape(RadiusMD),
+                ) {
+                    Text(
+                        text = state.errorMessage,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(SpacingMD),
+                    )
+                }
+            }
+
             // CAMPO NOME:
             Text(
                 text = "Nome",
@@ -381,8 +404,8 @@ private fun RegisterFormCard(
             Spacer(modifier = Modifier.height(SpacingXS))
 
             OutlinedTextField(
-                value = state.password,
-                onValueChange = onPasswordChange,
+                value = state.confirmPassword,
+                onValueChange = onConfirmPasswordChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(text = "••••••••••", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
@@ -396,16 +419,16 @@ private fun RegisterFormCard(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = onTogglePasswordVisibility) {
+                    IconButton(onClick = onToggleConfirmPasswordVisibility) {
                         Icon(
-                            imageVector = if (state.isPasswordVisible) TripSplitIcons.VisibilityOff else TripSplitIcons.Visibility,
-                            contentDescription = if (state.isPasswordVisible) "Ocultar senha" else "Mostrar senha",
+                            imageVector = if (state.isConfirmPasswordVisible) TripSplitIcons.VisibilityOff else TripSplitIcons.Visibility,
+                            contentDescription = if (state.isConfirmPasswordVisible) "Ocultar senha" else "Mostrar senha",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                     }
                 },
-                visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (state.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 shape = RoundedCornerShape(RadiusMD),
                 singleLine = true,
                 keyboardOptions =
@@ -426,6 +449,7 @@ private fun RegisterFormCard(
             // BOTÃO CRIAR CONTA:
             Button(
                 onClick = onRegisterClick,
+                enabled = state.isRegisterEnabled,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -435,6 +459,8 @@ private fun RegisterFormCard(
                     ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                     ),
             ) {
                 if (state.isLoading) {

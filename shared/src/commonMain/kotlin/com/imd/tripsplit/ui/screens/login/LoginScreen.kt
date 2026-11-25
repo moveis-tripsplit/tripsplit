@@ -81,11 +81,18 @@ fun LoginScreen(
 
     LoginContent(
         state = state,
-        onEmailChange = { state = state.copy(email = it) },
-        onPasswordChange = { state = state.copy(password = it) },
+        onEmailChange = { state = state.copy(email = it, errorMessage = null) },
+        onPasswordChange = { state = state.copy(password = it, errorMessage = null) },
         onTogglePasswordVisibility = { state = state.copy(isPasswordVisible = !state.isPasswordVisible) },
         onRememberMeChange = { state = state.copy(rememberMe = it) },
-        onLoginClick = { onLoginSuccess() },
+        onLoginClick = {
+            val result = com.imd.tripsplit.data.UserRepository.login(state.email, state.password)
+            if (result.isSuccess) {
+                onLoginSuccess()
+            } else {
+                state = state.copy(errorMessage = result.exceptionOrNull()?.message ?: "Erro ao realizar login.")
+            }
+        },
         onForgotPasswordClick = onForgotPasswordClick,
         onRegisterClick = onRegisterClick,
         modifier = modifier,
@@ -280,6 +287,22 @@ private fun LoginFormCard(
         Column(
             modifier = Modifier.padding(SpacingXL),
         ) {
+            if (state.errorMessage != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = SpacingMD),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                    shape = RoundedCornerShape(RadiusMD),
+                ) {
+                    Text(
+                        text = state.errorMessage,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(SpacingMD),
+                    )
+                }
+            }
+
             Text(
                 text = "E-mail",
                 fontSize = 14.sp,
