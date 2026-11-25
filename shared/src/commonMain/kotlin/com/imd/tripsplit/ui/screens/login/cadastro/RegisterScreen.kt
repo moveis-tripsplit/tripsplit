@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.login
+package com.imd.tripsplit.ui.screens.login.cadastro
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

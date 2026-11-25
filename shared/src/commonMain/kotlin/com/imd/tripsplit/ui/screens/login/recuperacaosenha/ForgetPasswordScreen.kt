@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.login
+package com.imd.tripsplit.ui.screens.login.recuperacaosenha
 
 import androidx.compose.runtime.Composable
 

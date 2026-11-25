@@ -139,6 +139,7 @@ fun AvatarStack(
 ) {
     val visible = participants.take(maxVisible)
     val extra = participants.size - visible.size
+
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Box(modifier = Modifier.width((28 + (visible.size - 1).coerceAtLeast(0) * 20).dp)) {
             visible.forEachIndexed { index, p ->

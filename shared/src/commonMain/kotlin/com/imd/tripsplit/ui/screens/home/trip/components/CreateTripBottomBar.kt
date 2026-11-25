@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

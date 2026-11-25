@@ -57,7 +57,7 @@ fun TripSplitLogo(
     val logoVector = remember { createTripSplitLogoVector() }
     Image(
         imageVector = logoVector,
-        contentDescription = "Logotipo TripSplit",
+        contentDescription = null,
         modifier = modifier.size(size),
     )
 }

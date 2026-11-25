@@ -11,11 +11,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.model.TripFilter
 import com.imd.tripsplit.ui.screens.home.HomeScreen
-import com.imd.tripsplit.ui.screens.trip.CreateTripScreen
+import com.imd.tripsplit.ui.screens.home.perfil.PerfilScreen
+import com.imd.tripsplit.ui.screens.home.trip.CreateTripScreen
+import com.imd.tripsplit.ui.screens.login.LoginScreen
+import com.imd.tripsplit.ui.screens.login.cadastro.RegisterScreen
 
 @Composable
 fun TripSplitNavHost(
@@ -24,9 +28,45 @@ fun TripSplitNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.Home,
+        startDestination = Route.Login,
         modifier = modifier,
     ) {
+        // LOGIN
+        composable<Route.Login> {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Route.Home) {
+                        popUpTo<Route.Login> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                onRegisterClick = {
+                    navController.navigate(Route.Register)
+                },
+            )
+        }
+
+        composable<Route.Perfil> {
+            PerfilScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<Route.Register> {
+            RegisterScreen(
+                onRegisterClick = {
+                    // Lógica do botão Registrar
+                },
+                onLoginClick = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
         composable<Route.Home> {
             val trips by TripRepository.trips.collectAsState()
             var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
@@ -40,6 +80,9 @@ fun TripSplitNavHost(
                 },
                 onCreateTripClick = {
                     navController.navigate(Route.NewTrip)
+                },
+                onPerfilClick = {
+                    navController.navigate(Route.Perfil)
                 },
             )
         }
@@ -59,6 +102,28 @@ fun TripSplitNavHost(
                 onTripCreatedSuccess = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        // DeepLink adicionado
+        composable<Route.TripDetail>(
+            deepLinks =
+                listOf(
+                    navDeepLink<Route.TripDetail>(
+                        basePath = "tripsplit://trip",
+                    ),
+                ),
+        ) { entry ->
+            val args = entry.toRoute<Route.TripDetail>()
+
+            CreateTripScreen(
+                tripId = args.tripId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onTripCreatedSuccess = {
+                    navController.popBackStack()
+                },
             )
         }
     }
