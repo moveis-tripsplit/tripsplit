@@ -23,7 +23,10 @@ object UserRepository {
         return LocalDataManager.registerUser(user)
     }
 
-    fun login(email: String, password: String): Result<User> {
+    fun login(
+        email: String,
+        password: String
+    ): Result<User> {
         return LocalDataManager.login(email = email, password = password)
     }
 

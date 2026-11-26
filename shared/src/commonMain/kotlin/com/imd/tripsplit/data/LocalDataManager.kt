@@ -66,7 +66,10 @@ object LocalDataManager {
         return Result.success(user)
     }
 
-    fun login(email: String, password: String): Result<User> {
+    fun login(
+        email: String,
+        password: String
+    ): Result<User> {
         val found =
             _dbState.value.users.find {
                 it.email.equals(email.trim(), ignoreCase = true) && it.password == password

@@ -25,7 +25,10 @@ actual class PlatformStorage actual constructor() {
     }
 
     @Suppress("CAST_NEVER_SUCCEEDS")
-    actual fun writeString(fileName: String, content: String) {
+    actual fun writeString(
+        fileName: String,
+        content: String,
+    ) {
         val path = if (documentsDirectory.isNotEmpty()) "$documentsDirectory/$fileName" else fileName
         try {
             (content as NSString).writeToFile(path, true, NSUTF8StringEncoding, null)

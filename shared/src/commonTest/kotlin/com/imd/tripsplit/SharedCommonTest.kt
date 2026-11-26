@@ -87,18 +87,20 @@ class SharedCommonTest {
         assertFalse(state.isRegisterEnabled, "Estado inicial não deve permitir registro")
         assertTrue(state.isBirthDateEmpty, "Data de nascimento deve iniciar vazia")
 
-        state = state.copy(
-            nome = "João da Silva",
-            email = "joao@exemplo.com",
-            password = "123",
-            confirmPassword = "123"
-        )
+        state =
+            state.copy(
+                nome = "João da Silva",
+                email = "joao@exemplo.com",
+                password = "123",
+                confirmPassword = "123",
+            )
         assertFalse(state.isRegisterEnabled, "Sem data de nascimento, registro deve estar desabilitado")
 
-        state = state.copy(
-            birthDate = LocalDate(2000, 5, 20),
-            birthDateInput = "20/05/2000"
-        )
+        state =
+            state.copy(
+                birthDate = LocalDate(2000, 5, 20),
+                birthDateInput = "20/05/2000",
+            )
         assertTrue(state.isRegisterEnabled, "Com todos os dados válidos, registro deve estar habilitado")
         assertFalse(state.isBirthDateEmpty, "Data de nascimento não deve estar vazia")
     }

@@ -11,4 +11,3 @@ data class Participant(
     val isOrganizer: Boolean = false,
     val contactOrPix: String? = null,
 )
-

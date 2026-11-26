@@ -31,7 +31,6 @@ data class TripParticipant(
     val contactOrPix: String? = null,
 )
 
-
 /**
  * Estado da tela de Cadastro de Viagem do TripSplit.
  */

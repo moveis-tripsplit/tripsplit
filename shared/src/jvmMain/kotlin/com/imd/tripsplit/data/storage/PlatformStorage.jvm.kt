@@ -25,7 +25,10 @@ actual class PlatformStorage actual constructor() {
         }
     }
 
-    actual fun writeString(fileName: String, content: String) {
+    actual fun writeString(
+        fileName: String,
+        content: String,
+    ) {
         try {
             val file = File(dir, fileName)
             file.writeText(content)

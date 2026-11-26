@@ -34,4 +34,3 @@ fun Trip.toUiState(): CreateTripUiState =
         activities = activities,
         participants = participants.map { it.toTripParticipant() },
     )
-
