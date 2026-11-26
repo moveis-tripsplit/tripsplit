@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.components.TripSplitIcons
+import com.imd.tripsplit.presentation.register.RegisterUiState
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.Spacing2XL
@@ -72,13 +73,13 @@ fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterUiState,
     onNameChange: (String) -> Unit,
+    onBirthDateChange: (LocalDate) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
 ) {
-    var birthDate by remember { mutableStateOf<LocalDate?>(null) }
     val scrollState = rememberScrollState()
 
     // CARD FORMULÁRIO:
@@ -148,8 +149,8 @@ fun RegisterContent(
                     ) {
                         RegisterFormCard(
                             state = state,
-                            birthDate = birthDate,
-                            onBirthDateChange = { birthDate = it },
+                            birthDate = state.birthDate,
+                            onBirthDateChange = onBirthDateChange,
                             onNameChange = onNameChange,
                             onEmailChange = onEmailChange,
                             onPasswordChange = onPasswordChange,
@@ -182,8 +183,8 @@ fun RegisterContent(
 
                 RegisterFormCard(
                     state = state,
-                    birthDate = birthDate,
-                    onBirthDateChange = { birthDate = it },
+                    birthDate = state.birthDate,
+                    onBirthDateChange = onBirthDateChange,
                     onNameChange = onNameChange,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,

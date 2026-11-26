@@ -3,18 +3,20 @@ package com.imd.tripsplit.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.imd.tripsplit.data.TripRepository
-import com.imd.tripsplit.model.TripFilter
+import com.imd.tripsplit.data.repository.InMemoryTripRepository
+import com.imd.tripsplit.domain.model.TripFilter
+import com.imd.tripsplit.domain.repository.TripRepository
+import com.imd.tripsplit.domain.usecase.ObserveTripsUseCase
+import com.imd.tripsplit.presentation.home.HomeViewModel
 import com.imd.tripsplit.ui.screens.home.HomeScreen
 import com.imd.tripsplit.ui.screens.home.perfil.PerfilScreen
 import com.imd.tripsplit.ui.screens.home.trip.CreateTripScreen
@@ -25,6 +27,7 @@ import com.imd.tripsplit.ui.screens.login.cadastro.RegisterScreen
 fun TripSplitNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    tripRepository: TripRepository = remember { InMemoryTripRepository() },
 ) {
     NavHost(
         navController = navController,
@@ -68,13 +71,17 @@ fun TripSplitNavHost(
         }
 
         composable<Route.Home> {
-            val trips by TripRepository.trips.collectAsState()
-            var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
+            val homeViewModel: HomeViewModel =
+                viewModel(key = "home") {
+                    HomeViewModel(ObserveTripsUseCase(tripRepository))
+                }
+            val state by homeViewModel.state.collectAsState()
+            val selectedFilter by homeViewModel.selectedFilter.collectAsState()
 
             HomeScreen(
-                trips = trips,
+                state = state,
                 selectedFilter = selectedFilter,
-                onFilterSelected = { selectedFilter = it },
+                onFilterSelected = homeViewModel::selectFilter,
                 onNavigateToTripEdit = { tripId ->
                     navController.navigate(Route.TripDetail(tripId = tripId))
                 },
@@ -90,6 +97,7 @@ fun TripSplitNavHost(
         composable<Route.TripDetail> { entry ->
             val args = entry.toRoute<Route.TripDetail>()
             CreateTripScreen(
+                tripRepository = tripRepository,
                 tripId = args.tripId,
                 onBackClick = { navController.popBackStack() },
                 onTripCreatedSuccess = { navController.popBackStack() },
@@ -98,6 +106,7 @@ fun TripSplitNavHost(
 
         composable<Route.NewTrip> {
             CreateTripScreen(
+                tripRepository = tripRepository,
                 onBackClick = { navController.popBackStack() },
                 onTripCreatedSuccess = {
                     navController.popBackStack()
@@ -117,6 +126,7 @@ fun TripSplitNavHost(
             val args = entry.toRoute<Route.TripDetail>()
 
             CreateTripScreen(
+                tripRepository = tripRepository,
                 tripId = args.tripId,
                 onBackClick = {
                     navController.popBackStack()

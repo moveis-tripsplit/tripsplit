@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.imd.tripsplit.ui.screens.home.trip.TripActivity
+import com.imd.tripsplit.domain.model.TripActivity
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM

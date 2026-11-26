@@ -1,11 +1,11 @@
 package com.imd.tripsplit.ui.screens.login.cadastro
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
+import com.imd.tripsplit.presentation.register.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
@@ -13,28 +13,17 @@ fun RegisterScreen(
     onRegisterClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
 ) {
-    var state by remember {
-        mutableStateOf(RegisterUiState())
-    }
+    val viewModel: RegisterViewModel = viewModel { RegisterViewModel() }
+    val state by viewModel.state.collectAsState()
 
     RegisterContent(
         modifier = modifier,
         state = state,
-        onNameChange = {
-            state = state.copy(nome = it)
-        },
-        onEmailChange = {
-            state = state.copy(email = it)
-        },
-        onPasswordChange = {
-            state = state.copy(password = it)
-        },
-        onTogglePasswordVisibility = {
-            state =
-                state.copy(
-                    isPasswordVisible = !state.isPasswordVisible
-                )
-        },
+        onNameChange = viewModel::onNameChange,
+        onBirthDateChange = viewModel::onBirthDateChange,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
         onLoginClick = onLoginClick,
         onRegisterClick = onRegisterClick
     )

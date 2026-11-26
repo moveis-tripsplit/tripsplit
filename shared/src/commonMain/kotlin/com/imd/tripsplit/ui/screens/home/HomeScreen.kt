@@ -1,6 +1,7 @@
 package com.imd.tripsplit.ui.screens.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,9 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imd.tripsplit.model.Trip
-import com.imd.tripsplit.model.TripFilter
-import com.imd.tripsplit.model.TripStatus
+import com.imd.tripsplit.domain.model.Trip
+import com.imd.tripsplit.domain.model.TripFilter
+import com.imd.tripsplit.domain.model.TripStatus
+import com.imd.tripsplit.presentation.UiState
 import com.imd.tripsplit.ui.components.EmptyState
 import com.imd.tripsplit.ui.components.FilterChipRow
 import com.imd.tripsplit.ui.components.TripCard
@@ -48,7 +51,7 @@ import com.imd.tripsplit.ui.theme.SpacingSM
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    trips: List<Trip>,
+    state: UiState<List<Trip>>,
     selectedFilter: TripFilter,
     onFilterSelected: (TripFilter) -> Unit,
     onNavigateToTripEdit: (tripId: String) -> Unit,
@@ -57,14 +60,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     var summaryTrip by remember { mutableStateOf<Trip?>(null) }
-
-    val filteredTrips =
-        when (selectedFilter) {
-            TripFilter.ALL -> trips
-            TripFilter.ONGOING -> trips.filter { it.status == TripStatus.ONGOING }
-            TripFilter.UPCOMING -> trips.filter { it.status == TripStatus.UPCOMING }
-            TripFilter.FINISHED -> trips.filter { it.status == TripStatus.FINISHED }
-        }
 
     val scheme = MaterialTheme.colorScheme
     val appTitle =
@@ -144,33 +139,67 @@ fun HomeScreen(
                     onSelected = onFilterSelected,
                     modifier = Modifier.fillMaxWidth().padding(top = SpacingSM),
                 )
-                if (filteredTrips.isEmpty()) {
-                    EmptyState(
-                        title = "Nenhuma viagem encontrada",
-                        message = "Você ainda não possui viagens nesta categoria.",
-                        actionText = "Criar Viagem",
-                        onAction = onCreateTripClick,
-                        modifier = Modifier.weight(1f),
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(SpacingMD),
-                        contentPadding = PaddingValues(bottom = 88.dp),
-                    ) {
-                        items(filteredTrips, key = { it.id }) { trip ->
-                            TripCard(
-                                trip = trip,
-                                onClick = {
-                                    if (trip.status == TripStatus.FINISHED) {
-                                        // Abre o resumo em tela sobreposta (Diálogo)
-                                        summaryTrip = trip
-                                    } else {
-                                        // Redireciona para a página de edição/detalhes da viagem em andamento/futura
-                                        onNavigateToTripEdit(trip.id)
-                                    }
-                                },
+                when (val currentState = state) {
+                    UiState.Loading -> {
+                        Box(
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is UiState.Error -> {
+                        Box(
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(currentState.message, color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                    UiState.Empty -> {
+                        EmptyState(
+                            title = "Nenhuma viagem encontrada",
+                            message = "Você ainda não possui viagens nesta categoria.",
+                            actionText = "Criar Viagem",
+                            onAction = onCreateTripClick,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    is UiState.Success -> {
+                        val filteredTrips =
+                            when (selectedFilter) {
+                                TripFilter.ALL -> currentState.data
+                                TripFilter.ONGOING -> currentState.data.filter { it.status == TripStatus.ONGOING }
+                                TripFilter.UPCOMING -> currentState.data.filter { it.status == TripStatus.UPCOMING }
+                                TripFilter.FINISHED -> currentState.data.filter { it.status == TripStatus.FINISHED }
+                            }
+                        if (filteredTrips.isEmpty()) {
+                            EmptyState(
+                                title = "Nenhuma viagem encontrada",
+                                message = "Você ainda não possui viagens nesta categoria.",
+                                actionText = "Criar Viagem",
+                                onAction = onCreateTripClick,
+                                modifier = Modifier.weight(1f),
                             )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(SpacingMD),
+                                contentPadding = PaddingValues(bottom = 88.dp),
+                            ) {
+                                items(filteredTrips, key = { it.id }) { trip ->
+                                    TripCard(
+                                        trip = trip,
+                                        onClick = {
+                                            if (trip.status == TripStatus.FINISHED) {
+                                                summaryTrip = trip
+                                            } else {
+                                                onNavigateToTripEdit(trip.id)
+                                            }
+                                        },
+                                    )
+                                }
+                            }
                         }
                     }
                 }

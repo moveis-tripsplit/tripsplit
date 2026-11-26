@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.login.cadastro
+package com.imd.tripsplit.presentation.register
 
 import kotlinx.datetime.LocalDate
 

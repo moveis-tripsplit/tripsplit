@@ -1,4 +1,4 @@
-package com.imd.tripsplit.model
+package com.imd.tripsplit.domain.model
 
 enum class TripFilter {
     ALL,

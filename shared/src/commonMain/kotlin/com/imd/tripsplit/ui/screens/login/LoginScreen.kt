@@ -36,10 +36,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -56,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.components.TripSplitIcons
 import com.imd.tripsplit.ui.components.TripSplitLogo
+import com.imd.tripsplit.presentation.login.LoginUiState
+import com.imd.tripsplit.presentation.login.LoginViewModel
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.Spacing2XL
@@ -77,14 +78,15 @@ fun LoginScreen(
     onForgotPasswordClick: () -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
-    var state by remember { mutableStateOf(LoginUiState()) }
+    val viewModel: LoginViewModel = viewModel { LoginViewModel() }
+    val state by viewModel.state.collectAsState()
 
     LoginContent(
         state = state,
-        onEmailChange = { state = state.copy(email = it) },
-        onPasswordChange = { state = state.copy(password = it) },
-        onTogglePasswordVisibility = { state = state.copy(isPasswordVisible = !state.isPasswordVisible) },
-        onRememberMeChange = { state = state.copy(rememberMe = it) },
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
+        onRememberMeChange = viewModel::onRememberMeChange,
         onLoginClick = { onLoginSuccess() },
         onForgotPasswordClick = onForgotPasswordClick,
         onRegisterClick = onRegisterClick,

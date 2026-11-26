@@ -1,10 +1,11 @@
-package com.imd.tripsplit.model
+package com.imd.tripsplit.domain.model
 
-data class Participant(
+data class TripParticipant(
     val id: String,
     val name: String,
-    val avatarUrl: String? = null,
+    val initials: String,
     val role: String = "Participante",
     val isOrganizer: Boolean = false,
+    val hasAccount: Boolean = true,
     val contactOrPix: String? = null,
 )

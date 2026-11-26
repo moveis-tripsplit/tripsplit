@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.imd.tripsplit.presentation.UiState
+import com.imd.tripsplit.presentation.trip.CreateTripAction
+import com.imd.tripsplit.presentation.trip.CreateTripUiState
 import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripBottomBar
 import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripHeader
 import com.imd.tripsplit.ui.screens.home.trip.components.TripActivitiesCard
@@ -62,6 +65,14 @@ fun CreateTripContent(
                 isEditing = isEditing,
             )
 
+            if (state.submissionState is UiState.Error) {
+                androidx.compose.material3.Text(
+                    text = state.submissionState.message,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Spacer(modifier = Modifier.height(SpacingMD))
+            }
+
             Spacer(modifier = Modifier.height(SpacingLG))
 
             // 2. Informações Gerais (Título e Descrição)
@@ -103,7 +114,7 @@ fun CreateTripContent(
 
         // 6. Rodapé Fixo Inferior
         CreateTripBottomBar(
-            isLoading = state.isLoading,
+            isLoading = state.submissionState is UiState.Loading,
             onSubmitClick = onSubmitClick,
             onSaveDraftClick = onBackClick,
             isEditing = isEditing,

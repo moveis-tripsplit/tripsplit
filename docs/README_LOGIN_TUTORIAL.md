@@ -273,4 +273,4 @@ fun App() {
 ### Sugestões de experimentos para aprender praticando:
 1. **Experimente alternar o tema:** No `App.kt`, chame `TripSplitTheme(darkTheme = true)` para ver a tela renderizada na paleta escura.
 2. **Adicionar validação de formato de e-mail:** No `LoginUiState`, adicione um método que valide se o texto contém `@` e `.`.
-3. **Conectar com um ViewModel real:** No futuro, o `LoginScreen` pode coletar o estado a partir de um `ViewModel` compartilhado (`androidx.lifecycle.viewmodel.compose`).
+3. **Estado da tela:** O `LoginScreen` coleta o `StateFlow` exposto por `LoginViewModel`, que mantém os dados do formulário fora dos Composables.

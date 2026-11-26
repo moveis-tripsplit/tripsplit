@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.login
+package com.imd.tripsplit.presentation.login
 
 // ====================================================
 // 📋 Estado da Tela de Login (State Holder Pattern)

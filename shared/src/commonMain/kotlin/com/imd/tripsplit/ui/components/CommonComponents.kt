@@ -27,8 +27,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.imd.tripsplit.model.Participant
-import com.imd.tripsplit.model.TripStatus
+import com.imd.tripsplit.domain.model.Participant
+import com.imd.tripsplit.domain.model.TripStatus
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingMD

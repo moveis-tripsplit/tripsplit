@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.imd.tripsplit.model.TripFilter
+import com.imd.tripsplit.domain.model.TripFilter
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingSM
 

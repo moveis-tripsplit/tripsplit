@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.imd.tripsplit.model.Trip
+import com.imd.tripsplit.domain.model.Trip
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
