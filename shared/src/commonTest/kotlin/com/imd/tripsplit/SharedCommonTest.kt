@@ -4,8 +4,11 @@ import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.data.UserRepository
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripStatus
+import com.imd.tripsplit.ui.screens.login.cadastro.RegisterUiState
+import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -76,5 +79,27 @@ class SharedCommonTest {
         // 7. Viagem aparece na lista do usuário
         val userTrips = TripRepository.getTripsForCurrentUser()
         assertTrue(userTrips.any { it.id == tripId }, "A viagem cadastrada deve estar na lista do usuário.")
+    }
+
+    @Test
+    fun testRegisterUiStateValidation() {
+        var state = RegisterUiState()
+        assertFalse(state.isRegisterEnabled, "Estado inicial não deve permitir registro")
+        assertTrue(state.isBirthDateEmpty, "Data de nascimento deve iniciar vazia")
+
+        state = state.copy(
+            nome = "João da Silva",
+            email = "joao@exemplo.com",
+            password = "123",
+            confirmPassword = "123"
+        )
+        assertFalse(state.isRegisterEnabled, "Sem data de nascimento, registro deve estar desabilitado")
+
+        state = state.copy(
+            birthDate = LocalDate(2000, 5, 20),
+            birthDateInput = "20/05/2000"
+        )
+        assertTrue(state.isRegisterEnabled, "Com todos os dados válidos, registro deve estar habilitado")
+        assertFalse(state.isBirthDateEmpty, "Data de nascimento não deve estar vazia")
     }
 }

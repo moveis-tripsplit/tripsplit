@@ -63,6 +63,7 @@ import com.imd.tripsplit.ui.theme.SpacingXS
 import com.imd.tripsplit.ui.theme.TextDisabled
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
 
@@ -71,7 +72,7 @@ fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterUiState,
     onNameChange: (String) -> Unit,
-    onBirthDateChange: (LocalDate) -> Unit,
+    onBirthDateChange: (LocalDate?, String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
@@ -150,6 +151,7 @@ fun RegisterContent(
                         RegisterFormCard(
                             state = state,
                             birthDate = state.birthDate,
+                            birthDateInput = state.birthDateInput,
                             onBirthDateChange = onBirthDateChange,
                             onNameChange = onNameChange,
                             onEmailChange = onEmailChange,
@@ -186,6 +188,7 @@ fun RegisterContent(
                 RegisterFormCard(
                     state = state,
                     birthDate = state.birthDate,
+                    birthDateInput = state.birthDateInput,
                     onBirthDateChange = onBirthDateChange,
                     onNameChange = onNameChange,
                     onEmailChange = onEmailChange,
@@ -202,10 +205,40 @@ fun RegisterContent(
 }
 
 @Composable
+fun RegisterContent(
+    modifier: Modifier = Modifier,
+    state: RegisterUiState,
+    onNameChange: (String) -> Unit,
+    onBirthDateChange: (LocalDate) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onTogglePasswordVisibility: () -> Unit,
+    onToggleConfirmPasswordVisibility: () -> Unit,
+    onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit = {},
+) {
+    RegisterContent(
+        modifier = modifier,
+        state = state,
+        onNameChange = onNameChange,
+        onBirthDateChange = { date, _ -> date?.let { onBirthDateChange(it) } },
+        onEmailChange = onEmailChange,
+        onPasswordChange = onPasswordChange,
+        onConfirmPasswordChange = onConfirmPasswordChange,
+        onTogglePasswordVisibility = onTogglePasswordVisibility,
+        onToggleConfirmPasswordVisibility = onToggleConfirmPasswordVisibility,
+        onLoginClick = onLoginClick,
+        onRegisterClick = onRegisterClick,
+    )
+}
+
+@Composable
 private fun RegisterFormCard(
     state: RegisterUiState,
     birthDate: LocalDate?,
-    onBirthDateChange: (LocalDate) -> Unit,
+    birthDateInput: String,
+    onBirthDateChange: (LocalDate?, String) -> Unit,
     onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -297,6 +330,7 @@ private fun RegisterFormCard(
 
             BirthDateField(
                 birthDate = birthDate,
+                birthDateInput = birthDateInput,
                 onBirthDateChange = onBirthDateChange
             )
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -518,28 +552,104 @@ private fun RegisterFormCard(
 @Composable
 fun BirthDateField(
     birthDate: LocalDate?,
-    onBirthDateChange: (LocalDate) -> Unit
+    birthDateInput: String = "",
+    onBirthDateChange: (LocalDate?, String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
 
+    fun formatDateInput(input: String): String {
+        val digits = input.filter { it.isDigit() }.take(8)
+        val sb = StringBuilder()
+        for (i in digits.indices) {
+            if (i == 2 || i == 4) {
+                sb.append('/')
+            }
+            sb.append(digits[i])
+        }
+        if ((digits.length == 2 || digits.length == 4) && input.endsWith('/')) {
+            sb.append('/')
+        }
+        return sb.toString()
+    }
+
+    fun parseDate(text: String): LocalDate? {
+        val digits = text.filter { it.isDigit() }
+        if (digits.length != 8) return null
+        val day = digits.substring(0, 2).toIntOrNull() ?: return null
+        val month = digits.substring(2, 4).toIntOrNull() ?: return null
+        val year = digits.substring(4, 8).toIntOrNull() ?: return null
+        if (year < 1900 || year > 2100) return null
+        if (month !in 1..12) return null
+        if (day !in 1..31) return null
+        return try {
+            LocalDate(year, month, day)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val displayValue =
+        if (birthDateInput.isNotEmpty()) {
+            birthDateInput
+        } else {
+            birthDate?.let {
+                val day = it.dayOfMonth.toString().padStart(2, '0')
+                val month = it.monthNumber.toString().padStart(2, '0')
+                val year = it.year.toString().padStart(4, '0')
+                "$day/$month/$year"
+            } ?: ""
+        }
+
+    val digitsCount = displayValue.filter { it.isDigit() }.length
+    val isDateInvalid = digitsCount == 8 && birthDate == null
+
     OutlinedTextField(
-        value = birthDate?.toString() ?: "",
-        onValueChange = {},
-        modifier = Modifier.fillMaxWidth(),
-        readOnly = true,
-        placeholder = { Text("DD/MM/AAAA", color = TextDisabled, fontSize = 14.sp) },
-        trailingIcon = null,
+        value = displayValue,
+        onValueChange = { newValue ->
+            val formatted = formatDateInput(newValue)
+            val parsedDate = parseDate(formatted)
+            onBirthDateChange(parsedDate, formatted)
+        },
+        modifier = modifier.fillMaxWidth(),
+        readOnly = false,
+        isError = isDateInvalid,
+        supportingText =
+            if (isDateInvalid) {
+                {
+                    Text(
+                        text = "Data inválida. Use o formato DD/MM/AAAA",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
+                    )
+                }
+            } else {
+                null
+            },
+        placeholder = {
+            Text(
+                text = "DD/MM/AAAA",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp,
+            )
+        },
         leadingIcon = {
             IconButton(onClick = { showDatePicker = true }) {
                 Icon(
                     imageVector = TripSplitIcons.Calendar,
                     contentDescription = "Selecionar data de nascimento",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
                 )
             }
         },
         shape = RoundedCornerShape(RadiusMD),
         singleLine = true,
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next,
+            ),
         colors =
             OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -550,7 +660,12 @@ fun BirthDateField(
     )
 
     if (showDatePicker) {
-        val datePickerState = rememberDatePickerState()
+        val initialMillis =
+            birthDate?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = initialMillis,
+            )
 
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
@@ -563,7 +678,11 @@ fun BirthDateField(
                                     .fromEpochMilliseconds(millis)
                                     .toLocalDateTime(TimeZone.UTC)
                                     .date
-                            onBirthDateChange(date)
+                            val day = date.dayOfMonth.toString().padStart(2, '0')
+                            val month = date.monthNumber.toString().padStart(2, '0')
+                            val year = date.year.toString().padStart(4, '0')
+                            val formatted = "$day/$month/$year"
+                            onBirthDateChange(date, formatted)
                         }
                         showDatePicker = false
                     }
@@ -580,4 +699,18 @@ fun BirthDateField(
             DatePicker(state = datePickerState)
         }
     }
+}
+
+@Composable
+fun BirthDateField(
+    birthDate: LocalDate?,
+    onBirthDateChange: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BirthDateField(
+        birthDate = birthDate,
+        birthDateInput = "",
+        onBirthDateChange = { date, _ -> date?.let { onBirthDateChange(it) } },
+        modifier = modifier,
+    )
 }

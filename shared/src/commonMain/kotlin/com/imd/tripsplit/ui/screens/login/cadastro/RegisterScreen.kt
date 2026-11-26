@@ -24,8 +24,8 @@ fun RegisterScreen(
         onNameChange = {
             state = state.copy(nome = it, errorMessage = null)
         },
-        onBirthDateChange = {
-            state = state.copy(birthDate = it, errorMessage = null)
+        onBirthDateChange = { date, input ->
+            state = state.copy(birthDate = date, birthDateInput = input, errorMessage = null)
         },
         onEmailChange = {
             state = state.copy(email = it, errorMessage = null)
