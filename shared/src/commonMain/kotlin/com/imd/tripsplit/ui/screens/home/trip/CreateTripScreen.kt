@@ -60,9 +60,26 @@ fun CreateTripScreen(
                 )
                 onTripCreatedSuccess(editingTrip.id)
             } else {
+                val current = com.imd.tripsplit.data.UserRepository.currentUser.value
+                val currentUserId = current?.id ?: ""
+                val defaultParticipants =
+                    if (state.participants.isEmpty() && current != null) {
+                        listOf(
+                            com.imd.tripsplit.model.Participant(
+                                id = current.id,
+                                name = current.name,
+                                role = "Organizador",
+                                isOrganizer = true,
+                            ),
+                        )
+                    } else {
+                        state.participants.map { it.toParticipant() }
+                    }
+
                 val trip =
                     Trip(
                         id = "trip-${Random.nextInt(1000, 9999)}",
+                        userId = currentUserId,
                         title = state.title.trim(),
                         description = state.description.trim(),
                         destination = state.title.trim(),
@@ -71,7 +88,7 @@ fun CreateTripScreen(
                         myBalance = 0.0,
                         startDate = state.startDate,
                         endDate = state.endDate,
-                        participants = state.participants.map { it.toParticipant() },
+                        participants = defaultParticipants,
                         activities = state.activities,
                     )
                 TripRepository.addTrip(trip)

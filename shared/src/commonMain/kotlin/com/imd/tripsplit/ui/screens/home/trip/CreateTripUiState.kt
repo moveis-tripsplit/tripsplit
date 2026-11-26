@@ -1,9 +1,12 @@
 package com.imd.tripsplit.ui.screens.home.trip
 
+import kotlinx.serialization.Serializable
+
 /**
  * Representa uma atividade no roteiro da viagem.
  * Observação: O usuário pode criar a viagem sem atividades e adicioná-las posteriormente.
  */
+@Serializable
 data class TripActivity(
     val id: String,
     val title: String,
@@ -17,6 +20,7 @@ data class TripActivity(
  * Observação: Participantes podem ser adicionados agora ou convidados posteriormente.
  * Não é obrigatório possuir conta cadastrada no momento da criação.
  */
+@Serializable
 data class TripParticipant(
     val id: String,
     val name: String,
