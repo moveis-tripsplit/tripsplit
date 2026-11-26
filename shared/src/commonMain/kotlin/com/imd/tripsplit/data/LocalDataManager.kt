@@ -122,4 +122,100 @@ object LocalDataManager {
             _trips.value
         }
     }
+
+    // --- PARTICIPANTES / VIAJANTES ---
+
+    fun findUserByEmail(email: String): User? {
+        val query = email.trim()
+        return _dbState.value.users.find { it.email.equals(query, ignoreCase = true) }
+    }
+
+    fun getTripParticipants(tripId: String): List<com.imd.tripsplit.model.Participant> {
+        return getTrip(tripId)?.participants ?: emptyList()
+    }
+
+    fun addParticipantToTrip(
+        tripId: String,
+        participant: com.imd.tripsplit.model.Participant,
+    ): Result<com.imd.tripsplit.model.Participant> {
+        val trip = getTrip(tripId) ?: return Result.failure(IllegalArgumentException("Viagem não encontrada."))
+
+        // Validação de dados cadastrais
+        val dataValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
+            name = participant.name,
+            email = participant.email,
+            hasAccount = participant.hasAccount,
+        )
+        if (dataValidation.isFailure) {
+            return Result.failure(dataValidation.exceptionOrNull() ?: IllegalArgumentException("Dados inválidos."))
+        }
+
+        // Se tiver conta e userId não foi definido, tenta vincular com usuário local
+        val resolvedParticipant = if (participant.hasAccount && participant.userId.isNullOrBlank()) {
+            val matchedUser = participant.email?.let { findUserByEmail(it) }
+            if (matchedUser != null) {
+                participant.copy(userId = matchedUser.id, name = if (participant.name.isBlank()) matchedUser.name else participant.name)
+            } else {
+                participant
+            }
+        } else {
+            participant
+        }
+
+        val updatedParticipants = trip.participants + resolvedParticipant
+        updateTrip(trip.copy(participants = updatedParticipants))
+        return Result.success(resolvedParticipant)
+    }
+
+    fun updateParticipantInTrip(
+        tripId: String,
+        updated: com.imd.tripsplit.model.Participant,
+    ): Result<com.imd.tripsplit.model.Participant> {
+        val trip = getTrip(tripId) ?: return Result.failure(IllegalArgumentException("Viagem não encontrada."))
+
+        // Validação de dados cadastrais
+        val dataValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
+            name = updated.name,
+            email = updated.email,
+            hasAccount = updated.hasAccount,
+        )
+        if (dataValidation.isFailure) {
+            return Result.failure(dataValidation.exceptionOrNull() ?: IllegalArgumentException("Dados inválidos."))
+        }
+
+        // Validação de alteração de papel caso deixe de ser organizador
+        val roleValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = updated.id,
+            newRoleIsOrganizer = updated.isOrganizer,
+        )
+        if (roleValidation.isFailure) {
+            return Result.failure(roleValidation.exceptionOrNull() ?: IllegalStateException("Erro ao alterar papel."))
+        }
+
+        val updatedParticipants = trip.participants.map { if (it.id == updated.id) updated else it }
+        updateTrip(trip.copy(participants = updatedParticipants))
+        return Result.success(updated)
+    }
+
+    fun removeParticipantFromTrip(
+        tripId: String,
+        participantId: String,
+        hasFinancialPending: Boolean = false,
+    ): Result<Unit> {
+        val trip = getTrip(tripId) ?: return Result.failure(IllegalArgumentException("Viagem não encontrada."))
+
+        val validation = com.imd.tripsplit.domain.TripParticipantValidator.validateDeletion(
+            trip = trip,
+            participantId = participantId,
+            hasFinancialPending = hasFinancialPending,
+        )
+        if (validation.isFailure) {
+            return Result.failure(validation.exceptionOrNull() ?: IllegalStateException("Erro ao remover participante."))
+        }
+
+        val updatedParticipants = trip.participants.filterNot { it.id == participantId }
+        updateTrip(trip.copy(participants = updatedParticipants))
+        return Result.success(Unit)
+    }
 }

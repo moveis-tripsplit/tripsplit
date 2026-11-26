@@ -13,6 +13,8 @@ import com.imd.tripsplit.model.TripStatus
 import com.imd.tripsplit.model.toUiState
 import com.imd.tripsplit.ui.screens.home.trip.components.AddActivityDialog
 import com.imd.tripsplit.ui.screens.home.trip.components.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.DeleteParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.EditParticipantDialog
 import kotlin.random.Random
 
 @Composable
@@ -39,7 +41,42 @@ fun CreateTripScreen(
     if (state.showAddParticipantModal) {
         AddParticipantDialog(
             onDismiss = { state = state.reduce(CreateTripAction.CloseAddParticipantModal) },
-            onConfirm = { participant -> state = state.reduce(CreateTripAction.AddParticipant(participant)) },
+            onConfirm = { participant ->
+                state = state.reduce(CreateTripAction.AddParticipant(participant))
+                if (editingTrip != null) {
+                    TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
+                }
+            },
+        )
+    }
+
+    // Diálogo modal para editar participante
+    state.editingParticipant?.let { participantToEdit ->
+        EditParticipantDialog(
+            participant = participantToEdit,
+            errorMessage = state.participantErrorMessage,
+            onDismiss = { state = state.reduce(CreateTripAction.CloseEditParticipantModal) },
+            onConfirm = { updated ->
+                state = state.reduce(CreateTripAction.UpdateParticipant(updated))
+                if (editingTrip != null && state.participantErrorMessage == null) {
+                    TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
+                }
+            },
+        )
+    }
+
+    // Diálogo modal para confirmar exclusão de participante
+    state.deletingParticipant?.let { participantToDelete ->
+        DeleteParticipantDialog(
+            participant = participantToDelete,
+            errorMessage = state.participantErrorMessage,
+            onDismiss = { state = state.reduce(CreateTripAction.CloseDeleteParticipantModal) },
+            onConfirm = {
+                state = state.reduce(CreateTripAction.ConfirmDeleteParticipant(participantToDelete.id))
+                if (editingTrip != null && state.participantErrorMessage == null) {
+                    TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
+                }
+            },
         )
     }
 

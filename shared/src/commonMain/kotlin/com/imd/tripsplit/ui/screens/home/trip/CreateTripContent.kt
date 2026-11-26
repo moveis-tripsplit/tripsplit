@@ -98,6 +98,9 @@ fun CreateTripContent(
                 participants = state.participants,
                 onAddParticipantClick = { onAction(CreateTripAction.OpenAddParticipantModal) },
                 onRemoveParticipant = { onAction(CreateTripAction.RemoveParticipant(it)) },
+                onEditParticipant = { onAction(CreateTripAction.OpenEditParticipantModal(it)) },
+                onDeleteParticipant = { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) },
+                errorMessage = state.participantErrorMessage,
             )
         }
 

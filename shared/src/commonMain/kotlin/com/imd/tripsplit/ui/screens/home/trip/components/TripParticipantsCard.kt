@@ -42,7 +42,10 @@ import com.imd.tripsplit.ui.theme.SpacingXS
 fun TripParticipantsCard(
     participants: List<TripParticipant>,
     onAddParticipantClick: () -> Unit,
-    onRemoveParticipant: (String) -> Unit,
+    onRemoveParticipant: (String) -> Unit = {},
+    onEditParticipant: ((TripParticipant) -> Unit)? = null,
+    onDeleteParticipant: ((TripParticipant) -> Unit)? = null,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -88,6 +91,24 @@ fun TripParticipantsCard(
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(SpacingXS))
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(RadiusMD))
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                            .padding(SpacingSM),
+                ) {
+                    Text(
+                        text = errorMessage,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(SpacingSM))
 
@@ -143,14 +164,14 @@ fun TripParticipantsCard(
                                     Box(
                                         modifier =
                                             Modifier
-                                                .size(28.dp)
+                                                .size(32.dp)
                                                 .clip(CircleShape)
                                                 .background(if (participant.isOrganizer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
                                             text = participant.initials,
-                                            fontSize = 10.sp,
+                                            fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = if (participant.isOrganizer) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
                                         )
@@ -165,18 +186,57 @@ fun TripParticipantsCard(
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                         )
-                                        Text(
-                                            text = participant.role,
-                                            fontSize = 9.sp,
-                                            color = if (participant.isOrganizer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        ) {
+                                            Text(
+                                                text = participant.role,
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = if (participant.isOrganizer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                                            )
+                                            if (!participant.hasAccount) {
+                                                Text(
+                                                    text = "• Convidado",
+                                                    fontSize = 8.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                                )
+                                            }
+                                        }
+                                        if (!participant.contactOrPix.isNullOrBlank()) {
+                                            Text(
+                                                text = "Pix: ${participant.contactOrPix}",
+                                                fontSize = 8.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        }
                                     }
 
-                                    IconButton(
-                                        onClick = { onRemoveParticipant(participant.id) },
-                                        modifier = Modifier.size(20.dp),
-                                    ) {
-                                        Text("✕", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        if (onEditParticipant != null) {
+                                            IconButton(
+                                                onClick = { onEditParticipant(participant) },
+                                                modifier = Modifier.size(24.dp),
+                                            ) {
+                                                Text("✏️", fontSize = 11.sp)
+                                            }
+                                        }
+
+                                        IconButton(
+                                            onClick = {
+                                                if (onDeleteParticipant != null) {
+                                                    onDeleteParticipant(participant)
+                                                } else {
+                                                    onRemoveParticipant(participant.id)
+                                                }
+                                            },
+                                            modifier = Modifier.size(24.dp),
+                                        ) {
+                                            Text(if (onDeleteParticipant != null) "🗑️" else "✕", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        }
                                     }
                                 }
                             }
