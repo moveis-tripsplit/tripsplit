@@ -42,6 +42,7 @@ import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXS
 import com.imd.tripsplit.ui.theme.TextSecondary
+import com.imd.tripsplit.domain.parseActivityDateTime
 
 @Composable
 fun TripActivitiesCard(
@@ -127,8 +128,13 @@ fun TripActivitiesCard(
                     }
                 }
             } else {
-                activities.forEach { activity ->
-                    val activityParticipants =
+                val chronologicalActivities = activities.sortedWith(
+                    compareBy(nullsLast()) { activity: TripActivity ->
+                        parseActivityDateTime(activity.dateHour)
+                    },
+                )
+
+                chronologicalActivities.forEach { activity ->                    val activityParticipants =
                         activity.participantIds
                             .distinct()
                             .mapNotNull { participantId ->

@@ -2,6 +2,7 @@ package com.imd.tripsplit.domain
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.LocalDateTime
 
 private val tripDatePattern = Regex("""(\d{2})/(\d{2})/(\d{4})""")
 private val activityTimePattern = Regex("""(\d{2}):(\d{2})""")
@@ -62,4 +63,13 @@ internal fun activityDateError(
     }
 
     return null
+}
+internal fun parseActivityDateTime(dateHour: String): LocalDateTime? {
+    val parts = dateHour.split('•')
+    if (parts.size != 2) return null
+
+    val date = parseTripDate(parts[0]) ?: return null
+    val time = parseActivityTime(parts[1]) ?: return null
+
+    return LocalDateTime(date, time)
 }
