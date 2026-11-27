@@ -85,8 +85,6 @@ fun CreateTripContent(
                 onDescriptionChange = {
                     onAction(CreateTripAction.UpdateDescription(it))
                 },
-                onTitleChange = { onAction(CreateTripAction.UpdateTitle(it)) },
-                onDescriptionChange = { onAction(CreateTripAction.UpdateDescription(it)) },
                 enabled = isCreator,
             )
 
@@ -102,8 +100,6 @@ fun CreateTripContent(
                 onEndDateChange = {
                     onAction(CreateTripAction.UpdateEndDate(it))
                 },
-                onStartDateChange = { onAction(CreateTripAction.UpdateStartDate(it)) },
-                onEndDateChange = { onAction(CreateTripAction.UpdateEndDate(it)) },
                 enabled = isCreator,
             )
 
@@ -116,13 +112,15 @@ fun CreateTripContent(
                 onEditActivitiesClick = onEditActivitiesClick,
                 activities = state.activities,
                 onAddActivityClick = {
-                    onAction(CreateTripAction.OpenAddActivityModal)
+                    if (isCreator) {
+                        onAction(CreateTripAction.OpenAddActivityModal)
+                    }
                 },
                 onRemoveActivity = {
-                    onAction(CreateTripAction.RemoveActivity(it))
+                    if (isCreator) {
+                        onAction(CreateTripAction.RemoveActivity(it))
+                    }
                 },
-                onAddActivityClick = { if (isCreator) onAction(CreateTripAction.OpenAddActivityModal) },
-                onRemoveActivity = { if (isCreator) onAction(CreateTripAction.RemoveActivity(it)) },
                 isCreator = isCreator,
             )
 
@@ -132,25 +130,28 @@ fun CreateTripContent(
             TripParticipantsCard(
                 participants = state.participants,
                 onAddParticipantClick = {
-                    onAction(CreateTripAction.OpenAddParticipantModal)
+                    if (isCreator) {
+                        onAction(CreateTripAction.OpenAddParticipantModal)
+                    }
                 },
                 onRemoveParticipant = {
-                    onAction(CreateTripAction.RemoveParticipant(it))
-                },
-                    if (isCreator) onAction(CreateTripAction.OpenAddParticipantModal)
-                },
-                onRemoveParticipant = {
-                    if (isOrganizer) onAction(CreateTripAction.RemoveParticipant(it))
+                    if (isOrganizer) {
+                        onAction(CreateTripAction.RemoveParticipant(it))
+                    }
                 },
                 onEditParticipant =
                     if (isOrganizer) {
-                        { onAction(CreateTripAction.OpenEditParticipantModal(it)) }
+                        {
+                            onAction(CreateTripAction.OpenEditParticipantModal(it))
+                        }
                     } else {
                         null
                     },
                 onDeleteParticipant =
                     if (isOrganizer) {
-                        { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) }
+                        {
+                            onAction(CreateTripAction.OpenDeleteParticipantModal(it))
+                        }
                     } else {
                         null
                     },

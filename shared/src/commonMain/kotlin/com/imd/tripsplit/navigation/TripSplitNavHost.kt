@@ -92,9 +92,6 @@ fun TripSplitNavHost(
         composable<Route.Home> {
             val trips by TripRepository.trips.collectAsState()
 
-            var selectedFilter by remember {
-                mutableStateOf(TripFilter.ALL)
-            }
             val allTrips by TripRepository.trips.collectAsState()
             val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
             val userTrips =
@@ -108,14 +105,20 @@ fun TripSplitNavHost(
                                 trip.userId.isBlank() ||
                                 trip.participants.any { p ->
                                     (p.userId != null && p.userId == uid) ||
-                                        (!p.email.isNullOrBlank() && p.email.trim().equals(uEmail, ignoreCase = true))
+                                        (
+                                            !p.email.isNullOrBlank() &&
+                                                p.email.trim().equals(uEmail, ignoreCase = true)
+                                        )
                                 }
                         }
                     } else {
                         allTrips
                     }
                 }
-            var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
+
+            var selectedFilter by remember {
+                mutableStateOf(TripFilter.ALL)
+            }
 
             HomeScreen(
                 trips = userTrips,

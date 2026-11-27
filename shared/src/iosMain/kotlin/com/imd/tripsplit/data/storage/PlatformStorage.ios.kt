@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package com.imd.tripsplit.data.storage
 
 import platform.Foundation.NSDocumentDirectory
@@ -20,7 +22,7 @@ actual class PlatformStorage actual constructor() {
         return try {
             NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null) as? String
         } catch (e: Exception) {
-            null
+            nullgit
         }
     }
 

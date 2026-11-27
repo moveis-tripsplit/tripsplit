@@ -27,19 +27,25 @@ fun CreateTripScreen(
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
     onManageExpensesClick: (tripId: String) -> Unit = {},
 ) {
+    val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+
     val editingTrip =
         remember(tripId) {
             tripId?.let { TripRepository.getTrip(it) }
         }
 
-    var state by remember(tripId) {
-        mutableStateOf(
-            editingTrip?.toUiState() ?: CreateTripUiState()
-        )
-    val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+    val isUserCreator =
+        editingTrip == null ||
+            editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
+
+    val isUserOrganizer =
+        editingTrip == null ||
+            editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
+
     val initialParticipants =
         remember(currentUser) {
             val current = currentUser
+
             if (current != null) {
                 listOf(
                     TripParticipant(
@@ -65,12 +71,12 @@ fun CreateTripScreen(
                 emptyList()
             }
         }
-    val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
-    val isUserCreator = editingTrip == null || editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
-    val isUserOrganizer = editingTrip == null || editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
 
-    var state by remember(tripId) {
-        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState(participants = initialParticipants))
+    var state by remember(tripId, initialParticipants) {
+        mutableStateOf(
+            editingTrip?.toUiState()
+                ?: CreateTripUiState(participants = initialParticipants)
+        )
     }
 
     // Diálogo modal para adicionar atividade ao roteiro
@@ -94,6 +100,7 @@ fun CreateTripScreen(
     // Diálogo modal para adicionar participante
     if (state.showAddParticipantModal) {
         AddParticipantDialog(
+            isCreator = isUserCreator,
             onDismiss = {
                 state =
                     state.reduce(
@@ -101,42 +108,65 @@ fun CreateTripScreen(
                     )
             },
             onConfirm = { participant ->
-                state =
-                    state.reduce(
-                        CreateTripAction.AddParticipant(participant)
-                    )
+                if (isUserCreator) {
+                    state =
+                        state.reduce(
+                            CreateTripAction.AddParticipant(participant)
+                        )
+
+                    if (editingTrip != null) {
+                        TripRepository.updateTrip(
+                            editingTrip.copy(
+                                participants =
+                                    state.participants.map {
+                                        it.toParticipant()
+                                    }
+                            )
+                        )
+                    }
+                }
             },
         )
-        if (!isUserCreator) {
-            state = state.copy(showAddParticipantModal = false, participantErrorMessage = "Apenas o criador da viagem pode adicionar participantes.")
-        } else {
-            AddParticipantDialog(
-                isCreator = isUserCreator,
-                onDismiss = { state = state.reduce(CreateTripAction.CloseAddParticipantModal) },
-                onConfirm = { participant ->
-                    state = state.reduce(CreateTripAction.AddParticipant(participant))
-                    if (editingTrip != null) {
-                        TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
-                    }
-                },
-            )
-        }
     }
 
     // Diálogo modal para editar participante
     state.editingParticipant?.let { participantToEdit ->
         if (!isUserOrganizer) {
-            state = state.copy(editingParticipant = null, participantErrorMessage = "Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão.")
+            state =
+                state.copy(
+                    editingParticipant = null,
+                    participantErrorMessage =
+                        "Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão."
+                )
         } else {
             EditParticipantDialog(
                 participant = participantToEdit,
                 errorMessage = state.participantErrorMessage,
                 isCreatorUser = isUserCreator,
-                onDismiss = { state = state.reduce(CreateTripAction.CloseEditParticipantModal) },
+                onDismiss = {
+                    state =
+                        state.reduce(
+                            CreateTripAction.CloseEditParticipantModal
+                        )
+                },
                 onConfirm = { updated ->
-                    state = state.reduce(CreateTripAction.UpdateParticipant(updated))
-                    if (editingTrip != null && state.participantErrorMessage == null) {
-                        TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
+                    state =
+                        state.reduce(
+                            CreateTripAction.UpdateParticipant(updated)
+                        )
+
+                    if (
+                        editingTrip != null &&
+                        state.participantErrorMessage == null
+                    ) {
+                        TripRepository.updateTrip(
+                            editingTrip.copy(
+                                participants =
+                                    state.participants.map {
+                                        it.toParticipant()
+                                    }
+                            )
+                        )
                     }
                 },
             )
@@ -146,16 +176,42 @@ fun CreateTripScreen(
     // Diálogo modal para confirmar exclusão de participante
     state.deletingParticipant?.let { participantToDelete ->
         if (!isUserOrganizer) {
-            state = state.copy(deletingParticipant = null, participantErrorMessage = "Apenas organizadores podem excluir participantes da viagem.")
+            state =
+                state.copy(
+                    deletingParticipant = null,
+                    participantErrorMessage =
+                        "Apenas organizadores podem excluir participantes da viagem."
+                )
         } else {
             DeleteParticipantDialog(
                 participant = participantToDelete,
                 errorMessage = state.participantErrorMessage,
-                onDismiss = { state = state.reduce(CreateTripAction.CloseDeleteParticipantModal) },
+                onDismiss = {
+                    state =
+                        state.reduce(
+                            CreateTripAction.CloseDeleteParticipantModal
+                        )
+                },
                 onConfirm = {
-                    state = state.reduce(CreateTripAction.ConfirmDeleteParticipant(participantToDelete.id))
-                    if (editingTrip != null && state.participantErrorMessage == null) {
-                        TripRepository.updateTrip(editingTrip.copy(participants = state.participants.map { it.toParticipant() }))
+                    state =
+                        state.reduce(
+                            CreateTripAction.ConfirmDeleteParticipant(
+                                participantToDelete.id
+                            )
+                        )
+
+                    if (
+                        editingTrip != null &&
+                        state.participantErrorMessage == null
+                    ) {
+                        TripRepository.updateTrip(
+                            editingTrip.copy(
+                                participants =
+                                    state.participants.map {
+                                        it.toParticipant()
+                                    }
+                            )
+                        )
                     }
                 },
             )
@@ -169,7 +225,7 @@ fun CreateTripScreen(
         },
         onSubmitClick = {
             if (editingTrip != null) {
-                TripRepository.updateTrip(
+                val updatedTrip =
                     editingTrip.copy(
                         title = state.title.trim(),
                         description = state.description.trim(),
@@ -180,51 +236,101 @@ fun CreateTripScreen(
                                 it.toParticipant()
                             },
                         activities = state.activities,
-                    ),
-                )
+                    )
 
-                onTripCreatedSuccess(editingTrip.id)
                 if (!isUserCreator) {
+                    TripRepository.updateTrip(updatedTrip)
+
+                    onTripCreatedSuccess(editingTrip.id)
                     onBackClick()
+
                     return@CreateTripContent
                 }
+
                 val updateResult =
                     TripRepository.updateTrip(
-                        editingTrip.copy(
-                            title = state.title.trim(),
-                            description = state.description.trim(),
-                            startDate = state.startDate,
-                            endDate = state.endDate,
+                        updatedTrip.copy(
                             participants =
                                 state.participants.map { p ->
-                                    val isCreator = p.isCreator || (editingTrip.userId.isNotBlank() && (p.userId == editingTrip.userId || p.id == editingTrip.userId))
+                                    val isCreator =
+                                        p.isCreator ||
+                                            (
+                                                editingTrip.userId.isNotBlank() &&
+                                                    (
+                                                        p.userId == editingTrip.userId ||
+                                                            p.id == editingTrip.userId
+                                                    )
+                                            )
+
                                     p.toParticipant().copy(
                                         isCreator = isCreator,
-                                        isOrganizer = if (isCreator) true else p.isOrganizer,
-                                        role = if (isCreator) "Organizador" else p.role,
+                                        isOrganizer =
+                                            if (isCreator) {
+                                                true
+                                            } else {
+                                                p.isOrganizer
+                                            },
+                                        role =
+                                            if (isCreator) {
+                                                "Organizador"
+                                            } else {
+                                                p.role
+                                            },
                                     )
                                 },
-                            activities = state.activities,
                         ),
                         requesterUserId = currentUser?.id,
                         requesterEmail = currentUser?.email,
                     )
+
                 if (updateResult.isSuccess) {
                     onTripCreatedSuccess(editingTrip.id)
                 }
             } else {
                 val current = currentUser
                 val currentUserId = current?.id ?: ""
+
                 val defaultParticipants =
                     state.participants.map { p ->
-                        val isCreator = p.isCreator || (currentUserId.isNotBlank() && (p.userId == currentUserId || p.id == currentUserId))
+                        val isCreator =
+                            p.isCreator ||
+                                (
+                                    currentUserId.isNotBlank() &&
+                                        (
+                                            p.userId == currentUserId ||
+                                                p.id == currentUserId
+                                        )
+                                )
+
                         p.toParticipant().copy(
                             isCreator = isCreator,
-                            isOrganizer = if (isCreator) true else p.isOrganizer,
-                            role = if (isCreator) "Organizador" else p.role,
+                            isOrganizer =
+                                if (isCreator) {
+                                    true
+                                } else {
+                                    p.isOrganizer
+                                },
+                            role =
+                                if (isCreator) {
+                                    "Organizador"
+                                } else {
+                                    p.role
+                                },
                         )
                     }.let { list ->
-                        if (current != null && list.none { it.isCreator || (currentUserId.isNotBlank() && (it.userId == currentUserId || it.id == currentUserId)) }) {
+                        if (
+                            current != null &&
+                            list.none {
+                                it.isCreator ||
+                                    (
+                                        currentUserId.isNotBlank() &&
+                                            (
+                                                it.userId == currentUserId ||
+                                                    it.id == currentUserId
+                                            )
+                                    )
+                            }
+                        ) {
                             listOf(
                                 com.imd.tripsplit.model.Participant(
                                     id = current.id,
@@ -257,10 +363,6 @@ fun CreateTripScreen(
                         myBalance = 0.0,
                         startDate = state.startDate,
                         endDate = state.endDate,
-                        participants =
-                            state.participants.map {
-                                it.toParticipant()
-                            },
                         participants = defaultParticipants,
                         activities = state.activities,
                     )
