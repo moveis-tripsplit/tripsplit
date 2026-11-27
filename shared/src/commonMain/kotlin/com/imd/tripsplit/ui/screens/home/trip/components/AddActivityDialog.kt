@@ -36,10 +36,21 @@ import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import kotlin.random.Random
+import com.imd.tripsplit.domain.activityDateError
+import com.imd.tripsplit.domain.tripDateRange
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun AddActivityDialog(
     availableParticipants: List<TripParticipant>,
+    startDate: String,
+    endDate: String,
     initialActivity: TripActivity? = null,
     onDismiss: () -> Unit,
     onConfirm: (TripActivity) -> Unit,
@@ -48,9 +59,19 @@ fun AddActivityDialog(
         mutableStateOf(initialActivity?.title.orEmpty())
     }
 
-    var dateHour by remember(initialActivity?.id) {
-        mutableStateOf(initialActivity?.dateHour.orEmpty())
+    val originalDateHour = initialActivity?.dateHour.orEmpty()
+    val originalDigits = originalDateHour.filter { it in '0'..'9' }
+
+    val needsDateReentry = originalDateHour.isNotBlank() && originalDigits.length != 12
+
+    var dateHourDigits by remember(initialActivity?.id) {
+        mutableStateOf(if (needsDateReentry) "" else originalDigits)
     }
+
+    var dateFieldFocused by remember(initialActivity?.id) { mutableStateOf(false) }
+    var dateFieldEdited by remember(initialActivity?.id) { mutableStateOf(false) }
+
+    val dateHour = formatActivityDateHour(dateHourDigits)
 
     var location by remember(initialActivity?.id) {
         mutableStateOf(initialActivity?.location.orEmpty())
@@ -78,10 +99,14 @@ fun AddActivityDialog(
                                 parsedCost >= 0.0
                         )
 
+    val tripPeriod = tripDateRange(startDate, endDate)
+    val dateError = activityDateError(dateHour, tripPeriod)
+    val showDateError =
+        tripPeriod != null && dateFieldEdited && !dateFieldFocused && dateError != null
     val canConfirm =
         title.isNotBlank() &&
-                dateHour.isNotBlank() &&
                 location.isNotBlank() &&
+                dateError == null &&
                 isCostValid
 
 
@@ -118,28 +143,52 @@ fun AddActivityDialog(
                     shape = RoundedCornerShape(RadiusMD),
                 )
                 OutlinedTextField(
-                    value = dateHour,
-                    onValueChange = { dateHour = it },
+                    value = dateHourDigits,
+                    onValueChange = { input ->
+                        val digits = input.filter { it in '0'..'9' }
+                        if (digits.length <= 12 && digits != dateHourDigits) {
+                            dateHourDigits = digits
+                            dateFieldEdited = true
+                        }
+                    },
                     label = { Text("Data / Horário *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("Ex: 16/11 • 10:00", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+                    placeholder = { Text("DD/MM/AAAA • HH:mm", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
+                    visualTransformation = ActivityDateHourMask,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = showDateError,
+                    supportingText = {
+                        val message = when {
+                            tripPeriod == null ->
+                                "Defina um período válido no formulário da viagem para adicionar atividades."
+
+                            showDateError -> dateError.orEmpty()
+
+                            needsDateReentry && !dateFieldEdited ->
+                                "Data salva: $originalDateHour. Informe a data completa com o ano."
+
+                            else -> "Digite apenas os números da data e do horário."
+                        }
+                        Text(message)
+                    },
                     singleLine = true,
-                    textStyle =
-                        LocalTextStyle.current.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { dateFieldFocused = it.isFocused },
                     shape = RoundedCornerShape(RadiusMD),
                 )
+
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = it },
                     label = { Text("Local *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     placeholder = { Text("Ex: Ilha do Campeche", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
-                    textStyle =
-                        LocalTextStyle.current.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
@@ -267,4 +316,39 @@ fun AddActivityDialog(
         shape = RoundedCornerShape(RadiusLG),
         containerColor = MaterialTheme.colorScheme.surface,
     )
+}
+
+private fun formatActivityDateHour(digits: String): String = buildString {
+    digits.forEachIndexed { index, digit ->
+        when (index) {
+            2, 4 -> append('/')
+            8 -> append(" • ")
+            10 -> append(':')
+        }
+        append(digit)
+    }
+}
+
+private object ActivityDateHourMask : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val formatted = formatActivityDateHour(text.text)
+
+        val offsets = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset == 0) return 0
+
+                var digitsSeen = 0
+                for (index in formatted.indices) {
+                    if (formatted[index] in '0'..'9') digitsSeen++
+                    if (digitsSeen == offset) return index + 1
+                }
+                return formatted.length
+            }
+
+            override fun transformedToOriginal(offset: Int): Int =
+                formatted.take(offset).count { it in '0'..'9' }
+        }
+
+        return TransformedText(AnnotatedString(formatted), offsets)
+    }
 }

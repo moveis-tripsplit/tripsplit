@@ -17,6 +17,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.data.toParticipant
+import com.imd.tripsplit.domain.activityDateError
+import com.imd.tripsplit.domain.tripDateRange
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripStatus
 import com.imd.tripsplit.model.toUiState
@@ -69,6 +71,8 @@ fun CreateTripScreen(
     var state by remember(tripId) {
         mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState(participants = initialParticipants))
     }
+
+    var tripDateSaveError by remember(tripId) { mutableStateOf<String?>(null) }
 
     val scope = rememberCoroutineScope()
     var savingParticipant by remember(tripId) { mutableStateOf(false) }
@@ -130,6 +134,8 @@ fun CreateTripScreen(
     ) {
         AddActivityDialog(
             availableParticipants = state.participants,
+            startDate = state.startDate,
+            endDate = state.endDate,
             initialActivity = initialActivity,
             onDismiss = { state = state.reduce(CreateTripAction.CloseAddActivityModal,) },
             onConfirm = { activity ->
@@ -301,10 +307,42 @@ fun CreateTripScreen(
         }
     }
 
+    tripDateSaveError?.let { message ->
+        AlertDialog(
+            onDismissRequest = { tripDateSaveError = null },
+            title = { Text("Confira o período da viagem") },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = { tripDateSaveError = null }) {
+                    Text("Entendi")
+                }
+            },
+        )
+    }
+
     CreateTripContent(
         state = state,
         onAction = { action -> state = state.reduce(action) },
         onSubmitClick = {
+            if (editingTrip != null && !isUserCreator) {
+                onBackClick()
+                return@CreateTripContent
+            }
+
+            val period = tripDateRange(state.startDate, state.endDate)
+            if (period == null) {
+                tripDateSaveError = "Confira as datas de início e término da viagem."
+                return@CreateTripContent
+            }
+
+            for (activity in state.activities) {
+                val error = activityDateError(activity.dateHour, period)
+                if (error != null) {
+                    tripDateSaveError = "Confira a atividade “${activity.title}”. $error"
+                    return@CreateTripContent
+                }
+            }
+
             if (editingTrip != null) {
                 if (!isUserCreator) {
                     onBackClick()

@@ -259,6 +259,7 @@ fun TripActivitiesCard(
                         text = "+ Adicionar atividade ao roteiro",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

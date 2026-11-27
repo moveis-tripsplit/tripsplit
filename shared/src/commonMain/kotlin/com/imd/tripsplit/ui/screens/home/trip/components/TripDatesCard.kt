@@ -25,11 +25,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imd.tripsplit.domain.tripDateRange
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingSM
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun TripDatesCard(
@@ -61,26 +68,12 @@ fun TripDatesCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(SpacingSM),
             ) {
-                OutlinedTextField(
+                TripDateField(
                     value = startDate,
                     onValueChange = onStartDateChange,
-                    readOnly = !enabled,
-                    label = { Text("Data de Início", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    textStyle =
-                        LocalTextStyle.current.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
+                    label = "Data de Início",
+                    enabled = enabled,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(RadiusMD),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                    singleLine = true,
                 )
 
                 Text(
@@ -90,26 +83,12 @@ fun TripDatesCard(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                 )
 
-                OutlinedTextField(
+                TripDateField(
                     value = endDate,
                     onValueChange = onEndDateChange,
-                    readOnly = !enabled,
-                    label = { Text("Data de Término", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                    textStyle =
-                        LocalTextStyle.current.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
+                    label = "Data de Término",
+                    enabled = enabled,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(RadiusMD),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                    singleLine = true,
                 )
             }
 
@@ -120,8 +99,7 @@ fun TripDatesCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (startDate.isNotBlank() && endDate.isNotBlank()) {
-                    Box(
+                if (tripDateRange(startDate, endDate) != null) {                    Box(
                         modifier =
                             Modifier
                                 .clip(RoundedCornerShape(RadiusXL))
@@ -135,6 +113,12 @@ fun TripDatesCard(
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                         )
                     }
+                } else if (startDate.isNotBlank() && endDate.isNotBlank()) {
+                    Text(
+                        text = "Use DD/MM/AAAA. O término deve ser igual ou posterior ao início.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 } else {
                     Text(
                         text = "💡 Datas flexíveis podem ser alteradas depois",
@@ -145,4 +129,81 @@ fun TripDatesCard(
             }
         }
     }
+}
+
+private fun formatTripDate(digits: String): String = buildString {
+    digits.forEachIndexed { index, digit ->
+        if (index == 2 || index == 4) append('/')
+        append(digit)
+    }
+}
+
+private object TripDateMask : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val formatted = formatTripDate(text.text)
+
+        val offsets = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                var position = offset
+                if (offset > 2) position++
+                if (offset > 4) position++
+                return position
+            }
+
+            override fun transformedToOriginal(offset: Int): Int =
+                formatted.take(offset).count { it in '0'..'9' }
+        }
+
+        return TransformedText(AnnotatedString(formatted), offsets)
+    }
+}
+
+@Composable
+private fun TripDateField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val digits = value.filter { it in '0'..'9' }
+
+    OutlinedTextField(
+        value = digits,
+        onValueChange = { input ->
+            val newDigits = input.filter { it in '0'..'9' }
+            if (newDigits.length <= 8) {
+                onValueChange(formatTripDate(newDigits))
+            }
+        },
+        readOnly = !enabled,
+        label = {
+            Text(
+                text = label,
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
+        placeholder = {
+            Text(
+                text = "DD/MM/AAAA",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
+        visualTransformation = TripDateMask,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colorScheme.onSurface,
+        ),
+        modifier = modifier,
+        shape = RoundedCornerShape(RadiusMD),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        singleLine = true,
+    )
 }
