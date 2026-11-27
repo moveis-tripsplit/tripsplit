@@ -86,8 +86,18 @@ fun TripSplitNavHost(
             val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
             val userTrips =
                 remember(allTrips, currentUser) {
-                    if (currentUser != null) {
-                        allTrips.filter { it.userId == currentUser?.id || it.userId.isBlank() }
+                    val user = currentUser
+                    if (user != null) {
+                        val uid = user.id
+                        val uEmail = user.email.trim()
+                        allTrips.filter { trip ->
+                            trip.userId == uid ||
+                                trip.userId.isBlank() ||
+                                trip.participants.any { p ->
+                                    (p.userId != null && p.userId == uid) ||
+                                        (!p.email.isNullOrBlank() && p.email.trim().equals(uEmail, ignoreCase = true))
+                                }
+                        }
                     } else {
                         allTrips
                     }
