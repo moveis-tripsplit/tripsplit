@@ -14,21 +14,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.screens.home.trip.TripActivity
+import com.imd.tripsplit.ui.screens.home.trip.TripParticipant
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
@@ -41,10 +46,13 @@ import com.imd.tripsplit.ui.theme.TextSecondary
 @Composable
 fun TripActivitiesCard(
     activities: List<TripActivity>,
+    participants: List<TripParticipant>,
     onAddActivityClick: () -> Unit,
     onRemoveActivity: (String) -> Unit,
+    onEditActivity: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val participantsById = participants.associateBy { it.id }
     Card(
         shape = RoundedCornerShape(RadiusLG),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -119,7 +127,13 @@ fun TripActivitiesCard(
                 }
             } else {
                 activities.forEach { activity ->
-                    Box(
+                    val activityParticipants =
+                        activity.participantIds
+                            .distinct()
+                            .mapNotNull { participantId ->
+                                participantsById[participantId]
+                            }
+                    Column(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -128,6 +142,7 @@ fun TripActivitiesCard(
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusMD))
                                 .padding(horizontal = SpacingMD, vertical = SpacingSM),
+                        verticalArrangement = Arrangement.spacedBy(SpacingSM),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -150,11 +165,65 @@ fun TripActivitiesCard(
                                     )
                                     Spacer(modifier = Modifier.width(SpacingSM))
                                 }
+                                TextButton(
+                                    onClick = { onEditActivity(activity.id) },
+                                ) {
+                                    Text(
+                                        text = "Editar",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
                                 IconButton(
                                     onClick = { onRemoveActivity(activity.id) },
                                     modifier = Modifier.size(24.dp),
                                 ) {
                                     Text("✕", fontSize = 12.sp, color = TextSecondary)
+                                }
+                            }
+                        }
+                        if (activityParticipants.isEmpty()) {
+                            Text(
+                                text = "Nenhum participante selecionado",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        } else {
+                            Text(
+                                text = "Participantes",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(SpacingXS),
+                                verticalArrangement = Arrangement.spacedBy(SpacingXS),
+                            ) {
+                                activityParticipants.forEach { participant ->
+                                    Surface(
+                                        shape = RoundedCornerShape(RadiusXL),
+                                        color = MaterialTheme.colorScheme.surface,
+                                        contentColor = MaterialTheme.colorScheme.onSurface,
+                                        border =
+                                            BorderStroke(
+                                                1.dp,
+                                                MaterialTheme.colorScheme.outline,
+                                            ),
+                                    ) {
+                                        Text(
+                                            text = participant.name,
+                                            modifier =
+                                                Modifier.padding(
+                                                    horizontal = SpacingSM,
+                                                    vertical = SpacingXS,
+                                                ),
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -179,6 +248,7 @@ fun TripActivitiesCard(
                     text = "+ Adicionar atividade ao roteiro",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 

@@ -201,7 +201,9 @@ fun TripParticipantsCard(
                 shape = RoundedCornerShape(RadiusMD),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("+ Convidar ou adicionar participantes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                Text("+ Convidar ou adicionar participantes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface
+                )
+
             }
 
             Spacer(modifier = Modifier.height(SpacingXS))

@@ -87,8 +87,14 @@ fun CreateTripContent(
             // 4. Roteiro de Atividades
             TripActivitiesCard(
                 activities = state.activities,
+                participants = state.participants,
                 onAddActivityClick = { onAction(CreateTripAction.OpenAddActivityModal) },
-                onRemoveActivity = { onAction(CreateTripAction.RemoveActivity(it)) },
+                onRemoveActivity = { activityId ->
+                    onAction(CreateTripAction.RequestRemoveActivity(activityId))
+                },
+                onEditActivity = { activityId ->
+                    onAction(CreateTripAction.OpenEditActivityModal(activityId))
+                },
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))

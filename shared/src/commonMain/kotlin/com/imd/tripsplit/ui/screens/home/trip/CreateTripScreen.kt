@@ -1,5 +1,11 @@
 package com.imd.tripsplit.ui.screens.home.trip
 
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +34,105 @@ fun CreateTripScreen(
     }
 
     // Diálogo modal para adicionar atividade ao roteiro
-    if (state.showAddActivityModal) {
+    val editingActivityId = state.editingActivityId
+
+    val initialActivity =
+        editingActivityId?.let { activityId ->
+            state.activities.firstOrNull { it.id == activityId }
+        }
+
+    if (
+        state.showAddActivityModal &&
+        (editingActivityId == null || initialActivity != null)
+    ) {
         AddActivityDialog(
-            onDismiss = { state = state.reduce(CreateTripAction.CloseAddActivityModal) },
-            onConfirm = { activity -> state = state.reduce(CreateTripAction.AddActivity(activity)) },
+            availableParticipants = state.participants,
+            initialActivity = initialActivity,
+            onDismiss = { state = state.reduce(CreateTripAction.CloseAddActivityModal,) },
+            onConfirm = { activity ->
+                val action =
+                    if (editingActivityId == null) {
+                        CreateTripAction.AddActivity(activity)
+                    } else {
+                        CreateTripAction.UpdateActivity(activity)
+                    }
+
+                state = state.reduce(action)
+            },
         )
+
+    }
+
+    val pendingDeleteActivityId = state.pendingDeleteActivityId
+
+    if (pendingDeleteActivityId != null) {
+        val activityToDelete =
+            state.activities.firstOrNull {
+                it.id == pendingDeleteActivityId
+            }
+
+        if (pendingDeleteActivityId != null && activityToDelete != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    state = state.reduce(
+                        CreateTripAction.CancelRemoveActivity,
+                    )
+                },
+                title = {
+                    Text(
+                        text = "Excluir atividade?",
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
+                text = {
+                    Text(
+                        text =
+                            activityToDelete?.let {
+                                "Deseja remover \"${activityToDelete.title}\" do roteiro?"
+                            } ?: "Deseja remover esta atividade do roteiro?",
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            state = state.reduce(
+                                CreateTripAction.RemoveActivity(
+                                    pendingDeleteActivityId,
+                                ),
+                            )
+                        },
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor =
+                                    MaterialTheme.colorScheme.errorContainer,
+                                contentColor =
+                                    MaterialTheme.colorScheme.onErrorContainer,
+                            ),
+                    ) {
+                        Text(
+                            text = "Excluir",
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            state = state.reduce(
+                                CreateTripAction.CancelRemoveActivity,
+                            )
+                        },
+                    ) {
+                        Text(
+                            text = "Cancelar",
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
+        }
     }
 
     // Diálogo modal para adicionar participante
