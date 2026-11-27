@@ -85,10 +85,11 @@ fun DeleteParticipantDialog(
             Button(
                 onClick = onConfirm,
                 enabled = !isBlocked,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    disabledContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        disabledContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f),
+                    ),
                 shape = RoundedCornerShape(RadiusMD),
             ) {
                 Text("Confirmar Exclusão", color = MaterialTheme.colorScheme.onError)

@@ -11,16 +11,17 @@ import kotlinx.serialization.json.Json
 
 object HttpClientFactory {
     fun create(engine: HttpClientEngine? = null): HttpClient {
-        val baseClient = if (engine != null) {
-            HttpClient(engine)
-        } else {
-            try {
-                createPlatformHttpClient()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                HttpClient()
+        val baseClient =
+            if (engine != null) {
+                HttpClient(engine)
+            } else {
+                try {
+                    createPlatformHttpClient()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    HttpClient()
+                }
             }
-        }
         return baseClient.config {
             install(ContentNegotiation) {
                 json(

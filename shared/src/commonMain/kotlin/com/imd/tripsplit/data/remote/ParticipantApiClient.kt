@@ -33,10 +33,11 @@ class ParticipantApiClient(
         request: ParticipantRequestDto,
     ): Result<ParticipantResponseDto> {
         return runCatching {
-            val response = client.post("$baseUrl/trips/$tripId/participants") {
-                contentType(ContentType.Application.Json)
-                setBody(request)
-            }
+            val response =
+                client.post("$baseUrl/trips/$tripId/participants") {
+                    contentType(ContentType.Application.Json)
+                    setBody(request)
+                }
             if (response.status.isSuccess()) {
                 response.body<ParticipantResponseDto>()
             } else {
@@ -51,10 +52,11 @@ class ParticipantApiClient(
         request: ParticipantRequestDto,
     ): Result<ParticipantResponseDto> {
         return runCatching {
-            val response = client.put("$baseUrl/trips/$tripId/participants/$participantId") {
-                contentType(ContentType.Application.Json)
-                setBody(request)
-            }
+            val response =
+                client.put("$baseUrl/trips/$tripId/participants/$participantId") {
+                    contentType(ContentType.Application.Json)
+                    setBody(request)
+                }
             if (response.status.isSuccess()) {
                 response.body<ParticipantResponseDto>()
             } else {

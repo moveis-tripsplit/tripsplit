@@ -97,14 +97,15 @@ object LocalDataManager {
         val loggedId = _currentUser.value?.id ?: ""
         val tripUserId = if (trip.userId.isBlank()) loggedId else trip.userId
 
-        val updatedParticipants = trip.participants.map { p ->
-            val isCreator = p.isCreator || (tripUserId.isNotBlank() && (p.userId == tripUserId || p.id == tripUserId))
-            if (isCreator) {
-                p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
-            } else {
-                p
+        val updatedParticipants =
+            trip.participants.map { p ->
+                val isCreator = p.isCreator || (tripUserId.isNotBlank() && (p.userId == tripUserId || p.id == tripUserId))
+                if (isCreator) {
+                    p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
+                } else {
+                    p
+                }
             }
-        }
 
         val tripWithUser = trip.copy(userId = tripUserId, participants = updatedParticipants)
 
@@ -118,14 +119,15 @@ object LocalDataManager {
     fun getTrip(id: String): Trip? = _trips.value.find { it.id == id }
 
     private fun internalPersistTrip(finalUpdated: Trip) {
-        val updatedParticipants = finalUpdated.participants.map { p ->
-            val isCreator = finalUpdated.isCreator(p)
-            if (isCreator) {
-                p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
-            } else {
-                p
+        val updatedParticipants =
+            finalUpdated.participants.map { p ->
+                val isCreator = finalUpdated.isCreator(p)
+                if (isCreator) {
+                    p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
+                } else {
+                    p
+                }
             }
-        }
         val safeTrip = finalUpdated.copy(participants = updatedParticipants)
         _dbState.update { current ->
             current.copy(trips = current.trips.map { if (it.id == safeTrip.id) safeTrip else it })
@@ -196,37 +198,40 @@ object LocalDataManager {
         val effectiveRequesterId = requesterUserId ?: _currentUser.value?.id
         val effectiveRequesterEmail = requesterEmail ?: _currentUser.value?.email
 
-        val authValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateAddition(
-            trip = trip,
-            newParticipant = participant,
-            requesterUserId = effectiveRequesterId,
-            requesterEmail = effectiveRequesterEmail,
-        )
+        val authValidation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateAddition(
+                trip = trip,
+                newParticipant = participant,
+                requesterUserId = effectiveRequesterId,
+                requesterEmail = effectiveRequesterEmail,
+            )
         if (authValidation.isFailure) {
             return Result.failure(authValidation.exceptionOrNull() ?: IllegalStateException("Erro ao adicionar participante."))
         }
 
         // Validação de dados cadastrais
-        val dataValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
-            name = participant.name,
-            email = participant.email,
-            hasAccount = participant.hasAccount,
-        )
+        val dataValidation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
+                name = participant.name,
+                email = participant.email,
+                hasAccount = participant.hasAccount,
+            )
         if (dataValidation.isFailure) {
             return Result.failure(dataValidation.exceptionOrNull() ?: IllegalArgumentException("Dados inválidos."))
         }
 
         // Se tiver conta e userId não foi definido, tenta vincular com usuário local
-        val resolvedParticipant = if (participant.hasAccount && participant.userId.isNullOrBlank()) {
-            val matchedUser = participant.email?.let { findUserByEmail(it) }
-            if (matchedUser != null) {
-                participant.copy(userId = matchedUser.id, name = if (participant.name.isBlank()) matchedUser.name else participant.name)
+        val resolvedParticipant =
+            if (participant.hasAccount && participant.userId.isNullOrBlank()) {
+                val matchedUser = participant.email?.let { findUserByEmail(it) }
+                if (matchedUser != null) {
+                    participant.copy(userId = matchedUser.id, name = if (participant.name.isBlank()) matchedUser.name else participant.name)
+                } else {
+                    participant
+                }
             } else {
                 participant
             }
-        } else {
-            participant
-        }
 
         val updatedParticipants = trip.participants + resolvedParticipant
         internalPersistTrip(trip.copy(participants = updatedParticipants))
@@ -244,34 +249,37 @@ object LocalDataManager {
         val effectiveRequesterId = requesterUserId ?: _currentUser.value?.id
         val effectiveRequesterEmail = requesterEmail ?: _currentUser.value?.email
 
-        val editValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateEdition(
-            trip = trip,
-            targetParticipantId = updated.id,
-            requesterUserId = effectiveRequesterId,
-            requesterEmail = effectiveRequesterEmail,
-        )
+        val editValidation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateEdition(
+                trip = trip,
+                targetParticipantId = updated.id,
+                requesterUserId = effectiveRequesterId,
+                requesterEmail = effectiveRequesterEmail,
+            )
         if (editValidation.isFailure) {
             return Result.failure(editValidation.exceptionOrNull() ?: IllegalStateException("Erro ao editar participante."))
         }
 
         // Validação de dados cadastrais
-        val dataValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
-            name = updated.name,
-            email = updated.email,
-            hasAccount = updated.hasAccount,
-        )
+        val dataValidation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateParticipantData(
+                name = updated.name,
+                email = updated.email,
+                hasAccount = updated.hasAccount,
+            )
         if (dataValidation.isFailure) {
             return Result.failure(dataValidation.exceptionOrNull() ?: IllegalArgumentException("Dados inválidos."))
         }
 
         // Validação de alteração de papel caso deixe de ser organizador ou seja promovido
-        val roleValidation = com.imd.tripsplit.domain.TripParticipantValidator.validateRoleChange(
-            trip = trip,
-            participantId = updated.id,
-            newRoleIsOrganizer = updated.isOrganizer,
-            requesterUserId = effectiveRequesterId,
-            requesterEmail = effectiveRequesterEmail,
-        )
+        val roleValidation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateRoleChange(
+                trip = trip,
+                participantId = updated.id,
+                newRoleIsOrganizer = updated.isOrganizer,
+                requesterUserId = effectiveRequesterId,
+                requesterEmail = effectiveRequesterEmail,
+            )
         if (roleValidation.isFailure) {
             return Result.failure(roleValidation.exceptionOrNull() ?: IllegalStateException("Erro ao alterar papel."))
         }
@@ -293,13 +301,14 @@ object LocalDataManager {
         val effectiveRequesterId = requesterUserId ?: _currentUser.value?.id
         val effectiveRequesterEmail = requesterEmail ?: _currentUser.value?.email
 
-        val validation = com.imd.tripsplit.domain.TripParticipantValidator.validateDeletion(
-            trip = trip,
-            participantId = participantId,
-            requesterUserId = effectiveRequesterId,
-            requesterEmail = effectiveRequesterEmail,
-            hasFinancialPending = hasFinancialPending,
-        )
+        val validation =
+            com.imd.tripsplit.domain.TripParticipantValidator.validateDeletion(
+                trip = trip,
+                participantId = participantId,
+                requesterUserId = effectiveRequesterId,
+                requesterEmail = effectiveRequesterEmail,
+                hasFinancialPending = hasFinancialPending,
+            )
         if (validation.isFailure) {
             return Result.failure(validation.exceptionOrNull() ?: IllegalStateException("Erro ao remover participante."))
         }

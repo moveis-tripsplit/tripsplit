@@ -19,8 +19,9 @@ object TripParticipantValidator {
         requesterEmail: String? = null,
         hasFinancialPending: Boolean = false,
     ): Result<Unit> {
-        val target = trip.participants.find { it.id == participantId }
-            ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
+        val target =
+            trip.participants.find { it.id == participantId }
+                ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
 
         // Regra: Organizador é o único que pode excluir participantes
         if (requesterUserId != null || requesterEmail != null) {
@@ -75,8 +76,9 @@ object TripParticipantValidator {
         requesterUserId: String? = null,
         requesterEmail: String? = null,
     ): Result<Unit> {
-        val target = trip.participants.find { it.id == participantId }
-            ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
+        val target =
+            trip.participants.find { it.id == participantId }
+                ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
 
         // Regra: O criador da viagem sempre será o organizador
         if (trip.isCreator(target) && !newRoleIsOrganizer) {
@@ -120,8 +122,9 @@ object TripParticipantValidator {
         requesterUserId: String? = null,
         requesterEmail: String? = null,
     ): Result<Unit> {
-        val target = trip.participants.find { it.id == targetParticipantId }
-            ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
+        val target =
+            trip.participants.find { it.id == targetParticipantId }
+                ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
 
         if (requesterUserId != null || requesterEmail != null) {
             val isRequesterOrganizer = trip.isUserOrganizer(requesterUserId, requesterEmail)

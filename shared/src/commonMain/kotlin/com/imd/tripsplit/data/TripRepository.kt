@@ -15,12 +15,13 @@ object TripRepository {
     var apiClient: ParticipantApiClient
         get() {
             if (_apiClient == null) {
-                _apiClient = try {
-                    ParticipantApiClient()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    ParticipantApiClient()
-                }
+                _apiClient =
+                    try {
+                        ParticipantApiClient()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        ParticipantApiClient()
+                    }
             }
             return _apiClient!!
         }
@@ -55,12 +56,13 @@ object TripRepository {
         requesterEmail: String? = null,
     ): Result<Participant> {
         // 1. Persistência local imediata (Offline-First)
-        val localResult = LocalDataManager.addParticipantToTrip(
-            tripId = tripId,
-            participant = participant,
-            requesterUserId = requesterUserId,
-            requesterEmail = requesterEmail,
-        )
+        val localResult =
+            LocalDataManager.addParticipantToTrip(
+                tripId = tripId,
+                participant = participant,
+                requesterUserId = requesterUserId,
+                requesterEmail = requesterEmail,
+            )
         if (localResult.isFailure) return localResult
 
         val savedParticipant = localResult.getOrThrow()
@@ -92,12 +94,13 @@ object TripRepository {
         requesterUserId: String? = null,
         requesterEmail: String? = null,
     ): Result<Participant> {
-        val localResult = LocalDataManager.updateParticipantInTrip(
-            tripId = tripId,
-            updated = participant,
-            requesterUserId = requesterUserId,
-            requesterEmail = requesterEmail,
-        )
+        val localResult =
+            LocalDataManager.updateParticipantInTrip(
+                tripId = tripId,
+                updated = participant,
+                requesterUserId = requesterUserId,
+                requesterEmail = requesterEmail,
+            )
         if (localResult.isFailure) return localResult
 
         try {
@@ -116,13 +119,14 @@ object TripRepository {
         requesterEmail: String? = null,
         hasFinancialPending: Boolean = false,
     ): Result<Unit> {
-        val localResult = LocalDataManager.removeParticipantFromTrip(
-            tripId = tripId,
-            participantId = participantId,
-            requesterUserId = requesterUserId,
-            requesterEmail = requesterEmail,
-            hasFinancialPending = hasFinancialPending,
-        )
+        val localResult =
+            LocalDataManager.removeParticipantFromTrip(
+                tripId = tripId,
+                participantId = participantId,
+                requesterUserId = requesterUserId,
+                requesterEmail = requesterEmail,
+                hasFinancialPending = hasFinancialPending,
+            )
         if (localResult.isFailure) return localResult
 
         try {

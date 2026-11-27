@@ -155,13 +155,14 @@ fun EditParticipantDialog(
                         return@Button
                     }
 
-                    val initials = trimmedName
-                        .split(" ")
-                        .filter { it.isNotBlank() }
-                        .map { it.first().uppercase() }
-                        .take(2)
-                        .joinToString("")
-                        .ifEmpty { "P" }
+                    val initials =
+                        trimmedName
+                            .split(" ")
+                            .filter { it.isNotBlank() }
+                            .map { it.first().uppercase() }
+                            .take(2)
+                            .joinToString("")
+                            .ifEmpty { "P" }
 
                     val finalRole = if (participant.isCreator) "Organizador" else role
                     val isOrganizer = if (participant.isCreator) true else finalRole.equals("Organizador", ignoreCase = true)
@@ -171,14 +172,15 @@ fun EditParticipantDialog(
                         return@Button
                     }
 
-                    val updated = participant.copy(
-                        name = trimmedName,
-                        initials = initials,
-                        role = finalRole,
-                        isOrganizer = isOrganizer,
-                        isCreator = participant.isCreator,
-                        contactOrPix = contact.trim().ifEmpty { null },
-                    )
+                    val updated =
+                        participant.copy(
+                            name = trimmedName,
+                            initials = initials,
+                            role = finalRole,
+                            isOrganizer = isOrganizer,
+                            isCreator = participant.isCreator,
+                            contactOrPix = contact.trim().ifEmpty { null },
+                        )
                     onConfirm(updated)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),

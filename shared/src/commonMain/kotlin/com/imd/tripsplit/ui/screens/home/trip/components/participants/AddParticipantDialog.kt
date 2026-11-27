@@ -1,15 +1,12 @@
 package com.imd.tripsplit.ui.screens.home.trip.components.participants
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -38,7 +35,6 @@ import com.imd.tripsplit.ui.screens.home.trip.TripParticipant
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM
-import com.imd.tripsplit.ui.theme.SpacingXS
 import kotlin.random.Random
 
 @Composable
@@ -257,34 +253,37 @@ fun AddParticipantDialog(
                         return@Button
                     }
 
-                    val resolvedName = if (trimmedName.isNotBlank()) {
-                        trimmedName
-                    } else {
-                        val user = TripRepository.findUserByEmail(trimmedEmail)
-                        user?.name ?: trimmedEmail.substringBefore("@")
-                    }
+                    val resolvedName =
+                        if (trimmedName.isNotBlank()) {
+                            trimmedName
+                        } else {
+                            val user = TripRepository.findUserByEmail(trimmedEmail)
+                            user?.name ?: trimmedEmail.substringBefore("@")
+                        }
 
-                    val initials = resolvedName
-                        .split(" ")
-                        .filter { it.isNotBlank() }
-                        .map { it.first().uppercase() }
-                        .take(2)
-                        .joinToString("")
-                        .ifEmpty { "P" }
+                    val initials =
+                        resolvedName
+                            .split(" ")
+                            .filter { it.isNotBlank() }
+                            .map { it.first().uppercase() }
+                            .take(2)
+                            .joinToString("")
+                            .ifEmpty { "P" }
 
                     val matchedUser = if (hasAccountTab) TripRepository.findUserByEmail(trimmedEmail) else null
 
-                    val participant = TripParticipant(
-                        id = "part-${Random.nextInt(1000, 9999)}",
-                        name = resolvedName,
-                        initials = initials,
-                        role = role,
-                        isOrganizer = role.equals("Organizador", ignoreCase = true),
-                        hasAccount = hasAccountTab,
-                        contactOrPix = contact.trim().ifEmpty { null },
-                        email = if (hasAccountTab) trimmedEmail else null,
-                        userId = matchedUser?.id,
-                    )
+                    val participant =
+                        TripParticipant(
+                            id = "part-${Random.nextInt(1000, 9999)}",
+                            name = resolvedName,
+                            initials = initials,
+                            role = role,
+                            isOrganizer = role.equals("Organizador", ignoreCase = true),
+                            hasAccount = hasAccountTab,
+                            contactOrPix = contact.trim().ifEmpty { null },
+                            email = if (hasAccountTab) trimmedEmail else null,
+                            userId = matchedUser?.id,
+                        )
                     onConfirm(participant)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),

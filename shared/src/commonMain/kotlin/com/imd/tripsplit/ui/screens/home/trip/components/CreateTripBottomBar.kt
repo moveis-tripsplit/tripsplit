@@ -57,9 +57,10 @@ fun CreateTripBottomBar(
                         .fillMaxWidth()
                         .height(52.dp),
                 shape = RoundedCornerShape(RadiusMD),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isReadOnlyForUser) MaterialTheme.colorScheme.secondary else BlueOcean
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = if (isReadOnlyForUser) MaterialTheme.colorScheme.secondary else BlueOcean
+                    ),
                 enabled = !isLoading,
             ) {
                 if (isLoading) {
@@ -69,7 +70,14 @@ fun CreateTripBottomBar(
                     )
                 } else {
                     Text(
-                        text = if (!isEditing) "Criar Viagem ✈️" else if (!isCreator) "Voltar" else "Salvar alterações",
+                        text =
+                            if (!isEditing) {
+                                "Criar Viagem ✈️"
+                            } else if (!isCreator) {
+                                "Voltar"
+                            } else {
+                                "Salvar alterações"
+                            },
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,

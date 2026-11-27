@@ -109,12 +109,18 @@ fun CreateTripContent(
                 onRemoveParticipant = {
                     if (isOrganizer) onAction(CreateTripAction.RemoveParticipant(it))
                 },
-                onEditParticipant = if (isOrganizer) {
-                    { onAction(CreateTripAction.OpenEditParticipantModal(it)) }
-                } else null,
-                onDeleteParticipant = if (isOrganizer) {
-                    { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) }
-                } else null,
+                onEditParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenEditParticipantModal(it)) }
+                    } else {
+                        null
+                    },
+                onDeleteParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) }
+                    } else {
+                        null
+                    },
                 isOrganizer = isOrganizer,
                 isCreator = isCreator,
                 currentUserId = currentUserId,

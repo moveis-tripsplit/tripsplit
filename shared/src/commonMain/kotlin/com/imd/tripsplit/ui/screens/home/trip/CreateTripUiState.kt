@@ -130,11 +130,12 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
             } else if (current?.isOrganizer == true && !action.participant.isOrganizer && participants.count { it.isOrganizer } <= 1) {
                 copy(participantErrorMessage = "A viagem deve ter pelo menos um Organizador. Defina outro organizador antes de alterar esta função.")
             } else {
-                val safeParticipant = if (current?.isCreator == true) {
-                    action.participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
-                } else {
-                    action.participant
-                }
+                val safeParticipant =
+                    if (current?.isCreator == true) {
+                        action.participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
+                    } else {
+                        action.participant
+                    }
                 copy(
                     participants = participants.map { if (it.id == action.participant.id) safeParticipant else it },
                     editingParticipant = null,

@@ -61,7 +61,14 @@ fun CreateTripHeader(
             }
 
             Text(
-                text = if (!isEditing) "Cadastrar Viagem" else if (isCreator) "Editar Viagem" else "Detalhes da Viagem",
+                text =
+                    if (!isEditing) {
+                        "Cadastrar Viagem"
+                    } else if (isCreator) {
+                        "Editar Viagem"
+                    } else {
+                        "Detalhes da Viagem"
+                    },
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -105,7 +112,14 @@ fun CreateTripHeader(
         }
 
         Text(
-            text = if (!isEditing) "Para onde vamos?" else if (isCreator) "Editar viagem" else "Detalhes da viagem",
+            text =
+                if (!isEditing) {
+                    "Para onde vamos?"
+                } else if (isCreator) {
+                    "Editar viagem"
+                } else {
+                    "Detalhes da viagem"
+                },
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,

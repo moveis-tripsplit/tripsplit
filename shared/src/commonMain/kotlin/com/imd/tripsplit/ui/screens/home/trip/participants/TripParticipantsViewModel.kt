@@ -17,7 +17,6 @@ import kotlin.random.Random
 class TripParticipantsViewModel(
     private val repository: TripRepository = TripRepository,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(TripParticipantsUiState())
     val uiState: StateFlow<TripParticipantsUiState> = _uiState.asStateFlow()
 
@@ -66,14 +65,15 @@ class TripParticipantsViewModel(
 
     private fun load(tripId: String) {
         val trip = repository.getTrip(tripId)
-        val currentParticipants = repository.getParticipants(tripId).map { p ->
-            val isCreator = trip?.isCreator(p) == true || p.isCreator
-            p.toTripParticipant().copy(
-                isCreator = isCreator,
-                isOrganizer = if (isCreator) true else p.isOrganizer,
-                role = if (isCreator) "Organizador" else p.role,
-            )
-        }
+        val currentParticipants =
+            repository.getParticipants(tripId).map { p ->
+                val isCreator = trip?.isCreator(p) == true || p.isCreator
+                p.toTripParticipant().copy(
+                    isCreator = isCreator,
+                    isOrganizer = if (isCreator) true else p.isOrganizer,
+                    role = if (isCreator) "Organizador" else p.role,
+                )
+            }
         _uiState.update {
             it.copy(
                 tripId = tripId,
@@ -86,14 +86,15 @@ class TripParticipantsViewModel(
             _uiState.update { it.copy(isSyncing = true) }
             repository.syncParticipants(tripId)
             val updatedTrip = repository.getTrip(tripId)
-            val updated = repository.getParticipants(tripId).map { p ->
-                val isCreator = updatedTrip?.isCreator(p) == true || p.isCreator
-                p.toTripParticipant().copy(
-                    isCreator = isCreator,
-                    isOrganizer = if (isCreator) true else p.isOrganizer,
-                    role = if (isCreator) "Organizador" else p.role,
-                )
-            }
+            val updated =
+                repository.getParticipants(tripId).map { p ->
+                    val isCreator = updatedTrip?.isCreator(p) == true || p.isCreator
+                    p.toTripParticipant().copy(
+                        isCreator = isCreator,
+                        isOrganizer = if (isCreator) true else p.isOrganizer,
+                        role = if (isCreator) "Organizador" else p.role,
+                    )
+                }
             _uiState.update { it.copy(participants = updated, isSyncing = false) }
         }
     }
@@ -122,23 +123,25 @@ class TripParticipantsViewModel(
             return
         }
 
-        val newParticipant = Participant(
-            id = "part-${Random.nextInt(1000, 9999)}",
-            name = action.name.trim(),
-            email = action.email?.trim()?.ifBlank { null },
-            role = action.role.trim().ifBlank { "Participante" },
-            isOrganizer = action.role.equals("Organizador", ignoreCase = true),
-            contactOrPix = action.contactOrPix?.trim()?.ifBlank { null },
-            hasAccount = action.hasAccount,
-        )
+        val newParticipant =
+            Participant(
+                id = "part-${Random.nextInt(1000, 9999)}",
+                name = action.name.trim(),
+                email = action.email?.trim()?.ifBlank { null },
+                role = action.role.trim().ifBlank { "Participante" },
+                isOrganizer = action.role.equals("Organizador", ignoreCase = true),
+                contactOrPix = action.contactOrPix?.trim()?.ifBlank { null },
+                hasAccount = action.hasAccount,
+            )
 
         viewModelScope.launch {
-            val result = repository.addParticipant(
-                tripId = tripId,
-                participant = newParticipant,
-                requesterUserId = currentUser?.id,
-                requesterEmail = currentUser?.email,
-            )
+            val result =
+                repository.addParticipant(
+                    tripId = tripId,
+                    participant = newParticipant,
+                    requesterUserId = currentUser?.id,
+                    requesterEmail = currentUser?.email,
+                )
             if (result.isSuccess) {
                 val list = repository.getParticipants(tripId).map { it.toTripParticipant() }
                 _uiState.update {
@@ -186,30 +189,33 @@ class TripParticipantsViewModel(
             return
         }
 
-        val safeParticipant = if (isCreator) {
-            participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
-        } else {
-            participant
-        }
+        val safeParticipant =
+            if (isCreator) {
+                participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
+            } else {
+                participant
+            }
         val domain = safeParticipant.toParticipant()
 
         viewModelScope.launch {
-            val result = repository.updateParticipant(
-                tripId = tripId,
-                participant = domain,
-                requesterUserId = currentUser?.id,
-                requesterEmail = currentUser?.email,
-            )
+            val result =
+                repository.updateParticipant(
+                    tripId = tripId,
+                    participant = domain,
+                    requesterUserId = currentUser?.id,
+                    requesterEmail = currentUser?.email,
+                )
             if (result.isSuccess) {
                 val updatedTrip = repository.getTrip(tripId)
-                val list = repository.getParticipants(tripId).map { p ->
-                    val creator = updatedTrip?.isCreator(p) == true || p.isCreator
-                    p.toTripParticipant().copy(
-                        isCreator = creator,
-                        isOrganizer = if (creator) true else p.isOrganizer,
-                        role = if (creator) "Organizador" else p.role,
-                    )
-                }
+                val list =
+                    repository.getParticipants(tripId).map { p ->
+                        val creator = updatedTrip?.isCreator(p) == true || p.isCreator
+                        p.toTripParticipant().copy(
+                            isCreator = creator,
+                            isOrganizer = if (creator) true else p.isOrganizer,
+                            role = if (creator) "Organizador" else p.role,
+                        )
+                    }
                 _uiState.update {
                     it.copy(
                         participants = list,
@@ -228,7 +234,10 @@ class TripParticipantsViewModel(
         }
     }
 
-    private fun deleteParticipant(participantId: String, hasFinancialPending: Boolean) {
+    private fun deleteParticipant(
+        participantId: String,
+        hasFinancialPending: Boolean
+    ) {
         val tripId = _uiState.value.tripId
         val trip = repository.getTrip(tripId)
         val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
@@ -245,23 +254,25 @@ class TripParticipantsViewModel(
         }
 
         viewModelScope.launch {
-            val result = repository.removeParticipant(
-                tripId = tripId,
-                participantId = participantId,
-                requesterUserId = currentUser?.id,
-                requesterEmail = currentUser?.email,
-                hasFinancialPending = hasFinancialPending,
-            )
+            val result =
+                repository.removeParticipant(
+                    tripId = tripId,
+                    participantId = participantId,
+                    requesterUserId = currentUser?.id,
+                    requesterEmail = currentUser?.email,
+                    hasFinancialPending = hasFinancialPending,
+                )
             if (result.isSuccess) {
                 val updatedTrip = repository.getTrip(tripId)
-                val list = repository.getParticipants(tripId).map { p ->
-                    val creator = updatedTrip?.isCreator(p) == true || p.isCreator
-                    p.toTripParticipant().copy(
-                        isCreator = creator,
-                        isOrganizer = if (creator) true else p.isOrganizer,
-                        role = if (creator) "Organizador" else p.role,
-                    )
-                }
+                val list =
+                    repository.getParticipants(tripId).map { p ->
+                        val creator = updatedTrip?.isCreator(p) == true || p.isCreator
+                        p.toTripParticipant().copy(
+                            isCreator = creator,
+                            isOrganizer = if (creator) true else p.isOrganizer,
+                            role = if (creator) "Organizador" else p.role,
+                        )
+                    }
                 _uiState.update {
                     it.copy(
                         participants = list,

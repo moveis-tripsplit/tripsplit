@@ -26,33 +26,34 @@ fun CreateTripScreen(
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
 ) {
     val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
-    val initialParticipants = remember(currentUser) {
-        val current = currentUser
-        if (current != null) {
-            listOf(
-                TripParticipant(
-                    id = current.id,
-                    name = current.name,
-                    initials =
-                        current.name
-                            .split(" ")
-                            .filter { it.isNotBlank() }
-                            .map { it.first().uppercase() }
-                            .take(2)
-                            .joinToString("")
-                            .ifEmpty { "O" },
-                    role = "Organizador",
-                    isOrganizer = true,
-                    hasAccount = true,
-                    email = current.email,
-                    userId = current.id,
-                    isCreator = true,
-                ),
-            )
-        } else {
-            emptyList()
+    val initialParticipants =
+        remember(currentUser) {
+            val current = currentUser
+            if (current != null) {
+                listOf(
+                    TripParticipant(
+                        id = current.id,
+                        name = current.name,
+                        initials =
+                            current.name
+                                .split(" ")
+                                .filter { it.isNotBlank() }
+                                .map { it.first().uppercase() }
+                                .take(2)
+                                .joinToString("")
+                                .ifEmpty { "O" },
+                        role = "Organizador",
+                        isOrganizer = true,
+                        hasAccount = true,
+                        email = current.email,
+                        userId = current.id,
+                        isCreator = true,
+                    ),
+                )
+            } else {
+                emptyList()
+            }
         }
-    }
     val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
     val isUserCreator = editingTrip == null || editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
     val isUserOrganizer = editingTrip == null || editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
@@ -135,26 +136,27 @@ fun CreateTripScreen(
                     onBackClick()
                     return@CreateTripContent
                 }
-                val updateResult = TripRepository.updateTrip(
-                    editingTrip.copy(
-                        title = state.title.trim(),
-                        description = state.description.trim(),
-                        startDate = state.startDate,
-                        endDate = state.endDate,
-                        participants =
-                            state.participants.map { p ->
-                                val isCreator = p.isCreator || (editingTrip.userId.isNotBlank() && (p.userId == editingTrip.userId || p.id == editingTrip.userId))
-                                p.toParticipant().copy(
-                                    isCreator = isCreator,
-                                    isOrganizer = if (isCreator) true else p.isOrganizer,
-                                    role = if (isCreator) "Organizador" else p.role,
-                                )
-                            },
-                        activities = state.activities,
-                    ),
-                    requesterUserId = currentUser?.id,
-                    requesterEmail = currentUser?.email,
-                )
+                val updateResult =
+                    TripRepository.updateTrip(
+                        editingTrip.copy(
+                            title = state.title.trim(),
+                            description = state.description.trim(),
+                            startDate = state.startDate,
+                            endDate = state.endDate,
+                            participants =
+                                state.participants.map { p ->
+                                    val isCreator = p.isCreator || (editingTrip.userId.isNotBlank() && (p.userId == editingTrip.userId || p.id == editingTrip.userId))
+                                    p.toParticipant().copy(
+                                        isCreator = isCreator,
+                                        isOrganizer = if (isCreator) true else p.isOrganizer,
+                                        role = if (isCreator) "Organizador" else p.role,
+                                    )
+                                },
+                            activities = state.activities,
+                        ),
+                        requesterUserId = currentUser?.id,
+                        requesterEmail = currentUser?.email,
+                    )
                 if (updateResult.isSuccess) {
                     onTripCreatedSuccess(editingTrip.id)
                 }
