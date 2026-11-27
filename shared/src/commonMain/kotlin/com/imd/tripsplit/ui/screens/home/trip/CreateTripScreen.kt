@@ -1,3 +1,4 @@
+
 package com.imd.tripsplit.ui.screens.home.trip
 
 import androidx.compose.runtime.Composable
@@ -21,31 +22,60 @@ fun CreateTripScreen(
     tripId: String? = null,
     onBackClick: () -> Unit = {},
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
+    onManageExpensesClick: (tripId: String) -> Unit = {},
 ) {
-    val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
+    val editingTrip =
+        remember(tripId) {
+            tripId?.let { TripRepository.getTrip(it) }
+        }
+
     var state by remember(tripId) {
-        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState())
+        mutableStateOf(
+            editingTrip?.toUiState() ?: CreateTripUiState()
+        )
     }
 
     // Diálogo modal para adicionar atividade ao roteiro
     if (state.showAddActivityModal) {
         AddActivityDialog(
-            onDismiss = { state = state.reduce(CreateTripAction.CloseAddActivityModal) },
-            onConfirm = { activity -> state = state.reduce(CreateTripAction.AddActivity(activity)) },
+            onDismiss = {
+                state =
+                    state.reduce(
+                        CreateTripAction.CloseAddActivityModal
+                    )
+            },
+            onConfirm = { activity ->
+                state =
+                    state.reduce(
+                        CreateTripAction.AddActivity(activity)
+                    )
+            },
         )
     }
 
     // Diálogo modal para adicionar participante
     if (state.showAddParticipantModal) {
         AddParticipantDialog(
-            onDismiss = { state = state.reduce(CreateTripAction.CloseAddParticipantModal) },
-            onConfirm = { participant -> state = state.reduce(CreateTripAction.AddParticipant(participant)) },
+            onDismiss = {
+                state =
+                    state.reduce(
+                        CreateTripAction.CloseAddParticipantModal
+                    )
+            },
+            onConfirm = { participant ->
+                state =
+                    state.reduce(
+                        CreateTripAction.AddParticipant(participant)
+                    )
+            },
         )
     }
 
     CreateTripContent(
         state = state,
-        onAction = { action -> state = state.reduce(action) },
+        onAction = { action ->
+            state = state.reduce(action)
+        },
         onSubmitClick = {
             if (editingTrip != null) {
                 TripRepository.updateTrip(
@@ -54,10 +84,14 @@ fun CreateTripScreen(
                         description = state.description.trim(),
                         startDate = state.startDate,
                         endDate = state.endDate,
-                        participants = state.participants.map { it.toParticipant() },
+                        participants =
+                            state.participants.map {
+                                it.toParticipant()
+                            },
                         activities = state.activities,
                     ),
                 )
+
                 onTripCreatedSuccess(editingTrip.id)
             } else {
                 val trip =
@@ -67,19 +101,30 @@ fun CreateTripScreen(
                         description = state.description.trim(),
                         destination = state.title.trim(),
                         status = TripStatus.UPCOMING,
-                        totalAmount = state.activities.sumOf { it.estimatedCost ?: 0.0 },
+                        totalAmount =
+                            state.activities.sumOf {
+                                it.estimatedCost ?: 0.0
+                            },
                         myBalance = 0.0,
                         startDate = state.startDate,
                         endDate = state.endDate,
-                        participants = state.participants.map { it.toParticipant() },
+                        participants =
+                            state.participants.map {
+                                it.toParticipant()
+                            },
                         activities = state.activities,
                     )
+
                 TripRepository.addTrip(trip)
                 onTripCreatedSuccess(trip.id)
             }
         },
         onBackClick = onBackClick,
         isEditing = editingTrip != null,
+        isTripSaved = editingTrip != null,
+        onManageExpensesClick = {
+            editingTrip?.id?.let(onManageExpensesClick)
+        },
         modifier = modifier,
     )
 }

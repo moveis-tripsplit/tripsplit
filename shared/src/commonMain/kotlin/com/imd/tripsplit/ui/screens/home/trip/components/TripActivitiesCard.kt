@@ -3,6 +3,7 @@ package com.imd.tripsplit.ui.screens.home.trip.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,9 @@ import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable
 fun TripActivitiesCard(
+    isTripSaved: Boolean = false,
+    onManageExpensesClick: () -> Unit = {},
+    onEditActivitiesClick: () -> Unit = {},
     activities: List<TripActivity>,
     onAddActivityClick: () -> Unit,
     onRemoveActivity: (String) -> Unit,
@@ -47,11 +51,21 @@ fun TripActivitiesCard(
 ) {
     Card(
         shape = RoundedCornerShape(RadiusLG),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+        border =
+            BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant
+            ),
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(SpacingLG)) {
+        Column(
+            modifier = Modifier.padding(SpacingLG)
+        ) {
+            // Cabeçalho
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -64,20 +78,40 @@ fun TripActivitiesCard(
                     color = MaterialTheme.colorScheme.outlineVariant,
                 )
 
-                Box(
-                    modifier =
-                        Modifier
-                            .clip(RoundedCornerShape(RadiusXL))
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusXL))
-                            .padding(horizontal = SpacingSM, vertical = 2.dp),
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(SpacingSM),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text = "Pode adicionar depois",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
+                    // Botão Editar atividades
+                    Box(
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(RadiusXL))
+                                .background(
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                )
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(RadiusXL)
+                                )
+                                .clickable(
+                                    enabled = isTripSaved,
+                                    // onClick = onEditActivitiesClick
+                                    onClick = onManageExpensesClick
+                                )
+                                .padding(
+                                    horizontal = SpacingSM,
+                                    vertical = 2.dp
+                                ),
+                    ) {
+                        Text(
+                            text = "Editar atividades",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
+                    }
                 }
             }
 
@@ -91,6 +125,7 @@ fun TripActivitiesCard(
 
             Spacer(modifier = Modifier.height(SpacingSM))
 
+            // Lista de atividades
             if (activities.isEmpty()) {
                 Box(
                     modifier =
@@ -98,22 +133,35 @@ fun TripActivitiesCard(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(RadiusMD))
                             .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), RoundedCornerShape(RadiusMD))
+                            .border(
+                                BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant
+                                ),
+                                RoundedCornerShape(RadiusMD)
+                            )
                             .padding(SpacingMD),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             text = "Nenhuma atividade adicionada ainda",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+
                         Spacer(modifier = Modifier.height(2.dp))
+
                         Text(
                             text = "Você pode salvar agora e criar as atividades depois.",
                             fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            color =
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                    alpha = 0.7f
+                                ),
                         )
                     }
                 }
@@ -126,21 +174,48 @@ fun TripActivitiesCard(
                                 .padding(vertical = 4.dp)
                                 .clip(RoundedCornerShape(RadiusMD))
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusMD))
-                                .padding(horizontal = SpacingMD, vertical = SpacingSM),
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    RoundedCornerShape(RadiusMD)
+                                )
+                                .padding(
+                                    horizontal = SpacingMD,
+                                    vertical = SpacingSM
+                                ),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(activity.dateHour, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                                Text(activity.title, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("📍 ${activity.location}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = activity.dateHour,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+
+                                Text(
+                                    text = activity.title,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Text(
+                                    text = "📍 ${activity.location}",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 if (activity.estimatedCost != null) {
                                     Text(
                                         text = "R$ ${activity.estimatedCost.toInt()}",
@@ -148,13 +223,23 @@ fun TripActivitiesCard(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.tertiary,
                                     )
-                                    Spacer(modifier = Modifier.width(SpacingSM))
+
+                                    Spacer(
+                                        modifier = Modifier.width(SpacingSM)
+                                    )
                                 }
+
                                 IconButton(
-                                    onClick = { onRemoveActivity(activity.id) },
+                                    onClick = {
+                                        onRemoveActivity(activity.id)
+                                    },
                                     modifier = Modifier.size(24.dp),
                                 ) {
-                                    Text("✕", fontSize = 12.sp, color = TextSecondary)
+                                    Text(
+                                        text = "✕",
+                                        fontSize = 12.sp,
+                                        color = TextSecondary
+                                    )
                                 }
                             }
                         }
@@ -164,6 +249,7 @@ fun TripActivitiesCard(
 
             Spacer(modifier = Modifier.height(SpacingSM))
 
+            // Adicionar atividade
             Button(
                 onClick = onAddActivityClick,
                 colors =
@@ -171,7 +257,11 @@ fun TripActivitiesCard(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                border =
+                    BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary
+                    ),
                 shape = RoundedCornerShape(RadiusMD),
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -187,7 +277,10 @@ fun TripActivitiesCard(
             Text(
                 text = "💡 Dica: Não definiu todos os passeios? Adicione durante a viagem.",
                 fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                color =
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                        alpha = 0.7f
+                    ),
             )
         }
     }

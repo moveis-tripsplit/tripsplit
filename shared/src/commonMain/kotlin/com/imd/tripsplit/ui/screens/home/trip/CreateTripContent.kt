@@ -1,3 +1,4 @@
+
 package com.imd.tripsplit.ui.screens.home.trip
 
 import androidx.compose.foundation.background
@@ -36,6 +37,9 @@ fun CreateTripContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEditing: Boolean = false,
+    isTripSaved: Boolean = false,
+    onManageExpensesClick: () -> Unit = {},
+    onEditActivitiesClick: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -52,7 +56,10 @@ fun CreateTripContent(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     .imePadding()
-                    .padding(horizontal = SpacingXL, vertical = SpacingLG)
+                    .padding(
+                        horizontal = SpacingXL,
+                        vertical = SpacingLG
+                    )
                     .padding(bottom = 100.dp),
             horizontalAlignment = Alignment.Start,
         ) {
@@ -64,12 +71,16 @@ fun CreateTripContent(
 
             Spacer(modifier = Modifier.height(SpacingLG))
 
-            // 2. Informações Gerais (Título e Descrição)
+            // 2. Informações Gerais
             TripInfoCard(
                 title = state.title,
                 description = state.description,
-                onTitleChange = { onAction(CreateTripAction.UpdateTitle(it)) },
-                onDescriptionChange = { onAction(CreateTripAction.UpdateDescription(it)) },
+                onTitleChange = {
+                    onAction(CreateTripAction.UpdateTitle(it))
+                },
+                onDescriptionChange = {
+                    onAction(CreateTripAction.UpdateDescription(it))
+                },
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -78,17 +89,28 @@ fun CreateTripContent(
             TripDatesCard(
                 startDate = state.startDate,
                 endDate = state.endDate,
-                onStartDateChange = { onAction(CreateTripAction.UpdateStartDate(it)) },
-                onEndDateChange = { onAction(CreateTripAction.UpdateEndDate(it)) },
+                onStartDateChange = {
+                    onAction(CreateTripAction.UpdateStartDate(it))
+                },
+                onEndDateChange = {
+                    onAction(CreateTripAction.UpdateEndDate(it))
+                },
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
 
             // 4. Roteiro de Atividades
             TripActivitiesCard(
+                isTripSaved = isTripSaved,
+                onManageExpensesClick = onManageExpensesClick,
+                onEditActivitiesClick = onEditActivitiesClick,
                 activities = state.activities,
-                onAddActivityClick = { onAction(CreateTripAction.OpenAddActivityModal) },
-                onRemoveActivity = { onAction(CreateTripAction.RemoveActivity(it)) },
+                onAddActivityClick = {
+                    onAction(CreateTripAction.OpenAddActivityModal)
+                },
+                onRemoveActivity = {
+                    onAction(CreateTripAction.RemoveActivity(it))
+                },
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -96,8 +118,12 @@ fun CreateTripContent(
             // 5. Participantes
             TripParticipantsCard(
                 participants = state.participants,
-                onAddParticipantClick = { onAction(CreateTripAction.OpenAddParticipantModal) },
-                onRemoveParticipant = { onAction(CreateTripAction.RemoveParticipant(it)) },
+                onAddParticipantClick = {
+                    onAction(CreateTripAction.OpenAddParticipantModal)
+                },
+                onRemoveParticipant = {
+                    onAction(CreateTripAction.RemoveParticipant(it))
+                },
             )
         }
 
