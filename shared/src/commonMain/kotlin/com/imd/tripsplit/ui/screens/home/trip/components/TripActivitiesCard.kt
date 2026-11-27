@@ -1,8 +1,10 @@
+
 package com.imd.tripsplit.ui.screens.home.trip.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.ui.screens.home.trip.TripActivity
+import com.imd.tripsplit.ui.theme.BackgroundLight
+import com.imd.tripsplit.ui.theme.BlueOcean
+import com.imd.tripsplit.ui.theme.BorderLight
+import com.imd.tripsplit.ui.theme.GreenTravel
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
@@ -36,10 +41,15 @@ import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXS
+import com.imd.tripsplit.ui.theme.SurfaceLight
+import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable
 fun TripActivitiesCard(
+    isTripSaved: Boolean = false,
+    onManageExpensesClick: () -> Unit = {},
+    onEditActivitiesClick: () -> Unit = {},
     activities: List<TripActivity>,
     onAddActivityClick: () -> Unit,
     onRemoveActivity: (String) -> Unit,
@@ -48,11 +58,21 @@ fun TripActivitiesCard(
 ) {
     Card(
         shape = RoundedCornerShape(RadiusLG),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = SurfaceLight
+            ),
+        border =
+            BorderStroke(
+                1.dp,
+                BorderLight
+            ),
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(SpacingLG)) {
+        Column(
+            modifier = Modifier.padding(SpacingLG)
+        ) {
+            // Cabeçalho
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -62,22 +82,34 @@ fun TripActivitiesCard(
                     text = "Roteiro de Atividades",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outlineVariant,
+                    color = TextSecondary,
                 )
 
+                // Botão Editar atividades
                 Box(
                     modifier =
                         Modifier
                             .clip(RoundedCornerShape(RadiusXL))
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusXL))
-                            .padding(horizontal = SpacingSM, vertical = 2.dp),
+                            .background(BlueOcean.copy(alpha = 0.08f))
+                            .border(
+                                1.dp,
+                                BorderLight,
+                                RoundedCornerShape(RadiusXL)
+                            )
+                            .clickable(
+                                enabled = isTripSaved,
+                                onClick = onManageExpensesClick
+                            )
+                            .padding(
+                                horizontal = SpacingSM,
+                                vertical = 2.dp
+                            ),
                 ) {
                     Text(
-                        text = "Pode adicionar depois",
+                        text = "Editar atividades",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        color = BlueOcean,
                     )
                 }
             }
@@ -87,34 +119,43 @@ fun TripActivitiesCard(
             Text(
                 text = "Atividades já programadas para a viagem:",
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = TextSecondary,
             )
 
             Spacer(modifier = Modifier.height(SpacingSM))
 
+            // Lista de atividades
             if (activities.isEmpty()) {
                 Box(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(RadiusMD))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), RoundedCornerShape(RadiusMD))
+                            .background(BackgroundLight)
+                            .border(
+                                1.dp,
+                                BorderLight,
+                                RoundedCornerShape(RadiusMD)
+                            )
                             .padding(SpacingMD),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             text = "Nenhuma atividade adicionada ainda",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = TextSecondary,
                         )
+
                         Spacer(modifier = Modifier.height(2.dp))
+
                         Text(
                             text = "Você pode salvar agora e criar as atividades depois.",
                             fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            color = TextSecondary.copy(alpha = 0.7f),
                         )
                     }
                 }
@@ -126,37 +167,74 @@ fun TripActivitiesCard(
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp)
                                 .clip(RoundedCornerShape(RadiusMD))
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(RadiusMD))
-                                .padding(horizontal = SpacingMD, vertical = SpacingSM),
+                                .background(BackgroundLight)
+                                .border(
+                                    1.dp,
+                                    BorderLight,
+                                    RoundedCornerShape(RadiusMD)
+                                )
+                                .padding(
+                                    horizontal = SpacingMD,
+                                    vertical = SpacingSM
+                                ),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(activity.dateHour, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                                Text(activity.title, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("📍 ${activity.location}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = activity.dateHour,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BlueOcean
+                                )
+
+                                Text(
+                                    text = activity.title,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary
+                                )
+
+                                Text(
+                                    text = "📍 ${activity.location}",
+                                    fontSize = 11.sp,
+                                    color = TextSecondary
+                                )
                             }
 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 if (activity.estimatedCost != null) {
                                     Text(
                                         text = "R$ ${activity.estimatedCost.toInt()}",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.tertiary,
+                                        color = GreenTravel,
                                     )
-                                    Spacer(modifier = Modifier.width(SpacingSM))
+
+                                    Spacer(
+                                        modifier = Modifier.width(SpacingSM)
+                                    )
                                 }
+
                                 if (isCreator) {
                                     IconButton(
-                                        onClick = { onRemoveActivity(activity.id) },
+                                        onClick = {
+                                            onRemoveActivity(activity.id)
+                                        },
                                         modifier = Modifier.size(24.dp),
                                     ) {
-                                        Text("✕", fontSize = 12.sp, color = TextSecondary)
+                                        Text(
+                                            text = "✕",
+                                            fontSize = 12.sp,
+                                            color = TextSecondary
+                                        )
                                     }
                                 }
                             }
@@ -168,14 +246,19 @@ fun TripActivitiesCard(
             if (isCreator) {
                 Spacer(modifier = Modifier.height(SpacingSM))
 
+                // Adicionar atividade
                 Button(
                     onClick = onAddActivityClick,
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            containerColor = BlueOcean,
+                            contentColor = SurfaceLight,
                         ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    border =
+                        BorderStroke(
+                            1.dp,
+                            BlueOcean
+                        ),
                     shape = RoundedCornerShape(RadiusMD),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -185,15 +268,15 @@ fun TripActivitiesCard(
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
+
+                Spacer(modifier = Modifier.height(SpacingXS))
+
+                Text(
+                    text = "💡 Dica: Não definiu todos os passeios? Adicione durante a viagem.",
+                    fontSize = 11.sp,
+                    color = TextSecondary.copy(alpha = 0.7f),
+                )
             }
-
-            Spacer(modifier = Modifier.height(SpacingXS))
-
-            Text(
-                text = "💡 Dica: Não definiu todos os passeios? Adicione durante a viagem.",
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            )
         }
     }
 }
