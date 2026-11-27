@@ -5,8 +5,10 @@ import com.imd.tripsplit.model.Trip
 
 object TripParticipantValidator {
     /**
-     * Regra 1: Toda viagem deve ter obrigatoriamente pelo menos um Organizador.
+     * Regra 1: O criador da viagem não pode ser excluído da viagem.
+     * Regra 2: Toda viagem deve ter obrigatoriamente pelo menos um Organizador.
      * O organizador não pode ser excluído sem transferir a função antes.
+     * Regra 3: Validação de pendências financeiras (despesas ativas ou débitos).
      */
     fun validateDeletion(
         trip: Trip,
@@ -16,7 +18,14 @@ object TripParticipantValidator {
         val target = trip.participants.find { it.id == participantId }
             ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
 
-        // Regra 1: Validação de organizador mínimo
+        // Regra: O criador da viagem não pode ser excluído
+        if (trip.isCreator(target)) {
+            return Result.failure(
+                IllegalStateException("O criador da viagem não pode ser excluído da viagem.")
+            )
+        }
+
+        // Regra: Validação de organizador mínimo
         if (target.isOrganizer) {
             val totalOrganizers = trip.participants.count { it.isOrganizer }
             if (totalOrganizers <= 1) {
@@ -28,7 +37,7 @@ object TripParticipantValidator {
             }
         }
 
-        // Regra 2: Validação de pendências financeiras (despesas ativas ou débitos)
+        // Regra: Validação de pendências financeiras (despesas ativas ou débitos)
         if (hasFinancialPending) {
             return Result.failure(
                 IllegalStateException(
@@ -41,7 +50,8 @@ object TripParticipantValidator {
     }
 
     /**
-     * Regra 1 (ao editar papel): Se for o único organizador, não pode alterar papel para participante.
+     * Regra 1: O criador da viagem sempre será o organizador e não pode ter seu papel alterado.
+     * Regra 2: Se for o único organizador, não pode alterar papel para participante.
      */
     fun validateRoleChange(
         trip: Trip,
@@ -50,6 +60,13 @@ object TripParticipantValidator {
     ): Result<Unit> {
         val target = trip.participants.find { it.id == participantId }
             ?: return Result.failure(IllegalArgumentException("Viajante não encontrado na viagem."))
+
+        // Regra: O criador da viagem sempre será o organizador
+        if (trip.isCreator(target) && !newRoleIsOrganizer) {
+            return Result.failure(
+                IllegalStateException("O criador da viagem sempre será o organizador e não pode ter seu papel alterado.")
+            )
+        }
 
         if (target.isOrganizer && !newRoleIsOrganizer) {
             val totalOrganizers = trip.participants.count { it.isOrganizer }

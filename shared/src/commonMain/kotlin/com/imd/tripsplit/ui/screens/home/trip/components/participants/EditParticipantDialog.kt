@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.home.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components.participants
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -69,7 +69,7 @@ fun EditParticipantDialog(
                 )
 
                 Text(
-                    text = "Papel na Viagem:",
+                    text = if (participant.isCreator) "Papel na Viagem (Criador):" else "Papel na Viagem:",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -79,18 +79,37 @@ fun EditParticipantDialog(
                     horizontalArrangement = Arrangement.spacedBy(SpacingSM),
                 ) {
                     FilterChip(
-                        selected = role == "Participante",
-                        onClick = { role = "Participante" },
+                        selected = !participant.isCreator && role == "Participante",
+                        onClick = {
+                            if (participant.isCreator) {
+                                validationError = "O criador da viagem sempre será o organizador e não pode ter seu papel alterado."
+                            } else {
+                                role = "Participante"
+                                validationError = null
+                            }
+                        },
+                        enabled = !participant.isCreator,
                         label = { Text("Participante", fontSize = 12.sp) },
                         shape = RoundedCornerShape(RadiusMD),
                         colors = FilterChipDefaults.filterChipColors(),
                     )
                     FilterChip(
-                        selected = role == "Organizador",
-                        onClick = { role = "Organizador" },
-                        label = { Text("Organizador", fontSize = 12.sp) },
+                        selected = participant.isCreator || role == "Organizador",
+                        onClick = {
+                            role = "Organizador"
+                            validationError = null
+                        },
+                        label = { Text(if (participant.isCreator) "Organizador (Criador)" else "Organizador", fontSize = 12.sp) },
                         shape = RoundedCornerShape(RadiusMD),
                         colors = FilterChipDefaults.filterChipColors(),
+                    )
+                }
+
+                if (participant.isCreator) {
+                    Text(
+                        text = "ℹ️ O criador da viagem é sempre o organizador.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
@@ -132,11 +151,15 @@ fun EditParticipantDialog(
                         .joinToString("")
                         .ifEmpty { "P" }
 
+                    val finalRole = if (participant.isCreator) "Organizador" else role
+                    val isOrganizer = if (participant.isCreator) true else finalRole.equals("Organizador", ignoreCase = true)
+
                     val updated = participant.copy(
                         name = trimmedName,
                         initials = initials,
-                        role = role,
-                        isOrganizer = role.equals("Organizador", ignoreCase = true),
+                        role = finalRole,
+                        isOrganizer = isOrganizer,
+                        isCreator = participant.isCreator,
                         contactOrPix = contact.trim().ifEmpty { null },
                     )
                     onConfirm(updated)

@@ -8,11 +8,12 @@ fun TripParticipant.toParticipant(): Participant =
         id = id,
         name = name,
         email = email,
-        role = role,
-        isOrganizer = isOrganizer,
+        role = if (isCreator) "Organizador" else role,
+        isOrganizer = if (isCreator) true else isOrganizer,
         contactOrPix = contactOrPix,
         hasAccount = hasAccount,
         userId = userId,
+        isCreator = isCreator,
     )
 
 fun Participant.toTripParticipant(): TripParticipant =
@@ -28,10 +29,11 @@ fun Participant.toTripParticipant(): TripParticipant =
                 .take(2)
                 .joinToString("")
                 .ifEmpty { "P" },
-        role = role,
-        isOrganizer = isOrganizer,
+        role = if (isCreator) "Organizador" else role,
+        isOrganizer = if (isCreator) true else isOrganizer,
         hasAccount = hasAccount,
         contactOrPix = contactOrPix,
         email = email,
         userId = userId,
+        isCreator = isCreator,
     )

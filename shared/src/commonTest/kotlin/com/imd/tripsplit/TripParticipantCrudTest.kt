@@ -320,4 +320,199 @@ class TripParticipantCrudTest {
         val result = apiClient.getParticipants("trip-err")
         assertTrue(result.isFailure, "Requisição que retorna 500 deve resultar em Failure.")
     }
+
+    @Test
+    fun testParticipantWithAccount_tripAppearsInParticipantTripList() {
+        val user1Email = "criador_${kotlin.random.Random.nextInt(10000, 99999)}@test.com"
+        val user2Email = "participante_${kotlin.random.Random.nextInt(10000, 99999)}@test.com"
+
+        // 1. Cadastra os dois usuários
+        val user1 = LocalDataManager.registerUser(
+            com.imd.tripsplit.model.User(
+                id = "user-${kotlin.random.Random.nextInt(10000, 99999)}",
+                name = "Criador da Viagem",
+                email = user1Email,
+                password = "123",
+            )
+        ).getOrThrow()
+
+        val user2 = LocalDataManager.registerUser(
+            com.imd.tripsplit.model.User(
+                id = "user-${kotlin.random.Random.nextInt(10000, 99999)}",
+                name = "Participante Convidado",
+                email = user2Email,
+                password = "123",
+            )
+        ).getOrThrow()
+
+        // 2. User 1 loga e cria uma viagem
+        LocalDataManager.login(user1Email, "123")
+        val tripId = "trip-shared-${kotlin.random.Random.nextInt(10000, 99999)}"
+        val trip = Trip(
+            id = tripId,
+            userId = user1.id,
+            title = "Viagem Compartilhada",
+            destination = "Praia",
+            status = TripStatus.UPCOMING,
+            totalAmount = 1000.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(
+                Participant(
+                    id = "part-1",
+                    name = "Participante Convidado",
+                    email = user2Email,
+                    hasAccount = true,
+                    userId = user2.id,
+                    role = "Participante",
+                )
+            ),
+        )
+        TripRepository.addTrip(trip)
+
+        // 3. User 1 vê a viagem
+        val user1Trips = TripRepository.getTripsForCurrentUser()
+        assertTrue(user1Trips.any { it.id == tripId }, "Criador da viagem deve ver a viagem.")
+
+        // 4. User 2 faz login
+        LocalDataManager.login(user2Email, "123")
+        val user2Trips = TripRepository.getTripsForCurrentUser()
+        assertTrue(user2Trips.any { it.id == tripId }, "Participante com conta deve ver a viagem em sua lista de viagens.")
+    }
+
+    // --- REGRAS DE NEGÓCIO: CRIADOR É SEMPRE ORGANIZADOR E NÃO PODE SER EXCLUÍDO ---
+
+    @Test
+    fun testCreatorCannotBeDeleted_evenIfOtherOrganizersExist() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador da Viagem",
+            userId = "creator-user-id",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val secondOrganizer = Participant(
+            id = "org-2",
+            name = "Outro Organizador",
+            userId = "user-2",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-creator-test",
+            userId = "creator-user-id",
+            title = "Viagem Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 500.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, secondOrganizer),
+        )
+
+        // Tentar excluir o criador deve falhar
+        val result = TripParticipantValidator.validateDeletion(trip, creator.id)
+        assertTrue(result.isFailure, "Não deve permitir excluir o criador da viagem.")
+        assertEquals("O criador da viagem não pode ser excluído da viagem.", result.exceptionOrNull()?.message)
+
+        // Excluir o outro organizador é permitido pois existem outros
+        val resultOther = TripParticipantValidator.validateDeletion(trip, secondOrganizer.id)
+        assertTrue(resultOther.isSuccess, "Deve permitir excluir outro organizador que não seja o criador.")
+    }
+
+    @Test
+    fun testCreatorCannotHaveRoleChanged_mustAlwaysBeOrganizer() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador da Viagem",
+            userId = "creator-user-id",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val secondOrganizer = Participant(
+            id = "org-2",
+            name = "Segundo Organizador",
+            userId = "user-2",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-creator-role-test",
+            userId = "creator-user-id",
+            title = "Viagem Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 500.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, secondOrganizer),
+        )
+
+        // Tentar rebaixar o criador para 'Participante' mesmo havendo outro organizador deve falhar
+        val result = TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = creator.id,
+            newRoleIsOrganizer = false,
+        )
+        assertTrue(result.isFailure, "O criador não pode ter seu papel alterado para participante.")
+        assertEquals("O criador da viagem sempre será o organizador e não pode ter seu papel alterado.", result.exceptionOrNull()?.message)
+
+        // O segundo organizador pode ter o papel alterado pois o criador permanece como organizador
+        val resultOther = TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = secondOrganizer.id,
+            newRoleIsOrganizer = false,
+        )
+        assertTrue(resultOther.isSuccess, "Outro organizador pode ter seu papel alterado.")
+    }
+
+    @Test
+    fun testCreateTripUiState_reduceProtectsCreator() {
+        val creator = TripParticipant(
+            id = "creator-part",
+            name = "Criador",
+            initials = "CR",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val friend = TripParticipant(
+            id = "friend-part",
+            name = "Amigo",
+            initials = "AM",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+
+        val state = CreateTripUiState(participants = listOf(creator, friend))
+
+        // 1. Tentar abrir exclusão para o criador bloqueia
+        val deleteOpenState = state.reduce(CreateTripAction.OpenDeleteParticipantModal(creator))
+        assertNotNull(deleteOpenState.participantErrorMessage)
+        assertEquals("O criador da viagem não pode ser excluído da viagem.", deleteOpenState.participantErrorMessage)
+
+        // 2. Tentar confirmar exclusão do criador bloqueia
+        val deleteConfirmState = state.reduce(CreateTripAction.ConfirmDeleteParticipant(creator.id))
+        assertNotNull(deleteConfirmState.participantErrorMessage)
+        assertEquals("O criador da viagem não pode ser excluído da viagem.", deleteConfirmState.participantErrorMessage)
+
+        // 3. Tentar alterar papel do criador bloqueia
+        val demotedCreator = creator.copy(role = "Participante", isOrganizer = false)
+        val updateState = state.reduce(CreateTripAction.UpdateParticipant(demotedCreator))
+        assertNotNull(updateState.participantErrorMessage)
+        assertEquals("O criador da viagem sempre será o organizador e não pode ter seu papel alterado.", updateState.participantErrorMessage)
+
+        // 4. Remover amigo comum funciona normalmente
+        val removeFriendState = state.reduce(CreateTripAction.RemoveParticipant(friend.id))
+        assertEquals(1, removeFriendState.participants.size)
+        assertEquals(creator.id, removeFriendState.participants.first().id)
+    }
 }

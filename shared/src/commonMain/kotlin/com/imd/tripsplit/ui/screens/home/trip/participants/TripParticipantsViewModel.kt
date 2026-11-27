@@ -28,7 +28,14 @@ class TripParticipantsViewModel(
             is TripParticipantsAction.CloseAddModal -> _uiState.update { it.copy(isAddModalOpen = false) }
             is TripParticipantsAction.OpenEditModal -> _uiState.update { it.copy(editingParticipant = action.participant) }
             is TripParticipantsAction.CloseEditModal -> _uiState.update { it.copy(editingParticipant = null) }
-            is TripParticipantsAction.OpenDeleteConfirmation -> _uiState.update { it.copy(deletingParticipant = action.participant) }
+            is TripParticipantsAction.OpenDeleteConfirmation -> {
+                val trip = repository.getTrip(_uiState.value.tripId)
+                if (action.participant.isCreator || (trip != null && trip.isCreator(action.participant.toParticipant()))) {
+                    _uiState.update { it.copy(errorMessage = "O criador da viagem não pode ser excluído da viagem.") }
+                } else {
+                    _uiState.update { it.copy(deletingParticipant = action.participant, errorMessage = null) }
+                }
+            }
             is TripParticipantsAction.CloseDeleteConfirmation -> _uiState.update { it.copy(deletingParticipant = null) }
             is TripParticipantsAction.AddParticipant -> addParticipant(action)
             is TripParticipantsAction.UpdateParticipant -> updateParticipant(action.participant)
@@ -39,7 +46,15 @@ class TripParticipantsViewModel(
     }
 
     private fun load(tripId: String) {
-        val currentParticipants = repository.getParticipants(tripId).map { it.toTripParticipant() }
+        val trip = repository.getTrip(tripId)
+        val currentParticipants = repository.getParticipants(tripId).map { p ->
+            val isCreator = trip?.isCreator(p) == true || p.isCreator
+            p.toTripParticipant().copy(
+                isCreator = isCreator,
+                isOrganizer = if (isCreator) true else p.isOrganizer,
+                role = if (isCreator) "Organizador" else p.role,
+            )
+        }
         _uiState.update {
             it.copy(
                 tripId = tripId,
@@ -51,7 +66,15 @@ class TripParticipantsViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isSyncing = true) }
             repository.syncParticipants(tripId)
-            val updated = repository.getParticipants(tripId).map { it.toTripParticipant() }
+            val updatedTrip = repository.getTrip(tripId)
+            val updated = repository.getParticipants(tripId).map { p ->
+                val isCreator = updatedTrip?.isCreator(p) == true || p.isCreator
+                p.toTripParticipant().copy(
+                    isCreator = isCreator,
+                    isOrganizer = if (isCreator) true else p.isOrganizer,
+                    role = if (isCreator) "Organizador" else p.role,
+                )
+            }
             _uiState.update { it.copy(participants = updated, isSyncing = false) }
         }
     }
@@ -93,12 +116,38 @@ class TripParticipantsViewModel(
 
     private fun updateParticipant(participant: TripParticipant) {
         val tripId = _uiState.value.tripId
-        val domain = participant.toParticipant()
+        val trip = repository.getTrip(tripId)
+        val isCreator = participant.isCreator || (trip != null && trip.isCreator(participant.toParticipant()))
+
+        if (isCreator && !participant.isOrganizer) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "O criador da viagem sempre será o organizador e não pode ter seu papel alterado.",
+                    editingParticipant = null,
+                )
+            }
+            return
+        }
+
+        val safeParticipant = if (isCreator) {
+            participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
+        } else {
+            participant
+        }
+        val domain = safeParticipant.toParticipant()
 
         viewModelScope.launch {
             val result = repository.updateParticipant(tripId, domain)
             if (result.isSuccess) {
-                val list = repository.getParticipants(tripId).map { it.toTripParticipant() }
+                val updatedTrip = repository.getTrip(tripId)
+                val list = repository.getParticipants(tripId).map { p ->
+                    val creator = updatedTrip?.isCreator(p) == true || p.isCreator
+                    p.toTripParticipant().copy(
+                        isCreator = creator,
+                        isOrganizer = if (creator) true else p.isOrganizer,
+                        role = if (creator) "Organizador" else p.role,
+                    )
+                }
                 _uiState.update {
                     it.copy(
                         participants = list,
@@ -119,11 +168,31 @@ class TripParticipantsViewModel(
 
     private fun deleteParticipant(participantId: String, hasFinancialPending: Boolean) {
         val tripId = _uiState.value.tripId
+        val trip = repository.getTrip(tripId)
+        val target = trip?.participants?.find { it.id == participantId }
+
+        if (target != null && trip.isCreator(target)) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "O criador da viagem não pode ser excluído da viagem.",
+                    deletingParticipant = null,
+                )
+            }
+            return
+        }
 
         viewModelScope.launch {
             val result = repository.removeParticipant(tripId, participantId, hasFinancialPending)
             if (result.isSuccess) {
-                val list = repository.getParticipants(tripId).map { it.toTripParticipant() }
+                val updatedTrip = repository.getTrip(tripId)
+                val list = repository.getParticipants(tripId).map { p ->
+                    val creator = updatedTrip?.isCreator(p) == true || p.isCreator
+                    p.toTripParticipant().copy(
+                        isCreator = creator,
+                        isOrganizer = if (creator) true else p.isOrganizer,
+                        role = if (creator) "Organizador" else p.role,
+                    )
+                }
                 _uiState.update {
                     it.copy(
                         participants = list,

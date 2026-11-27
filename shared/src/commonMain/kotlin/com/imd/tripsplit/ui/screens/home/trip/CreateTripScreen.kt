@@ -12,9 +12,9 @@ import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripStatus
 import com.imd.tripsplit.model.toUiState
 import com.imd.tripsplit.ui.screens.home.trip.components.AddActivityDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.AddParticipantDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.DeleteParticipantDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.EditParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.DeleteParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.EditParticipantDialog
 import kotlin.random.Random
 
 @Composable
@@ -24,9 +24,36 @@ fun CreateTripScreen(
     onBackClick: () -> Unit = {},
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
 ) {
+    val current = com.imd.tripsplit.data.UserRepository.currentUser.value
+    val initialParticipants = remember(current) {
+        if (current != null) {
+            listOf(
+                TripParticipant(
+                    id = current.id,
+                    name = current.name,
+                    initials =
+                        current.name
+                            .split(" ")
+                            .filter { it.isNotBlank() }
+                            .map { it.first().uppercase() }
+                            .take(2)
+                            .joinToString("")
+                            .ifEmpty { "O" },
+                    role = "Organizador",
+                    isOrganizer = true,
+                    hasAccount = true,
+                    email = current.email,
+                    userId = current.id,
+                    isCreator = true,
+                ),
+            )
+        } else {
+            emptyList()
+        }
+    }
     val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
     var state by remember(tripId) {
-        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState())
+        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState(participants = initialParticipants))
     }
 
     // Diálogo modal para adicionar atividade ao roteiro
@@ -91,7 +118,15 @@ fun CreateTripScreen(
                         description = state.description.trim(),
                         startDate = state.startDate,
                         endDate = state.endDate,
-                        participants = state.participants.map { it.toParticipant() },
+                        participants =
+                            state.participants.map { p ->
+                                val isCreator = p.isCreator || (editingTrip.userId.isNotBlank() && (p.userId == editingTrip.userId || p.id == editingTrip.userId))
+                                p.toParticipant().copy(
+                                    isCreator = isCreator,
+                                    isOrganizer = if (isCreator) true else p.isOrganizer,
+                                    role = if (isCreator) "Organizador" else p.role,
+                                )
+                            },
                         activities = state.activities,
                     ),
                 )
@@ -100,17 +135,30 @@ fun CreateTripScreen(
                 val current = com.imd.tripsplit.data.UserRepository.currentUser.value
                 val currentUserId = current?.id ?: ""
                 val defaultParticipants =
-                    if (state.participants.isEmpty() && current != null) {
-                        listOf(
-                            com.imd.tripsplit.model.Participant(
-                                id = current.id,
-                                name = current.name,
-                                role = "Organizador",
-                                isOrganizer = true,
-                            ),
+                    state.participants.map { p ->
+                        val isCreator = p.isCreator || (currentUserId.isNotBlank() && (p.userId == currentUserId || p.id == currentUserId))
+                        p.toParticipant().copy(
+                            isCreator = isCreator,
+                            isOrganizer = if (isCreator) true else p.isOrganizer,
+                            role = if (isCreator) "Organizador" else p.role,
                         )
-                    } else {
-                        state.participants.map { it.toParticipant() }
+                    }.let { list ->
+                        if (current != null && list.none { it.isCreator || (currentUserId.isNotBlank() && (it.userId == currentUserId || it.id == currentUserId)) }) {
+                            listOf(
+                                com.imd.tripsplit.model.Participant(
+                                    id = current.id,
+                                    name = current.name,
+                                    role = "Organizador",
+                                    isOrganizer = true,
+                                    email = current.email,
+                                    userId = current.id,
+                                    hasAccount = true,
+                                    isCreator = true,
+                                ),
+                            ) + list
+                        } else {
+                            list
+                        }
                     }
 
                 val trip =

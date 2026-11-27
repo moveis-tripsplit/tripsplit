@@ -31,6 +31,7 @@ data class TripParticipant(
     val contactOrPix: String? = null,
     val email: String? = null,
     val userId: String? = null,
+    val isCreator: Boolean = false,
 )
 
 /**
@@ -112,26 +113,48 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
         is CreateTripAction.OpenAddParticipantModal -> copy(showAddParticipantModal = true, participantErrorMessage = null)
         is CreateTripAction.CloseAddParticipantModal -> copy(showAddParticipantModal = false)
         is CreateTripAction.AddParticipant -> copy(participants = participants + action.participant, showAddParticipantModal = false)
-        is CreateTripAction.RemoveParticipant -> copy(participants = participants.filterNot { it.id == action.participantId })
+        is CreateTripAction.RemoveParticipant -> {
+            val target = participants.find { it.id == action.participantId }
+            if (target?.isCreator == true) {
+                copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+            } else {
+                copy(participants = participants.filterNot { it.id == action.participantId })
+            }
+        }
         is CreateTripAction.OpenEditParticipantModal -> copy(editingParticipant = action.participant, participantErrorMessage = null)
         is CreateTripAction.CloseEditParticipantModal -> copy(editingParticipant = null)
         is CreateTripAction.UpdateParticipant -> {
             val current = participants.find { it.id == action.participant.id }
-            if (current?.isOrganizer == true && !action.participant.isOrganizer && participants.count { it.isOrganizer } <= 1) {
+            if (current?.isCreator == true && !action.participant.isOrganizer) {
+                copy(participantErrorMessage = "O criador da viagem sempre será o organizador e não pode ter seu papel alterado.")
+            } else if (current?.isOrganizer == true && !action.participant.isOrganizer && participants.count { it.isOrganizer } <= 1) {
                 copy(participantErrorMessage = "A viagem deve ter pelo menos um Organizador. Defina outro organizador antes de alterar esta função.")
             } else {
+                val safeParticipant = if (current?.isCreator == true) {
+                    action.participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
+                } else {
+                    action.participant
+                }
                 copy(
-                    participants = participants.map { if (it.id == action.participant.id) action.participant else it },
+                    participants = participants.map { if (it.id == action.participant.id) safeParticipant else it },
                     editingParticipant = null,
                     participantErrorMessage = null,
                 )
             }
         }
-        is CreateTripAction.OpenDeleteParticipantModal -> copy(deletingParticipant = action.participant, participantErrorMessage = null)
+        is CreateTripAction.OpenDeleteParticipantModal -> {
+            if (action.participant.isCreator) {
+                copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+            } else {
+                copy(deletingParticipant = action.participant, participantErrorMessage = null)
+            }
+        }
         is CreateTripAction.CloseDeleteParticipantModal -> copy(deletingParticipant = null)
         is CreateTripAction.ConfirmDeleteParticipant -> {
             val target = participants.find { it.id == action.participantId }
-            if (target?.isOrganizer == true && participants.count { it.isOrganizer } <= 1) {
+            if (target?.isCreator == true) {
+                copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+            } else if (target?.isOrganizer == true && participants.count { it.isOrganizer } <= 1) {
                 copy(participantErrorMessage = "Toda viagem deve ter obrigatoriamente pelo menos um Organizador. Transfira a função antes de excluir.")
             } else if (action.hasFinancialPending) {
                 copy(participantErrorMessage = "Não é possível excluir viajante que possui despesas ativas vinculadas ou débitos em aberto.")

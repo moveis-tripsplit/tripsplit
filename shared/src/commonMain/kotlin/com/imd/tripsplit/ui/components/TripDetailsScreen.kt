@@ -31,10 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.data.TripRepository
-import com.imd.tripsplit.ui.screens.home.trip.components.AddParticipantDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.DeleteParticipantDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.EditParticipantDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.TripParticipantsCard
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.DeleteParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.EditParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.TripParticipantsCard
 import com.imd.tripsplit.ui.screens.home.trip.participants.TripParticipantsAction
 import com.imd.tripsplit.ui.screens.home.trip.participants.TripParticipantsViewModel
 import com.imd.tripsplit.ui.theme.SpacingLG

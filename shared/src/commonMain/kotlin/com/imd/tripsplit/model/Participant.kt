@@ -13,4 +13,5 @@ data class Participant(
     val contactOrPix: String? = null,
     val hasAccount: Boolean = false,
     val userId: String? = null,
+    val isCreator: Boolean = false,
 )

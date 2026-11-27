@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.home.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components.participants
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

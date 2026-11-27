@@ -95,7 +95,18 @@ object LocalDataManager {
 
     fun addTrip(trip: Trip) {
         val loggedId = _currentUser.value?.id ?: ""
-        val tripWithUser = if (trip.userId.isBlank()) trip.copy(userId = loggedId) else trip
+        val tripUserId = if (trip.userId.isBlank()) loggedId else trip.userId
+
+        val updatedParticipants = trip.participants.map { p ->
+            val isCreator = p.isCreator || (tripUserId.isNotBlank() && (p.userId == tripUserId || p.id == tripUserId))
+            if (isCreator) {
+                p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
+            } else {
+                p
+            }
+        }
+
+        val tripWithUser = trip.copy(userId = tripUserId, participants = updatedParticipants)
 
         _dbState.update { current ->
             current.copy(trips = listOf(tripWithUser) + current.trips)
@@ -107,17 +118,35 @@ object LocalDataManager {
     fun getTrip(id: String): Trip? = _trips.value.find { it.id == id }
 
     fun updateTrip(updated: Trip) {
+        val updatedParticipants = updated.participants.map { p ->
+            val isCreator = updated.isCreator(p)
+            if (isCreator) {
+                p.copy(isOrganizer = true, role = "Organizador", isCreator = true)
+            } else {
+                p
+            }
+        }
+        val finalUpdated = updated.copy(participants = updatedParticipants)
         _dbState.update { current ->
-            current.copy(trips = current.trips.map { if (it.id == updated.id) updated else it })
+            current.copy(trips = current.trips.map { if (it.id == finalUpdated.id) finalUpdated else it })
         }
         _trips.value = _dbState.value.trips
         persist()
     }
 
     fun getTripsForCurrentUser(): List<Trip> {
-        val userId = _currentUser.value?.id
+        val user = _currentUser.value
+        val userId = user?.id
+        val userEmail = user?.email?.trim()
         return if (userId != null) {
-            _trips.value.filter { it.userId == userId || it.userId.isBlank() }
+            _trips.value.filter { trip ->
+                trip.userId == userId ||
+                    trip.userId.isBlank() ||
+                    trip.participants.any { p ->
+                        (p.userId != null && p.userId == userId) ||
+                            (!p.email.isNullOrBlank() && userEmail != null && p.email.trim().equals(userEmail, ignoreCase = true))
+                    }
+            }
         } else {
             _trips.value
         }

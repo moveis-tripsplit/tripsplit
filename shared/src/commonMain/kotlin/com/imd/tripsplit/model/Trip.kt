@@ -23,6 +23,9 @@ data class Trip(
     fun periodLabel(): String {
         return "$startDate - $endDate"
     }
+
+    fun isCreator(participant: Participant): Boolean =
+        participant.isCreator || (userId.isNotBlank() && (participant.userId == userId || participant.id == userId))
 }
 
 fun Trip.toUiState(): CreateTripUiState =
@@ -32,5 +35,13 @@ fun Trip.toUiState(): CreateTripUiState =
         startDate = startDate,
         endDate = endDate,
         activities = activities,
-        participants = participants.map { it.toTripParticipant() },
+        participants =
+            participants.map { p ->
+                val isThisCreator = isCreator(p)
+                p.toTripParticipant().copy(
+                    isCreator = isThisCreator,
+                    isOrganizer = if (isThisCreator) true else p.isOrganizer,
+                    role = if (isThisCreator) "Organizador" else p.role,
+                )
+            },
     )

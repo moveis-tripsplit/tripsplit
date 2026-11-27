@@ -23,7 +23,7 @@ import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripHeader
 import com.imd.tripsplit.ui.screens.home.trip.components.TripActivitiesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripDatesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripInfoCard
-import com.imd.tripsplit.ui.screens.home.trip.components.TripParticipantsCard
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.TripParticipantsCard
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXL

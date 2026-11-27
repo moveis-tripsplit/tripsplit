@@ -1,4 +1,4 @@
-package com.imd.tripsplit.ui.screens.home.trip.components
+package com.imd.tripsplit.ui.screens.home.trip.components.participants
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,7 +32,13 @@ fun DeleteParticipantDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    val isBlocked = errorMessage != null
+    val effectiveError =
+        if (participant.isCreator) {
+            "O criador da viagem não pode ser excluído da viagem."
+        } else {
+            errorMessage
+        }
+    val isBlocked = effectiveError != null
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -66,7 +72,7 @@ fun DeleteParticipantDialog(
                                 .padding(SpacingSM),
                     ) {
                         Text(
-                            text = errorMessage.orEmpty(),
+                            text = effectiveError.orEmpty(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onErrorContainer,
