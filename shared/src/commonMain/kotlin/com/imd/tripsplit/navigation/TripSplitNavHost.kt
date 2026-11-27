@@ -58,15 +58,29 @@ fun TripSplitNavHost(
             PerfilScreen(
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
+                onLogoutClick = {
+                    com.imd.tripsplit.data.UserRepository.logout()
+                    navController.navigate(Route.Login) {
+                        popUpTo<Route.Home> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
             )
         }
 
         // CADASTRO
         composable<Route.Register> {
             RegisterScreen(
-                onRegisterClick = {
-                    // Lógica do botão Registrar
+                onRegisterSuccess = {
+                    navController.navigate(Route.Home) {
+                        popUpTo<Route.Login> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 },
                 onLoginClick = {
                     navController.popBackStack()
@@ -81,9 +95,30 @@ fun TripSplitNavHost(
             var selectedFilter by remember {
                 mutableStateOf(TripFilter.ALL)
             }
+            val allTrips by TripRepository.trips.collectAsState()
+            val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+            val userTrips =
+                remember(allTrips, currentUser) {
+                    val user = currentUser
+                    if (user != null) {
+                        val uid = user.id
+                        val uEmail = user.email.trim()
+                        allTrips.filter { trip ->
+                            trip.userId == uid ||
+                                trip.userId.isBlank() ||
+                                trip.participants.any { p ->
+                                    (p.userId != null && p.userId == uid) ||
+                                        (!p.email.isNullOrBlank() && p.email.trim().equals(uEmail, ignoreCase = true))
+                                }
+                        }
+                    } else {
+                        allTrips
+                    }
+                }
+            var selectedFilter by remember { mutableStateOf(TripFilter.ALL) }
 
             HomeScreen(
-                trips = trips,
+                trips = userTrips,
                 selectedFilter = selectedFilter,
                 onFilterSelected = {
                     selectedFilter = it

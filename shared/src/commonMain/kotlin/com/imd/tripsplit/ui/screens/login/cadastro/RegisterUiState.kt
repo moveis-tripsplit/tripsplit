@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDate
 data class RegisterUiState(
     val nome: String = "",
     val birthDate: LocalDate? = null,
+    val birthDateInput: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",

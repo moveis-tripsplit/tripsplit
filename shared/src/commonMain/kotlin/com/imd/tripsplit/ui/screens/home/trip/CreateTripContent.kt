@@ -24,7 +24,7 @@ import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripHeader
 import com.imd.tripsplit.ui.screens.home.trip.components.TripActivitiesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripDatesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripInfoCard
-import com.imd.tripsplit.ui.screens.home.trip.components.TripParticipantsCard
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.TripParticipantsCard
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXL
@@ -35,6 +35,9 @@ fun CreateTripContent(
     onAction: (CreateTripAction) -> Unit,
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
+    isOrganizer: Boolean = true,
+    isCreator: Boolean = true,
+    currentUserId: String? = null,
     modifier: Modifier = Modifier,
     isEditing: Boolean = false,
     isTripSaved: Boolean = false,
@@ -67,6 +70,7 @@ fun CreateTripContent(
             CreateTripHeader(
                 onBackClick = onBackClick,
                 isEditing = isEditing,
+                isCreator = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingLG))
@@ -81,6 +85,9 @@ fun CreateTripContent(
                 onDescriptionChange = {
                     onAction(CreateTripAction.UpdateDescription(it))
                 },
+                onTitleChange = { onAction(CreateTripAction.UpdateTitle(it)) },
+                onDescriptionChange = { onAction(CreateTripAction.UpdateDescription(it)) },
+                enabled = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -95,6 +102,9 @@ fun CreateTripContent(
                 onEndDateChange = {
                     onAction(CreateTripAction.UpdateEndDate(it))
                 },
+                onStartDateChange = { onAction(CreateTripAction.UpdateStartDate(it)) },
+                onEndDateChange = { onAction(CreateTripAction.UpdateEndDate(it)) },
+                enabled = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -111,6 +121,9 @@ fun CreateTripContent(
                 onRemoveActivity = {
                     onAction(CreateTripAction.RemoveActivity(it))
                 },
+                onAddActivityClick = { if (isCreator) onAction(CreateTripAction.OpenAddActivityModal) },
+                onRemoveActivity = { if (isCreator) onAction(CreateTripAction.RemoveActivity(it)) },
+                isCreator = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -124,6 +137,27 @@ fun CreateTripContent(
                 onRemoveParticipant = {
                     onAction(CreateTripAction.RemoveParticipant(it))
                 },
+                    if (isCreator) onAction(CreateTripAction.OpenAddParticipantModal)
+                },
+                onRemoveParticipant = {
+                    if (isOrganizer) onAction(CreateTripAction.RemoveParticipant(it))
+                },
+                onEditParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenEditParticipantModal(it)) }
+                    } else {
+                        null
+                    },
+                onDeleteParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) }
+                    } else {
+                        null
+                    },
+                isOrganizer = isOrganizer,
+                isCreator = isCreator,
+                currentUserId = currentUserId,
+                errorMessage = state.participantErrorMessage,
             )
         }
 
@@ -133,6 +167,7 @@ fun CreateTripContent(
             onSubmitClick = onSubmitClick,
             onSaveDraftClick = onBackClick,
             isEditing = isEditing,
+            isCreator = isCreator,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
     }

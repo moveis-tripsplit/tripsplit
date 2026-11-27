@@ -31,6 +31,7 @@ fun TripInfoCard(
     description: String,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -52,6 +53,7 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
+                readOnly = !enabled,
                 placeholder = {
                     Text(
                         text = "Ex: Férias em Floripa, Carnaval...",
@@ -88,6 +90,7 @@ fun TripInfoCard(
             OutlinedTextField(
                 value = description,
                 onValueChange = onDescriptionChange,
+                readOnly = !enabled,
                 placeholder = {
                     Text(
                         text = "Adicione um recado para o grupo ou anotações...",
