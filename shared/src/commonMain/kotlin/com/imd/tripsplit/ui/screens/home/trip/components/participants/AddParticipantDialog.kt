@@ -43,6 +43,7 @@ import kotlin.random.Random
 
 @Composable
 fun AddParticipantDialog(
+    isCreator: Boolean = true,
     onDismiss: () -> Unit,
     onConfirm: (TripParticipant) -> Unit,
 ) {
@@ -179,17 +180,36 @@ fun AddParticipantDialog(
                 ) {
                     FilterChip(
                         selected = role == "Participante",
-                        onClick = { role = "Participante" },
+                        onClick = {
+                            role = "Participante"
+                            errorMessage = null
+                        },
                         label = { Text("Participante", fontSize = 12.sp) },
                         shape = RoundedCornerShape(RadiusMD),
                         colors = FilterChipDefaults.filterChipColors(),
                     )
                     FilterChip(
                         selected = role == "Organizador",
-                        onClick = { role = "Organizador" },
+                        onClick = {
+                            if (!isCreator) {
+                                errorMessage = "Apenas o criador da viagem pode definir participantes como organizador."
+                            } else {
+                                role = "Organizador"
+                                errorMessage = null
+                            }
+                        },
+                        enabled = isCreator,
                         label = { Text("Organizador", fontSize = 12.sp) },
                         shape = RoundedCornerShape(RadiusMD),
                         colors = FilterChipDefaults.filterChipColors(),
+                    )
+                }
+
+                if (!isCreator) {
+                    Text(
+                        text = "ℹ️ Apenas o criador da viagem pode definir participantes como organizador.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -230,6 +250,11 @@ fun AddParticipantDialog(
                             errorMessage = "O nome deve ter pelo menos 2 caracteres."
                             return@Button
                         }
+                    }
+
+                    if (role == "Organizador" && !isCreator) {
+                        errorMessage = "Apenas o criador da viagem pode definir participantes como organizador."
+                        return@Button
                     }
 
                     val resolvedName = if (trimmedName.isNotBlank()) {

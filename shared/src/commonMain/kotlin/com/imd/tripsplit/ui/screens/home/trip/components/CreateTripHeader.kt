@@ -37,6 +37,7 @@ fun CreateTripHeader(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEditing: Boolean = false,
+    isCreator: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // Barra Superior de Navegação
@@ -60,7 +61,7 @@ fun CreateTripHeader(
             }
 
             Text(
-                text = if (isEditing) "Editar Viagem" else "Cadastrar Viagem",
+                text = if (!isEditing) "Cadastrar Viagem" else if (isCreator) "Editar Viagem" else "Detalhes da Viagem",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -104,7 +105,7 @@ fun CreateTripHeader(
         }
 
         Text(
-            text = if (isEditing) "Editar viagem" else "Para onde vamos?",
+            text = if (!isEditing) "Para onde vamos?" else if (isCreator) "Editar viagem" else "Detalhes da viagem",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -114,10 +115,12 @@ fun CreateTripHeader(
 
         Text(
             text =
-                if (isEditing) {
+                if (!isEditing) {
+                    "Preencha as informações da viagem para começar a dividir gastos com os participantes."
+                } else if (isCreator) {
                     "Atualize as informações, o roteiro e os participantes da viagem."
                 } else {
-                    "Preencha as informações da viagem para começar a dividir gastos com os participantes."
+                    "Visualize as informações, o roteiro e os participantes da viagem."
                 },
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

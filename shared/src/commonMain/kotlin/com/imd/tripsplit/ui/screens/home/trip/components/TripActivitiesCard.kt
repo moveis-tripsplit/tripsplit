@@ -43,6 +43,7 @@ fun TripActivitiesCard(
     activities: List<TripActivity>,
     onAddActivityClick: () -> Unit,
     onRemoveActivity: (String) -> Unit,
+    isCreator: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -150,11 +151,13 @@ fun TripActivitiesCard(
                                     )
                                     Spacer(modifier = Modifier.width(SpacingSM))
                                 }
-                                IconButton(
-                                    onClick = { onRemoveActivity(activity.id) },
-                                    modifier = Modifier.size(24.dp),
-                                ) {
-                                    Text("✕", fontSize = 12.sp, color = TextSecondary)
+                                if (isCreator) {
+                                    IconButton(
+                                        onClick = { onRemoveActivity(activity.id) },
+                                        modifier = Modifier.size(24.dp),
+                                    ) {
+                                        Text("✕", fontSize = 12.sp, color = TextSecondary)
+                                    }
                                 }
                             }
                         }
@@ -162,24 +165,26 @@ fun TripActivitiesCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(SpacingSM))
+            if (isCreator) {
+                Spacer(modifier = Modifier.height(SpacingSM))
 
-            Button(
-                onClick = onAddActivityClick,
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(RadiusMD),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = "+ Adicionar atividade ao roteiro",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                Button(
+                    onClick = onAddActivityClick,
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(RadiusMD),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "+ Adicionar atividade ao roteiro",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(SpacingXS))

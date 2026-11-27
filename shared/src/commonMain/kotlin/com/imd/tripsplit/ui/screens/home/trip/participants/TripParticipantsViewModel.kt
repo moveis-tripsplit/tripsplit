@@ -24,13 +24,32 @@ class TripParticipantsViewModel(
     fun onAction(action: TripParticipantsAction) {
         when (action) {
             is TripParticipantsAction.Load -> load(action.tripId)
-            is TripParticipantsAction.OpenAddModal -> _uiState.update { it.copy(isAddModalOpen = true) }
+            is TripParticipantsAction.OpenAddModal -> {
+                val trip = repository.getTrip(_uiState.value.tripId)
+                val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
+                if (trip != null && currentUser != null && !trip.isUserCreator(currentUser.id, currentUser.email)) {
+                    _uiState.update { it.copy(errorMessage = "Apenas o criador da viagem pode adicionar participantes.") }
+                } else {
+                    _uiState.update { it.copy(isAddModalOpen = true, errorMessage = null) }
+                }
+            }
             is TripParticipantsAction.CloseAddModal -> _uiState.update { it.copy(isAddModalOpen = false) }
-            is TripParticipantsAction.OpenEditModal -> _uiState.update { it.copy(editingParticipant = action.participant) }
+            is TripParticipantsAction.OpenEditModal -> {
+                val trip = repository.getTrip(_uiState.value.tripId)
+                val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
+                if (trip != null && currentUser != null && !trip.isUserOrganizer(currentUser.id, currentUser.email)) {
+                    _uiState.update { it.copy(errorMessage = "Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão.") }
+                } else {
+                    _uiState.update { it.copy(editingParticipant = action.participant, errorMessage = null) }
+                }
+            }
             is TripParticipantsAction.CloseEditModal -> _uiState.update { it.copy(editingParticipant = null) }
             is TripParticipantsAction.OpenDeleteConfirmation -> {
                 val trip = repository.getTrip(_uiState.value.tripId)
-                if (action.participant.isCreator || (trip != null && trip.isCreator(action.participant.toParticipant()))) {
+                val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
+                if (trip != null && currentUser != null && !trip.isUserOrganizer(currentUser.id, currentUser.email)) {
+                    _uiState.update { it.copy(errorMessage = "Apenas organizadores podem excluir participantes da viagem.") }
+                } else if (action.participant.isCreator || (trip != null && trip.isCreator(action.participant.toParticipant()))) {
                     _uiState.update { it.copy(errorMessage = "O criador da viagem não pode ser excluído da viagem.") }
                 } else {
                     _uiState.update { it.copy(deletingParticipant = action.participant, errorMessage = null) }
@@ -81,6 +100,27 @@ class TripParticipantsViewModel(
 
     private fun addParticipant(action: TripParticipantsAction.AddParticipant) {
         val tripId = _uiState.value.tripId
+        val trip = repository.getTrip(tripId)
+        val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
+        val isCreator = trip?.isUserCreator(currentUser?.id, currentUser?.email) == true
+
+        if (!isCreator && currentUser != null) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "Apenas o criador da viagem pode adicionar participantes."
+                )
+            }
+            return
+        }
+
+        if (action.role.equals("Organizador", ignoreCase = true) && !isCreator) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "Apenas o criador da viagem pode definir participantes como organizador."
+                )
+            }
+            return
+        }
 
         val newParticipant = Participant(
             id = "part-${Random.nextInt(1000, 9999)}",
@@ -93,7 +133,12 @@ class TripParticipantsViewModel(
         )
 
         viewModelScope.launch {
-            val result = repository.addParticipant(tripId, newParticipant)
+            val result = repository.addParticipant(
+                tripId = tripId,
+                participant = newParticipant,
+                requesterUserId = currentUser?.id,
+                requesterEmail = currentUser?.email,
+            )
             if (result.isSuccess) {
                 val list = repository.getParticipants(tripId).map { it.toTripParticipant() }
                 _uiState.update {
@@ -117,6 +162,7 @@ class TripParticipantsViewModel(
     private fun updateParticipant(participant: TripParticipant) {
         val tripId = _uiState.value.tripId
         val trip = repository.getTrip(tripId)
+        val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
         val isCreator = participant.isCreator || (trip != null && trip.isCreator(participant.toParticipant()))
 
         if (isCreator && !participant.isOrganizer) {
@@ -124,6 +170,17 @@ class TripParticipantsViewModel(
                 it.copy(
                     errorMessage = "O criador da viagem sempre será o organizador e não pode ter seu papel alterado.",
                     editingParticipant = null,
+                )
+            }
+            return
+        }
+
+        val targetInTrip = trip?.participants?.find { it.id == participant.id }
+        val isRequesterCreator = trip?.isUserCreator(currentUser?.id) == true
+        if (participant.isOrganizer && targetInTrip?.isOrganizer != true && !isRequesterCreator) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "Apenas o criador da viagem pode definir participantes como organizador.",
                 )
             }
             return
@@ -137,7 +194,12 @@ class TripParticipantsViewModel(
         val domain = safeParticipant.toParticipant()
 
         viewModelScope.launch {
-            val result = repository.updateParticipant(tripId, domain)
+            val result = repository.updateParticipant(
+                tripId = tripId,
+                participant = domain,
+                requesterUserId = currentUser?.id,
+                requesterEmail = currentUser?.email,
+            )
             if (result.isSuccess) {
                 val updatedTrip = repository.getTrip(tripId)
                 val list = repository.getParticipants(tripId).map { p ->
@@ -169,6 +231,7 @@ class TripParticipantsViewModel(
     private fun deleteParticipant(participantId: String, hasFinancialPending: Boolean) {
         val tripId = _uiState.value.tripId
         val trip = repository.getTrip(tripId)
+        val currentUser = com.imd.tripsplit.data.LocalDataManager.currentUser.value
         val target = trip?.participants?.find { it.id == participantId }
 
         if (target != null && trip.isCreator(target)) {
@@ -182,7 +245,13 @@ class TripParticipantsViewModel(
         }
 
         viewModelScope.launch {
-            val result = repository.removeParticipant(tripId, participantId, hasFinancialPending)
+            val result = repository.removeParticipant(
+                tripId = tripId,
+                participantId = participantId,
+                requesterUserId = currentUser?.id,
+                requesterEmail = currentUser?.email,
+                hasFinancialPending = hasFinancialPending,
+            )
             if (result.isSuccess) {
                 val updatedTrip = repository.getTrip(tripId)
                 val list = repository.getParticipants(tripId).map { p ->

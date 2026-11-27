@@ -42,6 +42,9 @@ fun ParticipantItemCard(
     onEditParticipant: ((TripParticipant) -> Unit)?,
     onDeleteParticipant: ((TripParticipant) -> Unit)?,
     onRemoveParticipant: (String) -> Unit,
+    isOrganizer: Boolean = false,
+    isCreator: Boolean = false,
+    currentUserId: String? = null,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -121,57 +124,62 @@ fun ParticipantItemCard(
             }
 
             // Ações: Botões com tamanho mínimo acessível de 48dp x 48dp e contentDescription semântico
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                if (onEditParticipant != null) {
-                    IconButton(
-                        onClick = { onEditParticipant(participant) },
-                        modifier =
-                            Modifier
-                                .size(48.dp)
-                                .semantics {
-                                    contentDescription = "Editar participante ${participant.name}"
-                                },
-                    ) {
-                        Icon(
-                            imageVector = TripSplitIcons.Edit,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                }
+            val canEdit = isOrganizer && onEditParticipant != null
+            val canDelete = isOrganizer && !participant.isCreator
 
-                // O criador da viagem não pode ser excluído
-                if (!participant.isCreator) {
-                    IconButton(
-                        onClick = {
-                            if (onDeleteParticipant != null) {
-                                onDeleteParticipant(participant)
-                            } else {
-                                onRemoveParticipant(participant.id)
-                            }
-                        },
-                        modifier =
-                            Modifier
-                                .size(48.dp)
-                                .semantics {
-                                    contentDescription =
-                                        if (onDeleteParticipant != null) {
-                                            "Excluir participante ${participant.name}"
-                                        } else {
-                                            "Remover participante ${participant.name}"
-                                        }
-                                },
-                    ) {
-                        Icon(
-                            imageVector = if (onDeleteParticipant != null) TripSplitIcons.Delete else TripSplitIcons.Close,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp),
-                        )
+            if (canEdit || canDelete) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    if (canEdit) {
+                        IconButton(
+                            onClick = { onEditParticipant(participant) },
+                            modifier =
+                                Modifier
+                                    .size(48.dp)
+                                    .semantics {
+                                        contentDescription = "Editar participante ${participant.name}"
+                                    },
+                        ) {
+                            Icon(
+                                imageVector = TripSplitIcons.Edit,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    }
+
+                    // O criador da viagem não pode ser excluído
+                    if (canDelete) {
+                        IconButton(
+                            onClick = {
+                                if (onDeleteParticipant != null) {
+                                    onDeleteParticipant(participant)
+                                } else {
+                                    onRemoveParticipant(participant.id)
+                                }
+                            },
+                            modifier =
+                                Modifier
+                                    .size(48.dp)
+                                    .semantics {
+                                        contentDescription =
+                                            if (onDeleteParticipant != null) {
+                                                "Excluir participante ${participant.name}"
+                                            } else {
+                                                "Remover participante ${participant.name}"
+                                            }
+                                    },
+                        ) {
+                            Icon(
+                                imageVector = if (onDeleteParticipant != null) TripSplitIcons.Delete else TripSplitIcons.Close,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
                     }
                 }
             }

@@ -32,6 +32,7 @@ import com.imd.tripsplit.ui.theme.SpacingSM
 fun EditParticipantDialog(
     participant: TripParticipant,
     errorMessage: String? = null,
+    isCreatorUser: Boolean = true,
     onDismiss: () -> Unit,
     onConfirm: (TripParticipant) -> Unit,
 ) {
@@ -96,9 +97,14 @@ fun EditParticipantDialog(
                     FilterChip(
                         selected = participant.isCreator || role == "Organizador",
                         onClick = {
-                            role = "Organizador"
-                            validationError = null
+                            if (!isCreatorUser && !participant.isOrganizer) {
+                                validationError = "Apenas o criador da viagem pode definir participantes como organizador."
+                            } else {
+                                role = "Organizador"
+                                validationError = null
+                            }
                         },
+                        enabled = participant.isCreator || isCreatorUser || participant.isOrganizer,
                         label = { Text(if (participant.isCreator) "Organizador (Criador)" else "Organizador", fontSize = 12.sp) },
                         shape = RoundedCornerShape(RadiusMD),
                         colors = FilterChipDefaults.filterChipColors(),
@@ -110,6 +116,12 @@ fun EditParticipantDialog(
                         text = "ℹ️ O criador da viagem é sempre o organizador.",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.primary,
+                    )
+                } else if (!isCreatorUser) {
+                    Text(
+                        text = "ℹ️ Apenas o criador da viagem pode definir participantes como organizador.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -153,6 +165,11 @@ fun EditParticipantDialog(
 
                     val finalRole = if (participant.isCreator) "Organizador" else role
                     val isOrganizer = if (participant.isCreator) true else finalRole.equals("Organizador", ignoreCase = true)
+
+                    if (isOrganizer && !participant.isOrganizer && !isCreatorUser) {
+                        validationError = "Apenas o criador da viagem pode definir participantes como organizador."
+                        return@Button
+                    }
 
                     val updated = participant.copy(
                         name = trimmedName,

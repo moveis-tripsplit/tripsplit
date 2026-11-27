@@ -515,4 +515,448 @@ class TripParticipantCrudTest {
         assertEquals(1, removeFriendState.participants.size)
         assertEquals(creator.id, removeFriendState.participants.first().id)
     }
+
+    // --- REGRAS DE AUTORIZAÇÃO: CRIADOR, ORGANIZADOR E PARTICIPANTE ---
+
+    @Test
+    fun testParticipantCannotDeleteOtherParticipants() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador",
+            userId = "user-creator",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-1",
+            name = "Organizador",
+            userId = "user-org",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val part1 = Participant(
+            id = "part-1",
+            name = "Participante 1",
+            userId = "user-p1",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val part2 = Participant(
+            id = "part-2",
+            name = "Participante 2",
+            userId = "user-p2",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-auth-del",
+            userId = "user-creator",
+            title = "Viagem de Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 200.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer, part1, part2),
+        )
+
+        // Participante comum tentando excluir outro participante -> Deve falhar
+        val failResult = TripParticipantValidator.validateDeletion(
+            trip = trip,
+            participantId = "part-2",
+            requesterUserId = "user-p1",
+        )
+        assertTrue(failResult.isFailure, "Participante não pode excluir outros participantes.")
+        assertEquals("Apenas organizadores podem excluir participantes da viagem.", failResult.exceptionOrNull()?.message)
+
+        // Organizador tentando excluir participante comum -> Deve ter sucesso
+        val successResult = TripParticipantValidator.validateDeletion(
+            trip = trip,
+            participantId = "part-2",
+            requesterUserId = "user-org",
+        )
+        assertTrue(successResult.isSuccess, "Organizador pode excluir participantes comuns.")
+
+        // Organizador tentando excluir o criador -> Deve falhar
+        val creatorFailResult = TripParticipantValidator.validateDeletion(
+            trip = trip,
+            participantId = "creator-1",
+            requesterUserId = "user-org",
+        )
+        assertTrue(creatorFailResult.isFailure, "Organizador não pode excluir o criador.")
+        assertEquals("O criador da viagem não pode ser excluído da viagem.", creatorFailResult.exceptionOrNull()?.message)
+    }
+
+    @Test
+    fun testParticipantCannotEditOtherParticipants() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador",
+            userId = "user-creator",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-1",
+            name = "Organizador",
+            userId = "user-org",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val part1 = Participant(
+            id = "part-1",
+            name = "Participante 1",
+            userId = "user-p1",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val part2 = Participant(
+            id = "part-2",
+            name = "Participante 2",
+            userId = "user-p2",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-auth-edit",
+            userId = "user-creator",
+            title = "Viagem de Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 200.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer, part1, part2),
+        )
+
+        // Participante tentando editar outro participante -> Deve falhar
+        val failResult = TripParticipantValidator.validateEdition(
+            trip = trip,
+            targetParticipantId = "part-2",
+            requesterUserId = "user-p1",
+        )
+        assertTrue(failResult.isFailure, "Participante não pode editar outros viajantes.")
+        assertEquals("Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão.", failResult.exceptionOrNull()?.message)
+
+        // Organizador tentando editar participante -> Deve ter sucesso
+        val successResult = TripParticipantValidator.validateEdition(
+            trip = trip,
+            targetParticipantId = "part-2",
+            requesterUserId = "user-org",
+        )
+        assertTrue(successResult.isSuccess, "Organizador pode editar participantes.")
+    }
+
+    @Test
+    fun testOnlyTripCreatorCanDefineParticipantAsOrganizer() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador",
+            userId = "user-creator",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-1",
+            name = "Organizador Secundário",
+            userId = "user-org",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val part1 = Participant(
+            id = "part-1",
+            name = "Participante 1",
+            userId = "user-p1",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-auth-promote",
+            userId = "user-creator",
+            title = "Viagem de Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 200.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer, part1),
+        )
+
+        // Organizador comum tentando promover participante para Organizador -> Deve falhar
+        val orgPromoteFail = TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = "part-1",
+            newRoleIsOrganizer = true,
+            requesterUserId = "user-org",
+        )
+        assertTrue(orgPromoteFail.isFailure, "Organizador comum não pode promover ninguém a Organizador.")
+        assertEquals("Apenas o criador da viagem pode definir participantes como organizador.", orgPromoteFail.exceptionOrNull()?.message)
+
+        // Participante comum tentando promover participante para Organizador -> Deve falhar
+        val partPromoteFail = TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = "part-1",
+            newRoleIsOrganizer = true,
+            requesterUserId = "user-p1",
+        )
+        assertTrue(partPromoteFail.isFailure)
+        assertEquals("Apenas o criador da viagem pode definir participantes como organizador.", partPromoteFail.exceptionOrNull()?.message)
+
+        // O Criador da viagem promovendo o participante para Organizador -> Deve ter sucesso
+        val creatorPromoteSuccess = TripParticipantValidator.validateRoleChange(
+            trip = trip,
+            participantId = "part-1",
+            newRoleIsOrganizer = true,
+            requesterUserId = "user-creator",
+        )
+        assertTrue(creatorPromoteSuccess.isSuccess, "O criador da viagem tem permissão para definir participantes como organizador.")
+    }
+
+    @Test
+    fun testOnlyTripCreatorCanAddParticipants() {
+        val creator = Participant(
+            id = "creator-1",
+            name = "Criador",
+            userId = "user-creator",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-1",
+            name = "Organizador Secundário",
+            userId = "user-org",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = "trip-auth-add",
+            userId = "user-creator",
+            title = "Viagem de Teste",
+            destination = "Destino",
+            status = TripStatus.UPCOMING,
+            totalAmount = 200.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer),
+        )
+
+        val newGuest = Participant(
+            id = "new-p",
+            name = "Novo Participante",
+            role = "Participante",
+            isOrganizer = false,
+            hasAccount = false,
+        )
+
+        // Organizador comum tentando adicionar novo participante -> Deve falhar
+        val orgAddFail = TripParticipantValidator.validateAddition(
+            trip = trip,
+            newParticipant = newGuest,
+            requesterUserId = "user-org",
+        )
+        assertTrue(orgAddFail.isFailure)
+        assertEquals("Apenas o criador da viagem pode adicionar participantes.", orgAddFail.exceptionOrNull()?.message)
+
+        // Participante comum tentando adicionar novo participante -> Deve falhar
+        val partAddFail = TripParticipantValidator.validateAddition(
+            trip = trip,
+            newParticipant = newGuest,
+            requesterUserId = "user-p1",
+        )
+        assertTrue(partAddFail.isFailure)
+        assertEquals("Apenas o criador da viagem pode adicionar participantes.", partAddFail.exceptionOrNull()?.message)
+
+        // Criador da viagem adicionando participante -> Deve ter sucesso
+        val creatorAddSuccess = TripParticipantValidator.validateAddition(
+            trip = trip,
+            newParticipant = newGuest,
+            requesterUserId = "user-creator",
+        )
+        assertTrue(creatorAddSuccess.isSuccess)
+    }
+
+    @Test
+    fun testLocalDataManagerEnforcesRolePermissions() {
+        val tripId = "trip-ldm-auth-${kotlin.random.Random.nextInt(1000, 9999)}"
+        val creator = Participant(
+            id = "creator-ldm",
+            name = "Criador",
+            userId = "user-creator-ldm",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-ldm",
+            name = "Organizador",
+            userId = "user-org-ldm",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val part1 = Participant(
+            id = "part-ldm-1",
+            name = "Viajante 1",
+            userId = "user-p-ldm-1",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = tripId,
+            userId = "user-creator-ldm",
+            title = "Viagem LDM Auth",
+            destination = "Natal",
+            status = TripStatus.UPCOMING,
+            totalAmount = 500.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer, part1),
+        )
+        LocalDataManager.addTrip(trip)
+
+        // 1. Participante comum tentando excluir outro participante via LocalDataManager -> Deve falhar
+        val deleteFail = LocalDataManager.removeParticipantFromTrip(
+            tripId = tripId,
+            participantId = "part-ldm-1",
+            requesterUserId = "user-p-ldm-1",
+        )
+        assertTrue(deleteFail.isFailure)
+        assertEquals("Apenas organizadores podem excluir participantes da viagem.", deleteFail.exceptionOrNull()?.message)
+
+        // 2. Organizador tentando promover participante a organizador via LocalDataManager -> Deve falhar
+        val updatedToOrg = part1.copy(role = "Organizador", isOrganizer = true)
+        val promoteFail = LocalDataManager.updateParticipantInTrip(
+            tripId = tripId,
+            updated = updatedToOrg,
+            requesterUserId = "user-org-ldm",
+        )
+        assertTrue(promoteFail.isFailure)
+        assertEquals("Apenas o criador da viagem pode definir participantes como organizador.", promoteFail.exceptionOrNull()?.message)
+
+        // 3. Criador promovendo participante a organizador -> Deve ter sucesso
+        val promoteSuccess = LocalDataManager.updateParticipantInTrip(
+            tripId = tripId,
+            updated = updatedToOrg,
+            requesterUserId = "user-creator-ldm",
+        )
+        assertTrue(promoteSuccess.isSuccess)
+
+        // 4. Organizador excluindo participante -> Deve ter sucesso (já que agora temos 3 organizadores)
+        val deleteSuccess = LocalDataManager.removeParticipantFromTrip(
+            tripId = tripId,
+            participantId = "part-ldm-1",
+            requesterUserId = "user-org-ldm",
+        )
+        assertTrue(deleteSuccess.isSuccess)
+
+        // 5. Organizador tentando adicionar participante via LocalDataManager -> Deve falhar
+        val newGuest = Participant(
+            id = "part-guest-ldm",
+            name = "Novo Hóspede",
+            role = "Participante",
+            isOrganizer = false,
+        )
+        val addFail = LocalDataManager.addParticipantToTrip(
+            tripId = tripId,
+            participant = newGuest,
+            requesterUserId = "user-org-ldm",
+        )
+        assertTrue(addFail.isFailure)
+        assertEquals("Apenas o criador da viagem pode adicionar participantes.", addFail.exceptionOrNull()?.message)
+
+        // 6. Criador adicionando participante via LocalDataManager -> Deve ter sucesso
+        val addSuccess = LocalDataManager.addParticipantToTrip(
+            tripId = tripId,
+            participant = newGuest,
+            requesterUserId = "user-creator-ldm",
+        )
+        assertTrue(addSuccess.isSuccess)
+    }
+
+    @Test
+    fun testOnlyCreatorCanEditTrip() {
+        val tripId = "trip-edit-test-${kotlin.random.Random.nextInt(1000, 9999)}"
+        val creator = Participant(
+            id = "creator-part",
+            name = "Criador",
+            userId = "user-creator-edit",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = true,
+        )
+        val organizer = Participant(
+            id = "org-part",
+            name = "Organizador Secundário",
+            userId = "user-org-edit",
+            role = "Organizador",
+            isOrganizer = true,
+            isCreator = false,
+        )
+        val participant = Participant(
+            id = "regular-part",
+            name = "Viajante",
+            userId = "user-part-edit",
+            role = "Participante",
+            isOrganizer = false,
+            isCreator = false,
+        )
+        val trip = Trip(
+            id = tripId,
+            userId = "user-creator-edit",
+            title = "Viagem Original",
+            destination = "Destino Original",
+            status = TripStatus.UPCOMING,
+            totalAmount = 1000.0,
+            myBalance = 0.0,
+            startDate = "2026-12-01",
+            endDate = "2026-12-05",
+            participants = listOf(creator, organizer, participant),
+        )
+        LocalDataManager.addTrip(trip)
+
+        val modifiedTrip = trip.copy(title = "Viagem Alterada por Terceiros")
+
+        // 1. Participante comum tentando editar a viagem -> Deve falhar
+        val partEditFail = LocalDataManager.updateTrip(
+            updated = modifiedTrip,
+            requesterUserId = "user-part-edit",
+        )
+        assertTrue(partEditFail.isFailure, "Participante não pode editar a viagem.")
+        assertEquals("Apenas o criador pode editar a viagem que criou.", partEditFail.exceptionOrNull()?.message)
+
+        // 2. Organizador (não criador) tentando editar a viagem -> Deve falhar
+        val orgEditFail = LocalDataManager.updateTrip(
+            updated = modifiedTrip,
+            requesterUserId = "user-org-edit",
+        )
+        assertTrue(orgEditFail.isFailure, "Apenas o criador pode editar a viagem que criou.")
+        assertEquals("Apenas o criador pode editar a viagem que criou.", orgEditFail.exceptionOrNull()?.message)
+
+        // 3. Criador da viagem editando a viagem -> Deve ter sucesso
+        val creatorEditSuccess = LocalDataManager.updateTrip(
+            updated = modifiedTrip,
+            requesterUserId = "user-creator-edit",
+        )
+        assertTrue(creatorEditSuccess.isSuccess, "O criador tem permissão para editar a viagem que criou.")
+        assertEquals("Viagem Alterada por Terceiros", LocalDataManager.getTrip(tripId)?.title)
+    }
 }

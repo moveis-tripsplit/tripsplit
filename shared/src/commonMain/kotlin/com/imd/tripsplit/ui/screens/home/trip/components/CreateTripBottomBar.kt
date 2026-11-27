@@ -37,6 +37,7 @@ fun CreateTripBottomBar(
     onSaveDraftClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEditing: Boolean = false,
+    isCreator: Boolean = true,
 ) {
     Card(
         shape = RoundedCornerShape(topStart = RadiusXL, topEnd = RadiusXL),
@@ -48,14 +49,17 @@ fun CreateTripBottomBar(
             modifier = Modifier.padding(horizontal = SpacingXL, vertical = SpacingMD),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val isReadOnlyForUser = isEditing && !isCreator
             Button(
-                onClick = onSubmitClick,
+                onClick = if (isReadOnlyForUser) onSaveDraftClick else onSubmitClick,
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                 shape = RoundedCornerShape(RadiusMD),
-                colors = ButtonDefaults.buttonColors(containerColor = BlueOcean),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isReadOnlyForUser) MaterialTheme.colorScheme.secondary else BlueOcean
+                ),
                 enabled = !isLoading,
             ) {
                 if (isLoading) {
@@ -65,7 +69,7 @@ fun CreateTripBottomBar(
                     )
                 } else {
                     Text(
-                        text = if (isEditing) "Salvar alterações" else "Criar Viagem ✈️",
+                        text = if (!isEditing) "Criar Viagem ✈️" else if (!isCreator) "Voltar" else "Salvar alterações",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,

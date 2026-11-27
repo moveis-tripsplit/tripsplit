@@ -50,6 +50,9 @@ fun TripDetailsScreen(
     viewModel: TripParticipantsViewModel = remember { TripParticipantsViewModel() },
 ) {
     val trip = remember(tripId) { TripRepository.getTrip(tripId) }
+    val currentUser by com.imd.tripsplit.data.LocalDataManager.currentUser.collectAsState()
+    val isUserCreator = trip != null && trip.isUserCreator(currentUser?.id, currentUser?.email)
+    val isUserOrganizer = trip != null && trip.isUserOrganizer(currentUser?.id, currentUser?.email)
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -74,6 +77,7 @@ fun TripDetailsScreen(
     // Modal Adicionar Viajante
     if (uiState.isAddModalOpen) {
         AddParticipantDialog(
+            isCreator = isUserCreator,
             onDismiss = { viewModel.onAction(TripParticipantsAction.CloseAddModal) },
             onConfirm = { participant ->
                 viewModel.onAction(
@@ -94,6 +98,7 @@ fun TripDetailsScreen(
         EditParticipantDialog(
             participant = participantToEdit,
             errorMessage = uiState.errorMessage,
+            isCreatorUser = isUserCreator,
             onDismiss = { viewModel.onAction(TripParticipantsAction.CloseEditModal) },
             onConfirm = { updated ->
                 viewModel.onAction(TripParticipantsAction.UpdateParticipant(updated))
@@ -180,6 +185,9 @@ fun TripDetailsScreen(
                 onAddParticipantClick = { viewModel.onAction(TripParticipantsAction.OpenAddModal) },
                 onEditParticipant = { viewModel.onAction(TripParticipantsAction.OpenEditModal(it)) },
                 onDeleteParticipant = { viewModel.onAction(TripParticipantsAction.OpenDeleteConfirmation(it)) },
+                isOrganizer = isUserOrganizer,
+                isCreator = isUserCreator,
+                currentUserId = currentUser?.id,
                 errorMessage = uiState.errorMessage,
             )
 

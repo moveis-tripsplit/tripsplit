@@ -47,6 +47,9 @@ fun TripParticipantsCard(
     onRemoveParticipant: (String) -> Unit = {},
     onEditParticipant: ((TripParticipant) -> Unit)? = null,
     onDeleteParticipant: ((TripParticipant) -> Unit)? = null,
+    isOrganizer: Boolean = false,
+    isCreator: Boolean = false,
+    currentUserId: String? = null,
     errorMessage: String? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -79,14 +82,18 @@ fun TripParticipantsCard(
                             onEditParticipant = onEditParticipant,
                             onDeleteParticipant = onDeleteParticipant,
                             onRemoveParticipant = onRemoveParticipant,
+                            isOrganizer = isOrganizer,
+                            isCreator = isCreator,
+                            currentUserId = currentUserId,
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(SpacingMD))
-
-            AddParticipantButton(onClick = onAddParticipantClick)
+            if (isCreator) {
+                Spacer(modifier = Modifier.height(SpacingMD))
+                AddParticipantButton(onClick = onAddParticipantClick)
+            }
 
             Spacer(modifier = Modifier.height(SpacingSM))
 
