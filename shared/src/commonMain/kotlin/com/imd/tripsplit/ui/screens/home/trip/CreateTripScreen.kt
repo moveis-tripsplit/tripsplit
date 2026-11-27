@@ -7,18 +7,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.data.toParticipant
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.TripStatus
 import com.imd.tripsplit.model.toUiState
 import com.imd.tripsplit.ui.screens.home.trip.components.AddActivityDialog
-import com.imd.tripsplit.ui.screens.home.trip.components.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.AddParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.DeleteParticipantDialog
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.EditParticipantDialog
 import kotlin.random.Random
 
 @Composable
@@ -28,9 +33,87 @@ fun CreateTripScreen(
     onBackClick: () -> Unit = {},
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
 ) {
+    val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+    val initialParticipants =
+        remember(currentUser) {
+            val current = currentUser
+            if (current != null) {
+                listOf(
+                    TripParticipant(
+                        id = current.id,
+                        name = current.name,
+                        initials =
+                            current.name
+                                .split(" ")
+                                .filter { it.isNotBlank() }
+                                .map { it.first().uppercase() }
+                                .take(2)
+                                .joinToString("")
+                                .ifEmpty { "O" },
+                        role = "Organizador",
+                        isOrganizer = true,
+                        hasAccount = true,
+                        email = current.email,
+                        userId = current.id,
+                        isCreator = true,
+                    ),
+                )
+            } else {
+                emptyList()
+            }
+        }
     val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
+    val isUserCreator = editingTrip == null || editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
+    val isUserOrganizer = editingTrip == null || editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
+
     var state by remember(tripId) {
-        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState())
+        mutableStateOf(editingTrip?.toUiState() ?: CreateTripUiState(participants = initialParticipants))
+    }
+
+    val scope = rememberCoroutineScope()
+    var savingParticipant by remember(tripId) { mutableStateOf(false) }
+    var participantSaveError by remember(tripId) { mutableStateOf<String?>(null) }
+
+    fun applyParticipantChange(
+        action: CreateTripAction,
+        persist: suspend (Trip) -> Result<*>,
+    ) {
+        if (savingParticipant) return
+
+        val nextState = state.reduce(action)
+        if (editingTrip == null || nextState.participantErrorMessage != null) {
+            state = nextState
+            return
+        }
+
+        savingParticipant = true
+        scope.launch {
+            try {
+                persist(editingTrip)
+                    .onSuccess {
+                        state = nextState
+                    }
+                    .onFailure { error ->
+                        participantSaveError =
+                            error.message ?: "Não foi possível salvar a alteração do participante."
+                    }
+            } finally {
+                savingParticipant = false
+            }
+        }
+    }
+
+    participantSaveError?.let { message ->
+        AlertDialog(
+            onDismissRequest = { participantSaveError = null },
+            title = { Text("Não foi possível alterar o participante") },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = { participantSaveError = null }) {
+                    Text("Entendi")
+                }
+            },
+        )
     }
 
     // Diálogo modal para adicionar atividade ao roteiro
@@ -137,10 +220,85 @@ fun CreateTripScreen(
 
     // Diálogo modal para adicionar participante
     if (state.showAddParticipantModal) {
-        AddParticipantDialog(
-            onDismiss = { state = state.reduce(CreateTripAction.CloseAddParticipantModal) },
-            onConfirm = { participant -> state = state.reduce(CreateTripAction.AddParticipant(participant)) },
-        )
+        if (!isUserCreator) {
+            state = state.copy(showAddParticipantModal = false, participantErrorMessage = "Apenas o criador da viagem pode adicionar participantes.")
+        } else {
+            AddParticipantDialog(
+                isCreator = isUserCreator,
+                onDismiss = {
+                    if (!savingParticipant) {
+                        state = state.reduce(CreateTripAction.CloseAddParticipantModal)
+                    }
+                },
+                onConfirm = { participant ->
+                    applyParticipantChange(CreateTripAction.AddParticipant(participant)) { trip ->
+                        TripRepository.addParticipant(
+                            tripId = trip.id,
+                            participant = participant.toParticipant(),
+                            requesterUserId = currentUser?.id,
+                            requesterEmail = currentUser?.email,
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    // Diálogo modal para editar participante
+    state.editingParticipant?.let { participantToEdit ->
+        if (!isUserOrganizer) {
+            state = state.copy(editingParticipant = null, participantErrorMessage = "Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão.")
+        } else {
+            EditParticipantDialog(
+                participant = participantToEdit,
+                errorMessage = state.participantErrorMessage,
+                isCreatorUser = isUserCreator,
+                onDismiss = {
+                    if (!savingParticipant) {
+                        state = state.reduce(CreateTripAction.CloseEditParticipantModal)
+                    }
+                },
+                onConfirm = { updated ->
+                    applyParticipantChange(CreateTripAction.UpdateParticipant(updated)) { trip ->
+                        TripRepository.updateParticipant(
+                            tripId = trip.id,
+                            participant = updated.toParticipant(),
+                            requesterUserId = currentUser?.id,
+                            requesterEmail = currentUser?.email,
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    // Diálogo modal para confirmar exclusão de participante
+    state.deletingParticipant?.let { participantToDelete ->
+        if (!isUserOrganizer) {
+            state = state.copy(deletingParticipant = null, participantErrorMessage = "Apenas organizadores podem excluir participantes da viagem.")
+        } else {
+            DeleteParticipantDialog(
+                participant = participantToDelete,
+                errorMessage = state.participantErrorMessage,
+                onDismiss = {
+                    if (!savingParticipant) {
+                        state = state.reduce(CreateTripAction.CloseDeleteParticipantModal)
+                    }
+                },
+                onConfirm = {
+                    applyParticipantChange(
+                        CreateTripAction.ConfirmDeleteParticipant(participantToDelete.id),
+                    ) { trip ->
+                        TripRepository.removeParticipant(
+                            tripId = trip.id,
+                            participantId = participantToDelete.id,
+                            requesterUserId = currentUser?.id,
+                            requesterEmail = currentUser?.email,
+                        )
+                    }
+                },
+            )
+        }
     }
 
     CreateTripContent(
@@ -148,32 +306,62 @@ fun CreateTripScreen(
         onAction = { action -> state = state.reduce(action) },
         onSubmitClick = {
             if (editingTrip != null) {
-                TripRepository.updateTrip(
-                    editingTrip.copy(
-                        title = state.title.trim(),
-                        description = state.description.trim(),
-                        startDate = state.startDate,
-                        endDate = state.endDate,
-                        participants = state.participants.map { it.toParticipant() },
-                        activities = state.activities,
-                    ),
-                )
-                onTripCreatedSuccess(editingTrip.id)
+                if (!isUserCreator) {
+                    onBackClick()
+                    return@CreateTripContent
+                }
+                val updateResult =
+                    TripRepository.updateTrip(
+                        editingTrip.copy(
+                            title = state.title.trim(),
+                            description = state.description.trim(),
+                            startDate = state.startDate,
+                            endDate = state.endDate,
+                            participants =
+                                state.participants.map { p ->
+                                    val isCreator = p.isCreator || (editingTrip.userId.isNotBlank() && (p.userId == editingTrip.userId || p.id == editingTrip.userId))
+                                    p.toParticipant().copy(
+                                        isCreator = isCreator,
+                                        isOrganizer = if (isCreator) true else p.isOrganizer,
+                                        role = if (isCreator) "Organizador" else p.role,
+                                    )
+                                },
+                            activities = state.activities,
+                        ),
+                        requesterUserId = currentUser?.id,
+                        requesterEmail = currentUser?.email,
+                    )
+                if (updateResult.isSuccess) {
+                    onTripCreatedSuccess(editingTrip.id)
+                }
             } else {
-                val current = com.imd.tripsplit.data.UserRepository.currentUser.value
+                val current = currentUser
                 val currentUserId = current?.id ?: ""
                 val defaultParticipants =
-                    if (state.participants.isEmpty() && current != null) {
-                        listOf(
-                            com.imd.tripsplit.model.Participant(
-                                id = current.id,
-                                name = current.name,
-                                role = "Organizador",
-                                isOrganizer = true,
-                            ),
+                    state.participants.map { p ->
+                        val isCreator = p.isCreator || (currentUserId.isNotBlank() && (p.userId == currentUserId || p.id == currentUserId))
+                        p.toParticipant().copy(
+                            isCreator = isCreator,
+                            isOrganizer = if (isCreator) true else p.isOrganizer,
+                            role = if (isCreator) "Organizador" else p.role,
                         )
-                    } else {
-                        state.participants.map { it.toParticipant() }
+                    }.let { list ->
+                        if (current != null && list.none { it.isCreator || (currentUserId.isNotBlank() && (it.userId == currentUserId || it.id == currentUserId)) }) {
+                            listOf(
+                                com.imd.tripsplit.model.Participant(
+                                    id = current.id,
+                                    name = current.name,
+                                    role = "Organizador",
+                                    isOrganizer = true,
+                                    email = current.email,
+                                    userId = current.id,
+                                    hasAccount = true,
+                                    isCreator = true,
+                                ),
+                            ) + list
+                        } else {
+                            list
+                        }
                     }
 
                 val trip =
@@ -196,6 +384,9 @@ fun CreateTripScreen(
             }
         },
         onBackClick = onBackClick,
+        isOrganizer = isUserOrganizer,
+        isCreator = isUserCreator,
+        currentUserId = currentUser?.id,
         isEditing = editingTrip != null,
         modifier = modifier,
     )

@@ -23,7 +23,7 @@ import com.imd.tripsplit.ui.screens.home.trip.components.CreateTripHeader
 import com.imd.tripsplit.ui.screens.home.trip.components.TripActivitiesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripDatesCard
 import com.imd.tripsplit.ui.screens.home.trip.components.TripInfoCard
-import com.imd.tripsplit.ui.screens.home.trip.components.TripParticipantsCard
+import com.imd.tripsplit.ui.screens.home.trip.components.participants.TripParticipantsCard
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingXL
@@ -34,6 +34,9 @@ fun CreateTripContent(
     onAction: (CreateTripAction) -> Unit,
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
+    isOrganizer: Boolean = true,
+    isCreator: Boolean = true,
+    currentUserId: String? = null,
     modifier: Modifier = Modifier,
     isEditing: Boolean = false,
 ) {
@@ -60,6 +63,7 @@ fun CreateTripContent(
             CreateTripHeader(
                 onBackClick = onBackClick,
                 isEditing = isEditing,
+                isCreator = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingLG))
@@ -70,6 +74,7 @@ fun CreateTripContent(
                 description = state.description,
                 onTitleChange = { onAction(CreateTripAction.UpdateTitle(it)) },
                 onDescriptionChange = { onAction(CreateTripAction.UpdateDescription(it)) },
+                enabled = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -80,6 +85,7 @@ fun CreateTripContent(
                 endDate = state.endDate,
                 onStartDateChange = { onAction(CreateTripAction.UpdateStartDate(it)) },
                 onEndDateChange = { onAction(CreateTripAction.UpdateEndDate(it)) },
+                enabled = isCreator,
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
@@ -88,12 +94,28 @@ fun CreateTripContent(
             TripActivitiesCard(
                 activities = state.activities,
                 participants = state.participants,
-                onAddActivityClick = { onAction(CreateTripAction.OpenAddActivityModal) },
-                onRemoveActivity = { activityId ->
-                    onAction(CreateTripAction.RequestRemoveActivity(activityId))
+                isCreator = isCreator,
+
+                onAddActivityClick = {
+                    if (isCreator) {
+                        onAction(CreateTripAction.OpenAddActivityModal)
+                    }
                 },
+
                 onEditActivity = { activityId ->
-                    onAction(CreateTripAction.OpenEditActivityModal(activityId))
+                    if (isCreator) {
+                        onAction(
+                            CreateTripAction.OpenEditActivityModal(activityId)
+                        )
+                    }
+                },
+
+                onRemoveActivity = { activityId ->
+                    if (isCreator) {
+                        onAction(
+                            CreateTripAction.RequestRemoveActivity(activityId)
+                        )
+                    }
                 },
             )
 
@@ -102,8 +124,28 @@ fun CreateTripContent(
             // 5. Participantes
             TripParticipantsCard(
                 participants = state.participants,
-                onAddParticipantClick = { onAction(CreateTripAction.OpenAddParticipantModal) },
-                onRemoveParticipant = { onAction(CreateTripAction.RemoveParticipant(it)) },
+                onAddParticipantClick = {
+                    if (isCreator) onAction(CreateTripAction.OpenAddParticipantModal)
+                },
+                onRemoveParticipant = {
+                    if (isOrganizer) onAction(CreateTripAction.RemoveParticipant(it))
+                },
+                onEditParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenEditParticipantModal(it)) }
+                    } else {
+                        null
+                    },
+                onDeleteParticipant =
+                    if (isOrganizer) {
+                        { onAction(CreateTripAction.OpenDeleteParticipantModal(it)) }
+                    } else {
+                        null
+                    },
+                isOrganizer = isOrganizer,
+                isCreator = isCreator,
+                currentUserId = currentUserId,
+                errorMessage = state.participantErrorMessage,
             )
         }
 
@@ -113,6 +155,7 @@ fun CreateTripContent(
             onSubmitClick = onSubmitClick,
             onSaveDraftClick = onBackClick,
             isEditing = isEditing,
+            isCreator = isCreator,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
     }

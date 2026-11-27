@@ -30,6 +30,9 @@ data class TripParticipant(
     val isOrganizer: Boolean = false,
     val hasAccount: Boolean = true,
     val contactOrPix: String? = null,
+    val email: String? = null,
+    val userId: String? = null,
+    val isCreator: Boolean = false,
 )
 
 /**
@@ -45,8 +48,11 @@ data class CreateTripUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
+    val participantErrorMessage: String? = null,
     val showAddActivityModal: Boolean = false,
     val showAddParticipantModal: Boolean = false,
+    val editingParticipant: TripParticipant? = null,
+    val deletingParticipant: TripParticipant? = null,
     val editingActivityId: String? = null,
     val pendingDeleteActivityId: String? = null,
 )
@@ -65,13 +71,17 @@ sealed interface CreateTripAction {
 
     data object OpenAddActivityModal : CreateTripAction
 
-    data class OpenEditActivityModal(val activityId: String, ) : CreateTripAction
+    data class OpenEditActivityModal(val activityId: String) : CreateTripAction
 
     data object CloseAddActivityModal : CreateTripAction
 
     data class AddActivity(val activity: TripActivity) : CreateTripAction
 
     data class UpdateActivity(val activity: TripActivity) : CreateTripAction
+
+    data class RequestRemoveActivity(val activityId: String) : CreateTripAction
+
+    data object CancelRemoveActivity : CreateTripAction
 
     data class RemoveActivity(val activityId: String) : CreateTripAction
 
@@ -83,9 +93,22 @@ sealed interface CreateTripAction {
 
     data class RemoveParticipant(val participantId: String) : CreateTripAction
 
-    data class RequestRemoveActivity(val activityId: String, ) : CreateTripAction
+    data class OpenEditParticipantModal(val participant: TripParticipant) : CreateTripAction
 
-    data object CancelRemoveActivity : CreateTripAction
+    data object CloseEditParticipantModal : CreateTripAction
+
+    data class UpdateParticipant(val participant: TripParticipant) : CreateTripAction
+
+    data class OpenDeleteParticipantModal(val participant: TripParticipant) : CreateTripAction
+
+    data object CloseDeleteParticipantModal : CreateTripAction
+
+    data class ConfirmDeleteParticipant(
+        val participantId: String,
+        val hasFinancialPending: Boolean = false,
+    ) : CreateTripAction
+
+    data object DismissParticipantError : CreateTripAction
 }
 
 /**
@@ -97,56 +120,171 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
         is CreateTripAction.UpdateDescription -> copy(description = action.description)
         is CreateTripAction.UpdateStartDate -> copy(startDate = action.startDate)
         is CreateTripAction.UpdateEndDate -> copy(endDate = action.endDate)
-        is CreateTripAction.OpenAddActivityModal -> copy(showAddActivityModal = true, editingActivityId = null)
-        is CreateTripAction.OpenEditActivityModal -> if (activities.any { it.id == action.activityId }) { copy(showAddActivityModal = true, editingActivityId = action.activityId,) } else { this }
-        is CreateTripAction.CloseAddActivityModal -> copy(showAddActivityModal = false, editingActivityId = null,)
-        is CreateTripAction.AddActivity -> copy(activities = activities + action.activity, showAddActivityModal = false, editingActivityId = null,)
-        is CreateTripAction.UpdateActivity -> if (activities.any { it.id == action.activity.id }) { copy(activities = activities.map { currentActivity -> if (currentActivity.id == action.activity.id) { action.activity } else { currentActivity } }, showAddActivityModal = false, editingActivityId = null,) } else { this }
-        is CreateTripAction.RemoveActivity -> copy(activities = activities.filterNot { it.id == action.activityId })
-        is CreateTripAction.OpenAddParticipantModal -> copy(showAddParticipantModal = true)
-        is CreateTripAction.CloseAddParticipantModal -> copy(showAddParticipantModal = false)
-        is CreateTripAction.AddParticipant -> copy(participants = participants + action.participant, showAddParticipantModal = false)
-        is CreateTripAction.RemoveParticipant -> copy(participants = participants.filterNot { it.id == action.participantId }, activities = activities.map { activity -> activity.copy(participantIds = activity.participantIds.filterNot { it == action.participantId },) },)
-        is CreateTripAction.RequestRemoveActivity ->
+
+        CreateTripAction.OpenAddActivityModal ->
+            copy(showAddActivityModal = true, editingActivityId = null)
+
+        is CreateTripAction.OpenEditActivityModal ->
             if (activities.any { it.id == action.activityId }) {
-                copy(
-                    pendingDeleteActivityId = action.activityId,
-                )
+                copy(showAddActivityModal = true, editingActivityId = action.activityId)
             } else {
                 this
             }
 
-        is CreateTripAction.CancelRemoveActivity ->
+        CreateTripAction.CloseAddActivityModal ->
+            copy(showAddActivityModal = false, editingActivityId = null)
+
+        is CreateTripAction.AddActivity ->
             copy(
-                pendingDeleteActivityId = null,
+                activities = activities + action.activity,
+                showAddActivityModal = false,
+                editingActivityId = null,
             )
 
-        is CreateTripAction.RemoveActivity ->
-            if (pendingDeleteActivityId != action.activityId) {
-                this
-            } else {
-                val isDeletingEditedActivity =
-                    editingActivityId == action.activityId
-
+        is CreateTripAction.UpdateActivity ->
+            if (activities.any { it.id == action.activity.id }) {
                 copy(
-                    activities =
-                        activities.filterNot {
-                            it.id == action.activityId
-                        },
-                    pendingDeleteActivityId = null,
-                    editingActivityId =
-                        if (isDeletingEditedActivity) {
-                            null
-                        } else {
-                            editingActivityId
-                        },
-                    showAddActivityModal =
-                        if (isDeletingEditedActivity) {
-                            false
-                        } else {
-                            showAddActivityModal
-                        },
+                    activities = activities.map { current ->
+                        if (current.id == action.activity.id) action.activity else current
+                    },
+                    showAddActivityModal = false,
+                    editingActivityId = null,
                 )
+            } else {
+                this
             }
+
+        is CreateTripAction.RequestRemoveActivity ->
+            if (activities.any { it.id == action.activityId }) {
+                copy(pendingDeleteActivityId = action.activityId)
+            } else {
+                this
+            }
+
+        CreateTripAction.CancelRemoveActivity ->
+            copy(pendingDeleteActivityId = null)
+
+        is CreateTripAction.RemoveActivity -> {
+            if (pendingDeleteActivityId == action.activityId) {
+                val isDeletingEditedActivity = editingActivityId == action.activityId
+                copy(
+                    activities = activities.filterNot { it.id == action.activityId },
+                    pendingDeleteActivityId = null,
+                    editingActivityId = if (isDeletingEditedActivity) null else editingActivityId,
+                    showAddActivityModal = showAddActivityModal && !isDeletingEditedActivity,
+                )
+            } else {
+                this
+            }
+        }
+
+        CreateTripAction.OpenAddParticipantModal ->
+            copy(showAddParticipantModal = true, participantErrorMessage = null)
+
+        CreateTripAction.CloseAddParticipantModal ->
+            copy(showAddParticipantModal = false)
+
+        is CreateTripAction.AddParticipant ->
+            copy(
+                participants = participants + action.participant,
+                showAddParticipantModal = false,
+            )
+
+        is CreateTripAction.RemoveParticipant -> {
+            val target = participants.find { it.id == action.participantId }
+            if (target?.isCreator == true) {
+                copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+            } else {
+                withoutParticipant(action.participantId)
+            }
+        }
+
+        is CreateTripAction.OpenEditParticipantModal ->
+            copy(editingParticipant = action.participant, participantErrorMessage = null)
+
+        CreateTripAction.CloseEditParticipantModal ->
+            copy(editingParticipant = null)
+
+        is CreateTripAction.UpdateParticipant -> {
+            val current = participants.find { it.id == action.participant.id }
+            val removingOrganizerRole = current?.isOrganizer == true && !action.participant.isOrganizer
+
+            when {
+                current?.isCreator == true && !action.participant.isOrganizer ->
+                    copy(
+                        participantErrorMessage =
+                            "O criador da viagem sempre será o organizador e não pode ter seu papel alterado.",
+                    )
+
+                removingOrganizerRole && participants.count { it.isOrganizer } <= 1 ->
+                    copy(
+                        participantErrorMessage =
+                            "A viagem deve ter pelo menos um Organizador. Defina outro organizador antes de alterar esta função.",
+                    )
+
+                else -> {
+                    val updatedParticipant =
+                        if (current?.isCreator == true) {
+                            action.participant.copy(isCreator = true, isOrganizer = true, role = "Organizador")
+                        } else {
+                            action.participant
+                        }
+
+                    copy(
+                        participants = participants.map {
+                            if (it.id == updatedParticipant.id) updatedParticipant else it
+                        },
+                        editingParticipant = null,
+                        participantErrorMessage = null,
+                    )
+                }
+            }
+        }
+
+        is CreateTripAction.OpenDeleteParticipantModal ->
+            if (action.participant.isCreator) {
+                copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+            } else {
+                copy(deletingParticipant = action.participant, participantErrorMessage = null)
+            }
+
+        CreateTripAction.CloseDeleteParticipantModal ->
+            copy(deletingParticipant = null)
+
+        is CreateTripAction.ConfirmDeleteParticipant -> {
+            val target = participants.find { it.id == action.participantId }
+            when {
+                target?.isCreator == true ->
+                    copy(participantErrorMessage = "O criador da viagem não pode ser excluído da viagem.")
+
+                target?.isOrganizer == true && participants.count { it.isOrganizer } <= 1 ->
+                    copy(
+                        participantErrorMessage =
+                            "Toda viagem deve ter obrigatoriamente pelo menos um Organizador. Transfira a função antes de excluir.",
+                    )
+
+                action.hasFinancialPending ->
+                    copy(
+                        participantErrorMessage =
+                            "Não é possível excluir viajante que possui despesas ativas vinculadas ou débitos em aberto.",
+                    )
+
+                else ->
+                    withoutParticipant(action.participantId).copy(
+                        deletingParticipant = null,
+                        participantErrorMessage = null,
+                    )
+            }
+        }
+
+        CreateTripAction.DismissParticipantError ->
+            copy(participantErrorMessage = null)
     }
 
+private fun CreateTripUiState.withoutParticipant(participantId: String): CreateTripUiState =
+    copy(
+        participants = participants.filterNot { it.id == participantId },
+        activities = activities.map { activity ->
+            activity.copy(participantIds = activity.participantIds.filterNot { it == participantId })
+        },
+    )

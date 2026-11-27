@@ -37,6 +37,7 @@ fun TripDatesCard(
     endDate: String,
     onStartDateChange: (String) -> Unit,
     onEndDateChange: (String) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -63,6 +64,7 @@ fun TripDatesCard(
                 OutlinedTextField(
                     value = startDate,
                     onValueChange = onStartDateChange,
+                    readOnly = !enabled,
                     label = { Text("Data de Início", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     textStyle =
@@ -91,6 +93,7 @@ fun TripDatesCard(
                 OutlinedTextField(
                     value = endDate,
                     onValueChange = onEndDateChange,
+                    readOnly = !enabled,
                     label = { Text("Data de Término", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     placeholder = { Text("DD/MM/AAAA", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     textStyle =
