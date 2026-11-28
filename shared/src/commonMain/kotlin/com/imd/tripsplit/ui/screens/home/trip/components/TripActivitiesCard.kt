@@ -47,8 +47,6 @@ import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import com.imd.tripsplit.ui.theme.SpacingXS
-import com.imd.tripsplit.ui.theme.SurfaceLight
-import com.imd.tripsplit.ui.theme.TextPrimary
 import com.imd.tripsplit.ui.theme.TextSecondary
 
 @Composable
@@ -67,10 +65,7 @@ fun TripActivitiesCard(
     val participantsById = participants.associateBy { it.id }
     Card(
         shape = RoundedCornerShape(RadiusLG),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = SurfaceLight
-            ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border =
             BorderStroke(
                 1.dp,
@@ -213,13 +208,13 @@ fun TripActivitiesCard(
                                     text = activity.title,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
 
                                 Text(
                                     text = "📍 ${activity.location}",
                                     fontSize = 11.sp,
-                                    color = TextSecondary
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
 
