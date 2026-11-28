@@ -314,7 +314,19 @@ object LocalDataManager {
         }
 
         val updatedParticipants = trip.participants.filterNot { it.id == participantId }
-        internalPersistTrip(trip.copy(participants = updatedParticipants))
+        val updatedActivities =
+            trip.activities.map { activity ->
+                activity.copy(
+                    participantIds = activity.participantIds.filterNot { it == participantId },
+                )
+            }
+
+        internalPersistTrip(
+            trip.copy(
+                participants = updatedParticipants,
+                activities = updatedActivities,
+            ),
+        )
         return Result.success(Unit)
     }
 }

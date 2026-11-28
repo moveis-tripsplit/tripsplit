@@ -190,6 +190,7 @@ private fun AddParticipantButton(onClick: () -> Unit) {
                 text = "Convidar ou adicionar participantes",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

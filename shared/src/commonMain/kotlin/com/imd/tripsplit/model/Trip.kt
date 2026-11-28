@@ -19,6 +19,8 @@ data class Trip(
     val description: String = "",
     val participants: List<Participant> = emptyList(),
     val activities: List<TripActivity> = emptyList(),
+    val pendingActivityUpsertIds: List<String> = emptyList(),
+    val pendingActivityDeleteIds: List<String> = emptyList(),
 ) {
     fun periodLabel(): String {
         return "$startDate - $endDate"

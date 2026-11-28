@@ -1,15 +1,52 @@
 package com.imd.tripsplit.data
 
+import com.imd.tripsplit.data.remote.ActivityApiClient
 import com.imd.tripsplit.data.remote.ParticipantApiClient
+import com.imd.tripsplit.data.remote.dto.ActivityRequestDto
+import com.imd.tripsplit.data.remote.dto.ActivityResponseDto
 import com.imd.tripsplit.data.remote.dto.toParticipant
 import com.imd.tripsplit.data.remote.dto.toRequestDto
 import com.imd.tripsplit.model.Participant
 import com.imd.tripsplit.model.Trip
 import com.imd.tripsplit.model.User
+import com.imd.tripsplit.ui.screens.home.trip.TripActivity
 import kotlinx.coroutines.flow.StateFlow
 
 object TripRepository {
     val trips: StateFlow<List<Trip>> = LocalDataManager.trips
+
+    private val activityApiClient by lazy { ActivityApiClient() }
+
+    suspend fun fetchActivities(tripId: String): Result<List<TripActivity>> =
+        activityApiClient.getActivities(tripId).map { activities ->
+            activities.map { it.toTripActivity() }
+        }
+
+    suspend fun createActivity(
+        tripId: String,
+        activity: TripActivity,
+    ): Result<TripActivity> =
+        activityApiClient.createActivity(tripId, activity.toActivityRequest())
+            .map { it.toTripActivity(localId = activity.id) }
+
+    suspend fun updateActivity(
+        tripId: String,
+        activity: TripActivity,
+    ): Result<TripActivity> {
+        val remoteId =
+            activity.remoteId
+                ?: return Result.failure(
+                    IllegalStateException("A atividade ainda não foi enviada ao servidor."),
+                )
+
+        return activityApiClient.updateActivity(tripId, remoteId, activity.toActivityRequest())
+            .map { it.toTripActivity(localId = activity.id) }
+    }
+
+    suspend fun deleteActivity(
+        tripId: String,
+        activityId: String,
+    ): Result<Unit> = activityApiClient.deleteActivity(tripId, activityId)
 
     private var _apiClient: ParticipantApiClient? = null
     var apiClient: ParticipantApiClient
@@ -155,4 +192,79 @@ object TripRepository {
             Result.success(getParticipants(tripId))
         }
     }
+
+    suspend fun syncPendingActivities(
+        tripId: String,
+        requesterUserId: String?,
+        requesterEmail: String?,
+    ): Result<Unit> {
+        fun currentTrip(): Trip = getTrip(tripId) ?: error("Viagem não encontrada.")
+
+        fun persist(trip: Trip) {
+            updateTrip(trip, requesterUserId, requesterEmail).getOrThrow()
+        }
+
+        return try {
+            for (localId in currentTrip().pendingActivityUpsertIds) {
+                val activity = currentTrip().activities.first { it.id == localId }
+
+                val confirmed =
+                    if (activity.remoteId == null) {
+                        createActivity(tripId, activity).getOrThrow()
+                    } else {
+                        updateActivity(tripId, activity).getOrThrow()
+                    }
+
+                val latest = currentTrip()
+                persist(
+                    latest.copy(
+                        activities =
+                            latest.activities.map {
+                                if (it.id == localId) it.copy(remoteId = confirmed.remoteId) else it
+                            },
+                        pendingActivityUpsertIds =
+                            latest.pendingActivityUpsertIds.filterNot { it == localId },
+                    ),
+                )
+            }
+
+            for (remoteId in currentTrip().pendingActivityDeleteIds) {
+                deleteActivity(tripId, remoteId).getOrThrow()
+
+                val latest = currentTrip()
+                persist(
+                    latest.copy(
+                        pendingActivityDeleteIds =
+                            latest.pendingActivityDeleteIds.filterNot { it == remoteId },
+                    ),
+                )
+            }
+
+            Result.success(Unit)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
 }
+
+private fun ActivityResponseDto.toTripActivity(localId: String = this.id): TripActivity =
+    TripActivity(
+        id = localId,
+        title = title,
+        dateHour = dateHour,
+        location = location,
+        estimatedCost = estimatedCost,
+        participantIds = participantIds,
+        remoteId = this.id,
+    )
+
+private fun TripActivity.toActivityRequest(): ActivityRequestDto =
+    ActivityRequestDto(
+        title = title,
+        dateHour = dateHour,
+        location = location,
+        estimatedCost = estimatedCost,
+        participantIds = participantIds,
+    )

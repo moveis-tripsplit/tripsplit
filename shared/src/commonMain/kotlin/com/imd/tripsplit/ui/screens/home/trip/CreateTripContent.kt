@@ -1,4 +1,3 @@
-
 package com.imd.tripsplit.ui.screens.home.trip
 
 import androidx.compose.foundation.background
@@ -111,17 +110,27 @@ fun CreateTripContent(
                 onManageExpensesClick = onManageExpensesClick,
                 onEditActivitiesClick = onEditActivitiesClick,
                 activities = state.activities,
+                participants = state.participants,
+                isCreator = isCreator,
                 onAddActivityClick = {
                     if (isCreator) {
                         onAction(CreateTripAction.OpenAddActivityModal)
                     }
                 },
-                onRemoveActivity = {
+                onEditActivity = { activityId ->
                     if (isCreator) {
-                        onAction(CreateTripAction.RemoveActivity(it))
+                        onAction(
+                            CreateTripAction.OpenEditActivityModal(activityId)
+                        )
                     }
                 },
-                isCreator = isCreator,
+                onRemoveActivity = { activityId ->
+                    if (isCreator) {
+                        onAction(
+                            CreateTripAction.RequestRemoveActivity(activityId)
+                        )
+                    }
+                },
             )
 
             Spacer(modifier = Modifier.height(SpacingMD))
