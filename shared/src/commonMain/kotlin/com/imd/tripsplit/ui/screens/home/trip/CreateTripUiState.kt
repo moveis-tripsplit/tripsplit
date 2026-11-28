@@ -14,7 +14,9 @@ data class TripActivity(
     val location: String,
     val estimatedCost: Double? = null,
     val participantIds: List<String> = emptyList(),
-)
+    val remoteId: String? = null,
+
+    )
 
 /**
  * Representa um participante da viagem.
