@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -26,25 +27,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imd.tripsplit.domain.activityDateError
+import com.imd.tripsplit.domain.tripDateRange
 import com.imd.tripsplit.ui.screens.home.trip.TripActivity
 import com.imd.tripsplit.ui.screens.home.trip.TripParticipant
 import com.imd.tripsplit.ui.theme.RadiusLG
 import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.SpacingSM
 import kotlin.random.Random
-import com.imd.tripsplit.domain.activityDateError
-import com.imd.tripsplit.domain.tripDateRange
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun AddActivityDialog(
@@ -93,11 +93,11 @@ fun AddActivityDialog(
 
     val isCostValid =
         costText.isBlank() ||
-                (
-                        parsedCost != null &&
-                                parsedCost.isFinite() &&
-                                parsedCost >= 0.0
-                        )
+            (
+                parsedCost != null &&
+                    parsedCost.isFinite() &&
+                    parsedCost >= 0.0
+            )
 
     val tripPeriod = tripDateRange(startDate, endDate)
     val dateError = activityDateError(dateHour, tripPeriod)
@@ -105,10 +105,9 @@ fun AddActivityDialog(
         tripPeriod != null && dateFieldEdited && !dateFieldFocused && dateError != null
     val canConfirm =
         title.isNotBlank() &&
-                location.isNotBlank() &&
-                dateError == null &&
-                isCostValid
-
+            location.isNotBlank() &&
+            dateError == null &&
+            isCostValid
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -157,26 +156,29 @@ fun AddActivityDialog(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = showDateError,
                     supportingText = {
-                        val message = when {
-                            tripPeriod == null ->
-                                "Defina um período válido no formulário da viagem para adicionar atividades."
+                        val message =
+                            when {
+                                tripPeriod == null ->
+                                    "Defina um período válido no formulário da viagem para adicionar atividades."
 
-                            showDateError -> dateError.orEmpty()
+                                showDateError -> dateError.orEmpty()
 
-                            needsDateReentry && !dateFieldEdited ->
-                                "Data salva: $originalDateHour. Informe a data completa com o ano."
+                                needsDateReentry && !dateFieldEdited ->
+                                    "Data salva: $originalDateHour. Informe a data completa com o ano."
 
-                            else -> "Digite apenas os números da data e do horário."
-                        }
+                                else -> "Digite apenas os números da data e do horário."
+                            }
                         Text(message)
                     },
                     singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onFocusChanged { dateFieldFocused = it.isFocused },
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { dateFieldFocused = it.isFocused },
                     shape = RoundedCornerShape(RadiusMD),
                 )
 
@@ -186,9 +188,10 @@ fun AddActivityDialog(
                     label = { Text("Local *", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     placeholder = { Text("Ex: Ilha do Campeche", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) },
                     singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
+                    textStyle =
+                        LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(RadiusMD),
                 )
@@ -293,13 +296,13 @@ fun AddActivityDialog(
                             }
 
                         onConfirm(activity)
-
                     }
                 },
                 enabled = canConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
                 shape = RoundedCornerShape(RadiusMD),
             ) {
                 Text(
@@ -318,36 +321,37 @@ fun AddActivityDialog(
     )
 }
 
-private fun formatActivityDateHour(digits: String): String = buildString {
-    digits.forEachIndexed { index, digit ->
-        when (index) {
-            2, 4 -> append('/')
-            8 -> append(" • ")
-            10 -> append(':')
+private fun formatActivityDateHour(digits: String): String =
+    buildString {
+        digits.forEachIndexed { index, digit ->
+            when (index) {
+                2, 4 -> append('/')
+                8 -> append(" • ")
+                10 -> append(':')
+            }
+            append(digit)
         }
-        append(digit)
     }
-}
 
 private object ActivityDateHourMask : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val formatted = formatActivityDateHour(text.text)
 
-        val offsets = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                if (offset == 0) return 0
+        val offsets =
+            object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset == 0) return 0
 
-                var digitsSeen = 0
-                for (index in formatted.indices) {
-                    if (formatted[index] in '0'..'9') digitsSeen++
-                    if (digitsSeen == offset) return index + 1
+                    var digitsSeen = 0
+                    for (index in formatted.indices) {
+                        if (formatted[index] in '0'..'9') digitsSeen++
+                        if (digitsSeen == offset) return index + 1
+                    }
+                    return formatted.length
                 }
-                return formatted.length
-            }
 
-            override fun transformedToOriginal(offset: Int): Int =
-                formatted.take(offset).count { it in '0'..'9' }
-        }
+                override fun transformedToOriginal(offset: Int): Int = formatted.take(offset).count { it in '0'..'9' }
+            }
 
         return TransformedText(AnnotatedString(formatted), offsets)
     }

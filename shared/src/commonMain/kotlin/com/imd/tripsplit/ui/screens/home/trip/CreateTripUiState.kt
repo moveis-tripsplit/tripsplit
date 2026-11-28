@@ -15,8 +15,7 @@ data class TripActivity(
     val estimatedCost: Double? = null,
     val participantIds: List<String> = emptyList(),
     val remoteId: String? = null,
-
-    )
+)
 
 /**
  * Representa um participante da viagem.
@@ -146,9 +145,10 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
         is CreateTripAction.UpdateActivity ->
             if (activities.any { it.id == action.activity.id }) {
                 copy(
-                    activities = activities.map { current ->
-                        if (current.id == action.activity.id) action.activity else current
-                    },
+                    activities =
+                        activities.map { current ->
+                            if (current.id == action.activity.id) action.activity else current
+                        },
                     showAddActivityModal = false,
                     editingActivityId = null,
                 )
@@ -233,9 +233,10 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
                         }
 
                     copy(
-                        participants = participants.map {
-                            if (it.id == updatedParticipant.id) updatedParticipant else it
-                        },
+                        participants =
+                            participants.map {
+                                if (it.id == updatedParticipant.id) updatedParticipant else it
+                            },
                         editingParticipant = null,
                         participantErrorMessage = null,
                     )
@@ -286,7 +287,8 @@ fun CreateTripUiState.reduce(action: CreateTripAction): CreateTripUiState =
 private fun CreateTripUiState.withoutParticipant(participantId: String): CreateTripUiState =
     copy(
         participants = participants.filterNot { it.id == participantId },
-        activities = activities.map { activity ->
-            activity.copy(participantIds = activity.participantIds.filterNot { it == participantId })
-        },
+        activities =
+            activities.map { activity ->
+                activity.copy(participantIds = activity.participantIds.filterNot { it == participantId })
+            },
     )

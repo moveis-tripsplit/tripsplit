@@ -1,20 +1,23 @@
 package com.imd.tripsplit.ui.screens.home.trip
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
 import com.imd.tripsplit.data.TripRepository
 import com.imd.tripsplit.data.toParticipant
 import com.imd.tripsplit.domain.activityDateError
@@ -26,15 +29,10 @@ import com.imd.tripsplit.ui.screens.home.trip.components.AddActivityDialog
 import com.imd.tripsplit.ui.screens.home.trip.components.participants.AddParticipantDialog
 import com.imd.tripsplit.ui.screens.home.trip.components.participants.DeleteParticipantDialog
 import com.imd.tripsplit.ui.screens.home.trip.components.participants.EditParticipantDialog
-import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
-import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.flow.update
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @Composable
 fun CreateTripScreen(
@@ -42,11 +40,27 @@ fun CreateTripScreen(
     tripId: String? = null,
     onBackClick: () -> Unit = {},
     onTripCreatedSuccess: (tripId: String) -> Unit = {},
+    onManageExpensesClick: (tripId: String) -> Unit = {},
 ) {
     val currentUser by com.imd.tripsplit.data.UserRepository.currentUser.collectAsState()
+
+    val editingTrip =
+        remember(tripId) {
+            tripId?.let { TripRepository.getTrip(it) }
+        }
+
+    val isUserCreator =
+        editingTrip == null ||
+            editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
+
+    val isUserOrganizer =
+        editingTrip == null ||
+            editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
+
     val initialParticipants =
         remember(currentUser) {
             val current = currentUser
+
             if (current != null) {
                 listOf(
                     TripParticipant(
@@ -72,16 +86,14 @@ fun CreateTripScreen(
                 emptyList()
             }
         }
-    val editingTrip = remember(tripId) { tripId?.let { TripRepository.getTrip(it) } }
-    val isUserCreator = editingTrip == null || editingTrip.isUserCreator(currentUser?.id, currentUser?.email)
-    val isUserOrganizer = editingTrip == null || editingTrip.isUserOrganizer(currentUser?.id, currentUser?.email)
 
-    val formState = remember(tripId) {
-        MutableStateFlow(
-            editingTrip?.toUiState()
-                ?: CreateTripUiState(participants = initialParticipants),
-        )
-    }
+    val formState =
+        remember(tripId) {
+            MutableStateFlow(
+                editingTrip?.toUiState()
+                    ?: CreateTripUiState(participants = initialParticipants),
+            )
+        }
     val state by formState.collectAsState()
 
     val pendingRemoteDeletions = remember(tripId) { mutableSetOf<String>() }
@@ -115,33 +127,37 @@ fun CreateTripScreen(
                     formState.update { current ->
                         val editingRoster =
                             current.showAddActivityModal ||
-                                    current.pendingDeleteActivityId != null
+                                current.pendingDeleteActivityId != null
 
                         if (
                             editingRoster ||
                             current.activities != activitiesAtStart ||
                             changedActivityIds.isNotEmpty() ||
                             pendingRemoteDeletions.isNotEmpty()
-                        ) {                            current
+                        ) {
+                            current
                         } else {
-                            val localByRemoteId = current.activities
-                                .filter { it.remoteId != null }
-                                .associateBy { it.remoteId }
+                            val localByRemoteId =
+                                current.activities
+                                    .filter { it.remoteId != null }
+                                    .associateBy { it.remoteId }
 
                             val drafts = current.activities.filter { it.remoteId == null }
                             val usedIds = drafts.mapTo(mutableSetOf()) { it.id }
 
-                            val syncedActivities = remoteActivities
-                                .filterNot { remote -> remote.remoteId in pendingRemoteDeletions }
-                                .map { remote ->                                val previous = localByRemoteId[remote.remoteId]
-                                var localId = previous?.id ?: remote.id
+                            val syncedActivities =
+                                remoteActivities
+                                    .filterNot { remote -> remote.remoteId in pendingRemoteDeletions }
+                                    .map { remote ->
+                                        val previous = localByRemoteId[remote.remoteId]
+                                        var localId = previous?.id ?: remote.id
 
-                                while (!usedIds.add(localId)) {
-                                    localId = "remote-$localId"
-                                }
+                                        while (!usedIds.add(localId)) {
+                                            localId = "remote-$localId"
+                                        }
 
-                                remote.copy(id = localId)
-                            }
+                                        remote.copy(id = localId)
+                                    }
 
                             current.copy(activities = drafts + syncedActivities)
                         }
@@ -181,7 +197,7 @@ fun CreateTripScreen(
             try {
                 persist(editingTrip)
                     .onSuccess {
-                        formState.value = nextState
+                        formState.update { it.reduce(action) }
                     }
                     .onFailure { error ->
                         participantSaveError =
@@ -225,7 +241,8 @@ fun CreateTripScreen(
             initialActivity = initialActivity,
             onDismiss = {
                 formState.value = formState.value.reduce(CreateTripAction.CloseAddActivityModal)
-            },            onConfirm = { activity ->
+            },
+            onConfirm = { activity ->
                 val action =
                     if (editingActivityId == null) {
                         CreateTripAction.AddActivity(activity)
@@ -238,7 +255,6 @@ fun CreateTripScreen(
                 formState.value = formState.value.reduce(action)
             },
         )
-
     }
 
     val pendingDeleteActivityId = state.pendingDeleteActivityId
@@ -252,9 +268,10 @@ fun CreateTripScreen(
         if (activityToDelete != null) {
             AlertDialog(
                 onDismissRequest = {
-                    formState.value = formState.value.reduce(
-                        CreateTripAction.CancelRemoveActivity,
-                    )
+                    formState.value =
+                        formState.value.reduce(
+                            CreateTripAction.CancelRemoveActivity,
+                        )
                 },
                 title = {
                     Text(
@@ -271,7 +288,6 @@ fun CreateTripScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-
                             changedActivityIds.remove(activityToDelete.id)
 
                             activityToDelete.remoteId?.let { remoteId ->
@@ -302,9 +318,10 @@ fun CreateTripScreen(
                 dismissButton = {
                     TextButton(
                         onClick = {
-                            formState.value = formState.value.reduce(
-                                CreateTripAction.CancelRemoveActivity,
-                            )
+                            formState.value =
+                                formState.value.reduce(
+                                    CreateTripAction.CancelRemoveActivity,
+                                )
                         },
                     ) {
                         Text(
@@ -328,7 +345,8 @@ fun CreateTripScreen(
                         participantErrorMessage = "Apenas o criador da viagem pode adicionar participantes.",
                     )
                 }
-            }        } else {
+            }
+        } else {
             AddParticipantDialog(
                 isCreator = isUserCreator,
                 onDismiss = {
@@ -362,7 +380,8 @@ fun CreateTripScreen(
                         participantErrorMessage = "Participantes não têm permissão para editar participantes. Apenas organizadores têm essa permissão.",
                     )
                 }
-            }        } else {
+            }
+        } else {
             EditParticipantDialog(
                 participant = participantToEdit,
                 errorMessage = state.participantErrorMessage,
@@ -396,7 +415,8 @@ fun CreateTripScreen(
                         participantErrorMessage = "Apenas organizadores podem excluir participantes da viagem.",
                     )
                 }
-            }        } else {
+            }
+        } else {
             DeleteParticipantDialog(
                 participant = participantToDelete,
                 errorMessage = state.participantErrorMessage,
@@ -455,11 +475,12 @@ fun CreateTripScreen(
 
             scope.launch {
                 try {
-                    val result = TripRepository.syncPendingActivities(
-                        tripId = savedTripId,
-                        requesterUserId = currentUser?.id,
-                        requesterEmail = currentUser?.email,
-                    )
+                    val result =
+                        TripRepository.syncPendingActivities(
+                            tripId = savedTripId,
+                            requesterUserId = currentUser?.id,
+                            requesterEmail = currentUser?.email,
+                        )
 
                     if (result.isSuccess) {
                         onTripCreatedSuccess(savedTripId)
@@ -629,7 +650,9 @@ fun CreateTripScreen(
             isCreator = isUserCreator,
             currentUserId = currentUser?.id,
             isEditing = editingTrip != null,
-            modifier = modifier,
+            isTripSaved = editingTrip != null,
+            onManageExpensesClick = { editingTrip?.id?.let(onManageExpensesClick) },
+            modifier = Modifier.weight(1f),
         )
     }
 }

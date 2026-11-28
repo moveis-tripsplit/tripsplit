@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -22,7 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imd.tripsplit.domain.tripDateRange
@@ -31,12 +37,6 @@ import com.imd.tripsplit.ui.theme.RadiusMD
 import com.imd.tripsplit.ui.theme.RadiusXL
 import com.imd.tripsplit.ui.theme.SpacingLG
 import com.imd.tripsplit.ui.theme.SpacingSM
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun TripDatesCard(
@@ -99,7 +99,8 @@ fun TripDatesCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (tripDateRange(startDate, endDate) != null) {                    Box(
+                if (tripDateRange(startDate, endDate) != null) {
+                    Box(
                         modifier =
                             Modifier
                                 .clip(RoundedCornerShape(RadiusXL))
@@ -131,28 +132,29 @@ fun TripDatesCard(
     }
 }
 
-private fun formatTripDate(digits: String): String = buildString {
-    digits.forEachIndexed { index, digit ->
-        if (index == 2 || index == 4) append('/')
-        append(digit)
+private fun formatTripDate(digits: String): String =
+    buildString {
+        digits.forEachIndexed { index, digit ->
+            if (index == 2 || index == 4) append('/')
+            append(digit)
+        }
     }
-}
 
 private object TripDateMask : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val formatted = formatTripDate(text.text)
 
-        val offsets = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                var position = offset
-                if (offset > 2) position++
-                if (offset > 4) position++
-                return position
-            }
+        val offsets =
+            object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    var position = offset
+                    if (offset > 2) position++
+                    if (offset > 4) position++
+                    return position
+                }
 
-            override fun transformedToOriginal(offset: Int): Int =
-                formatted.take(offset).count { it in '0'..'9' }
-        }
+                override fun transformedToOriginal(offset: Int): Int = formatted.take(offset).count { it in '0'..'9' }
+            }
 
         return TransformedText(AnnotatedString(formatted), offsets)
     }
@@ -193,17 +195,19 @@ private fun TripDateField(
         },
         visualTransformation = TripDateMask,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colorScheme.onSurface,
-        ),
+        textStyle =
+            LocalTextStyle.current.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
         modifier = modifier,
         shape = RoundedCornerShape(RadiusMD),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            ),
         singleLine = true,
     )
 }
